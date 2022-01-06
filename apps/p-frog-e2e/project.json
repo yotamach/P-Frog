@@ -1,0 +1,28 @@
+{
+  "root": "apps/p-frog-e2e",
+  "sourceRoot": "apps/p-frog-e2e/src",
+  "projectType": "application",
+  "targets": {
+    "e2e": {
+      "executor": "@nrwl/cypress:cypress",
+      "options": {
+        "cypressConfig": "apps/p-frog-e2e/cypress.json",
+        "devServerTarget": "p-frog:serve"
+      },
+      "configurations": {
+        "production": {
+          "devServerTarget": "p-frog:serve:production"
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["apps/p-frog-e2e/**/*.{js,ts}"]
+      }
+    }
+  },
+  "tags": [],
+  "implicitDependencies": ["p-frog"]
+}

@@ -1,0 +1,71 @@
+{
+  "root": "apps/p-frog",
+  "sourceRoot": "apps/p-frog/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/web:webpack",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "compiler": "babel",
+        "outputPath": "dist/apps/p-frog",
+        "index": "apps/p-frog/src/index.html",
+        "baseHref": "/",
+        "main": "apps/p-frog/src/main.tsx",
+        "polyfills": "apps/p-frog/src/polyfills.ts",
+        "tsConfig": "apps/p-frog/tsconfig.app.json",
+        "assets": ["apps/p-frog/src/favicon.ico", "apps/p-frog/src/assets"],
+        "styles": ["apps/p-frog/src/styles.scss"],
+        "scripts": [],
+        "webpackConfig": "@nrwl/react/plugins/webpack"
+      },
+      "configurations": {
+        "production": {
+          "fileReplacements": [
+            {
+              "replace": "apps/p-frog/src/environments/environment.ts",
+              "with": "apps/p-frog/src/environments/environment.prod.ts"
+            }
+          ],
+          "optimization": true,
+          "outputHashing": "all",
+          "sourceMap": false,
+          "namedChunks": false,
+          "extractLicenses": true,
+          "vendorChunk": false
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nrwl/web:dev-server",
+      "options": {
+        "buildTarget": "p-frog:build",
+        "hmr": true,
+        "proxyConfig": "apps/p-frog/proxy.conf.json"
+      },
+      "configurations": {
+        "production": {
+          "buildTarget": "p-frog:build:production",
+          "hmr": false
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["apps/p-frog/**/*.{ts,tsx,js,jsx}"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/apps/p-frog"],
+      "options": {
+        "jestConfig": "apps/p-frog/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}
