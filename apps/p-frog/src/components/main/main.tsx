@@ -1,19 +1,14 @@
 import * as React from 'react';
-import AppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
-import Container from '@mui/material/Container';
-import styles from "./footer.module.scss";
+import Box from "@mui/material/Box";
+import SideNav from "../side-nav/side-nav";
 
-const Footer = () => {
+const Main = () => {
 
   return (
-    <AppBar className={styles.footer}>
-      <Container maxWidth="xl">
-        <Toolbar disableGutters>
-  hi
-        </Toolbar>
-      </Container>
-    </AppBar>
+    <Box sx={{ display: 'flex', p: 1, bgcolor: 'background.paper' }}>
+      <Box width={'10%'}><SideNav /></Box>
+      <Box width={'90%'}>Contenet</Box>
+    </Box>
   );
 };
-export default Footer;
+export default Main;

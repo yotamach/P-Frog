@@ -18,7 +18,7 @@
         "assets": ["apps/p-frog/src/favicon.ico", "apps/p-frog/src/assets"],
         "styles": ["apps/p-frog/src/styles.scss"],
         "scripts": [],
-        "webpackConfig": "@nrwl/react/plugins/webpack"
+        "webpackConfig": "apps/p-frog/webpack.config.js"
       },
       "configurations": {
         "production": {

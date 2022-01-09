@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Message } from '@p-frog/api-interfaces';
+import styles from './app.module.scss';
+import {Header, Main} from '../components';
 
 export const App = () => {
   const [m, setMessage] = useState<Message>({ message: '' });
@@ -12,15 +14,8 @@ export const App = () => {
 
   return (
     <>
-      <div style={{ textAlign: 'center' }}>
-        <h1>Welcome to p-frog!</h1>
-        <img
-          width="450"
-          src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-logo.png"
-          alt="Nx - Smart, Fast and Extensible Build System"
-        />
-      </div>
-      <div>{m.message}</div>
+      <Header />
+      <Main />
     </>
   );
 };
