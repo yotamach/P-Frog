@@ -1,0 +1,20 @@
+{
+    "compilerOptions": {
+        "target": "esnext",
+        "baseUrl": ".",
+        "paths": {
+            "@components": ["./src/components/index.js"],
+            "@config": ["./src/config/index.js"],
+            "@data": ["./src/data/index.js"],
+            "@hooks": ["./src/hooks/index.js"],
+            "@icons": ["./src/icons/index.js"],
+            "@styles": ["./src/styles/base.scss"],
+            "@utils": ["./src/utils/index.js"],
+            "@state": ["./src/state/index.js"],
+            "@types": ["./src/types/index.js"],
+        },
+        "jsx": "react"
+    },
+    "exclude": ["node_modules", "dist"],
+    "checkJs": true
+}

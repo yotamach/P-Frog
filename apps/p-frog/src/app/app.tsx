@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from 'react';
+import {createTheme, Theme, ThemeProvider} from "@mui/material";
+import styles from "./app.module.scss";
+import {lighThemeOptions} from "../theme";
+import { Header, Main, Footer } from '@components';
 import { Message } from '@p-frog/api-interfaces';
-import styles from './app.module.scss';
-import {Header, Main} from '../components';
+
+const theme: Theme = createTheme(lighThemeOptions);
 
 export const App = () => {
   const [m, setMessage] = useState<Message>({ message: '' });
@@ -13,10 +17,13 @@ export const App = () => {
   }, []);
 
   return (
-    <>
-      <Header />
-      <Main />
-    </>
+    <ThemeProvider theme={theme}>
+      <div className={styles.app}>
+        <Header/>
+        <Main/>
+        <Footer />
+      </div>
+    </ThemeProvider>
   );
 };
 

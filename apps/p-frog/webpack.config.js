@@ -1,8 +1,18 @@
 const getConfig = require('@nrwl/react/plugins/webpack')
+const path = require(`path`);
+const alias = require(`./aliases`);
+
+const SRC = `./src`;
+const aliases = alias(SRC);
+
+const resolvedAliases = Object.fromEntries(
+  Object.entries(aliases).map(([key, value]) => [key, path.resolve(__dirname, value)]),
+);
 const cssModuleRegex = /\.module\.css$/;
 
 module.exports = (config) => {
   config = getConfig(config);
+  config.resolve.alias = resolvedAliases;
 
   config.module.rules.forEach((rule, idx) => {
     // Find rule tests for CSS.

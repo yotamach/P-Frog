@@ -1,17 +1,31 @@
 import * as React from 'react';
-import AppBar from '@mui/material/AppBar';
 import Box from "@mui/material/Box";
 import MenuItem from "@mui/material/MenuItem";
+import {ListItemIcon, ListItemText, MenuList} from "@mui/material";
+import {NavMenuItem} from "../../types";
+import {menuItems} from "../../data";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import styles from "./side-nav.module.scss";
 
 const SideNav = () => {
 
+  const getMenuItems = (menuItems: NavMenuItem[]) => {
+    return menuItems.map((item) => (
+      <MenuItem key={item.title}>
+        <ListItemIcon>
+          <FontAwesomeIcon icon={item.icon}/>
+        </ListItemIcon>
+        <ListItemText>{item.title}</ListItemText>
+      </MenuItem>
+    ))
+  }
+
   return (
-    <Box flexDirection={'column'} color={'primary'} >
-     <AppBar title={'P-Frog'} />
-      <MenuItem>Home</MenuItem>
-      <MenuItem>Events</MenuItem>
-      <MenuItem>Settings</MenuItem>
-    </Box>
+      <Box flexDirection={'column'} className={styles.sideNav}>
+        <MenuList>
+          {getMenuItems(menuItems)}
+        </MenuList>
+      </Box>
   );
 };
 export default SideNav;

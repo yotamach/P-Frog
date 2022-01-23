@@ -1,14 +1,28 @@
 import * as React from 'react';
 import Box from "@mui/material/Box";
-import SideNav from "../side-nav/side-nav";
+import styles from "./main.module.scss";
+import {SideNav} from "../index";
+import { Paper } from '@mui/material';
 
 const Main = () => {
 
   return (
-    <Box sx={{ display: 'flex', p: 1, bgcolor: 'background.paper' }}>
-      <Box width={'10%'}><SideNav /></Box>
-      <Box width={'90%'}>Contenet</Box>
-    </Box>
+    <Paper elevation={2} className={styles.main} >
+      <Box
+        sx={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          alignContent: 'flex-start',
+          height: '100%'
+        }}>
+        <Box width={'10%'} height={'100%'} bgcolor={'primary.light'}>
+          <SideNav />
+        </Box>
+        <Box flexGrow={1}>
+          Content
+        </Box>
+      </Box>
+    </Paper>
   );
 };
 export default Main;
