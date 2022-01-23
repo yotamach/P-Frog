@@ -1,5 +1,6 @@
 import {UserModel} from "../models/user.model";
 import {Logger} from "tslog";
+import { Message } from "@p-frog/api-interfaces";
 
 const log: Logger = new Logger();
 
@@ -20,6 +21,7 @@ export class UserController {
   }
 
   deleteUser(user: UserModel): Message {
+    log.info(`user deleted ${user}`)
     return { message: 'deleted in success' }
   }
 }
