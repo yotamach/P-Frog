@@ -2,6 +2,21 @@
   "extends": "../../tsconfig.base.json",
   "files": [],
   "include": [],
+  "compilerOptions": {
+    "allowJs": false,
+    "baseUrl": "./",
+    "paths": {
+      "@controllers": ["src/services/index.ts"],
+      "@config": ["./src/config/index.ts"],
+      "@data": ["./src/data/index.ts"],
+      "@routes": ["./src/routes/index.ts"],
+      "@models": ["./src/models/index.ts"],
+      "@schemas": ["./src/schemas/index.ts"],
+      "@utils": ["./src/utils/index.ts"],
+      "@types": ["./src/types/index.ts"],
+      "@p-frog/data": ["../../libs/data/src/index.ts"]
+    }
+  },
   "references": [
     {
       "path": "./tsconfig.app.json"

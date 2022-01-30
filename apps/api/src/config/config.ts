@@ -1,4 +1,4 @@
-const BASE_API: string = '/api'
+const BASE_API = '/api'
 
 export {
   BASE_API

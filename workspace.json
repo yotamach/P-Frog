@@ -2,7 +2,7 @@
   "version": 2,
   "projects": {
     "api": "apps/api",
-    "api-interfaces": "libs/api-interfaces",
+    "data": "libs/data",
     "p-frog": "apps/p-frog",
     "p-frog-e2e": "apps/p-frog-e2e"
   }

@@ -3,7 +3,7 @@ import {createTheme, Theme, ThemeProvider} from "@mui/material";
 import styles from "./app.module.scss";
 import {lighThemeOptions} from "../theme";
 import { Header, Main, Footer } from '@components';
-import { Message } from '@p-frog/api-interfaces';
+import { Message } from '@p-frog/data';
 
 const theme: Theme = createTheme(lighThemeOptions);
 

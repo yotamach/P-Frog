@@ -4,7 +4,7 @@ export const lighThemeOptions: ThemeOptions = {
   palette: {
     primary: {
       main: '#ff0000',
-      light: '#9a91ff'
+      light: '#ff6996'
     },
     secondary: {
       main: 'rgba(105,119,255,0.75)',

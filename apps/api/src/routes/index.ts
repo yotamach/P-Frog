@@ -1,5 +1,5 @@
-import userRouter from "./uesr.route";
+import userRoutes from "./uesr.route";
 
 export {
-  userRouter
+  userRoutes
 }

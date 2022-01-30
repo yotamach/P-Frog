@@ -1,31 +1,44 @@
 import * as express from "express";
 import {BASE_API} from "./config/config";
 import * as bodyParser from "body-parser";
-import {Router} from "express";
+import { AppRouter } from "@models";
+import { connect } from "mongoose";
+import { Logger } from "tslog";
+import { Port } from "@p-frog/data";
+
+const log: Logger = new Logger();
 
 export class App {
   private readonly host: string;
-  private readonly port: number | string;
+  private readonly port: Port;
   private app = express();
 
-  constructor(host: string, port: number | string) {
+  constructor(host: string, port: Port) {
     this.host = host;
     this.port = port;
   }
 
-  start() {
-    this.configure();
+  start(): void {
     const server = this.app.listen(this.port, () => {
-      console.log('Listening at http://' + this.host + ':' + this.port + BASE_API);
+      log.info('Listening at https://' + this.host + ':' + this.port + BASE_API);
     });
-    server.on('error', console.error);
+    server.on('error', log.error);
   }
 
-  configure() {
-    this.app.use(bodyParser);
+  configure(): void {
+    this.app.use(bodyParser.urlencoded({ extended: false }))
+    this.app.use(bodyParser.json())
   }
 
-  addRouter(router: Router) {
-    this.app.use(BASE_API, router);
+  addRouter(appRouter: AppRouter): void {
+    const { url, router } = appRouter;
+    this.app.use(BASE_API + url, router);
+  }
+
+  dbConnect(host: string, userName: string, password: string, schema: string) {
+    connect(`mongodb+srv://${userName}:${password}@${host}/${schema}?retryWrites=true&w=majority
+
+    `);
+    log.info(`Connected to mongoDB URL: mongodb://${host}/ DB: ${schema}`);
   }
 }
