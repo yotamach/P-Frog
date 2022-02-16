@@ -6,6 +6,7 @@
       "@components": ["./src/components/index.ts"],
       "@config": ["./src/config/index.ts"],
       "@data": ["./src/data/index.ts"],
+      "@pages": ["./src/pages/index.ts"],
       "@hooks": ["./src/hooks/index.ts"],
       "@icons": ["./src/icons/index.ts"],
       "@styles": ["./src/styles/base.scss"],

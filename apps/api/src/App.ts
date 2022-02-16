@@ -5,6 +5,7 @@ import { AppRouter } from "@models";
 import { connect } from "mongoose";
 import { Logger } from "tslog";
 import { Port } from "@p-frog/data";
+import * as cors from 'cors';
 
 const log: Logger = new Logger();
 
@@ -26,6 +27,7 @@ export class App {
   }
 
   configure(): void {
+    this.app.use(cors());
     this.app.use(bodyParser.urlencoded({ extended: false }))
     this.app.use(bodyParser.json())
   }
@@ -42,3 +44,5 @@ export class App {
     log.info(`Connected to mongoDB URL: mongodb://${host}/ DB: ${schema}`);
   }
 }
+
+
