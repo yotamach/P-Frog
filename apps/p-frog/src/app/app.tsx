@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react';
 import {createTheme, Theme, ThemeProvider} from "@mui/material";
 import styles from "./app.module.scss";
 import {lighThemeOptions} from "../theme";
-import { Header, Main, Footer } from '@components';
+import { Header, Main, Footer } from '@components/index';
 import { Message } from '@p-frog/data';
 import { Provider } from 'react-redux';
-import { store } from '@data';
+import { store } from '@data/index';
 import { BrowserRouter } from 'react-router-dom';
 
 const theme: Theme = createTheme(lighThemeOptions);

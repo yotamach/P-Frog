@@ -6,7 +6,7 @@
       "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
       "plugins": ["react", "react-hooks", "@typescript-eslint"],
       "rules": {
-        "react-hooks/exhaustive-deps": "error"
+        "react-hooks/exhaustive-deps": ["off"]
       },
       "settings": {
         "react": {
@@ -16,7 +16,9 @@
     },
     {
       "files": ["*.ts", "*.tsx"],
-      "rules": {}
+      "rules": {
+        "eslintreact-hooks/exhaustive-deps": ["off"]
+      }
     },
     {
       "files": ["*.js", "*.jsx"],

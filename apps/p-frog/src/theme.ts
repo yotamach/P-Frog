@@ -3,22 +3,22 @@ import {ThemeOptions} from "@mui/material";
 export const lighThemeOptions: ThemeOptions = {
   palette: {
     primary: {
-      main: '#ff0000',
-      light: '#ff6996'
+
+      main: '#3f51b5',
     },
     secondary: {
-      main: 'rgba(105,119,255,0.75)',
-      light: '#947be5',
+      main: '#f50057',
     },
     text: {
       primary: '#000000',
       disabled: 'rgba(0,0,0,0.29)',
+      secondary: '#ffffff',
     },
     error: {
-      main: '#e53935',
+      main: '#f44336',
     },
     warning: {
-      main: '#ffe57f',
+      main: '#ff9800',
     },
   },
 };
@@ -26,20 +26,20 @@ export const lighThemeOptions: ThemeOptions = {
 export const darkThemeOptions: ThemeOptions = {
   palette: {
     primary: {
-      main: '#dad032',
+      main: '#3f51b5',
     },
     secondary: {
-      main: 'rgba(46,155,203,0.75)',
-      light: '#6033f7',
+      main: '#f50057',
     },
     text: {
       disabled: 'rgba(0,0,0,0.29)',
+      secondary: '#ffffff',
     },
     error: {
-      main: '#e53935',
+      main: '#f44336',
     },
     warning: {
-      main: '#ffe57f',
+      main: '#ff9800',
     },
   },
 };

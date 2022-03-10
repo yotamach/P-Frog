@@ -1,18 +1,18 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "baseUrl": "./",
+    "baseUrl": ".",
     "paths": {
-      "@components": ["./src/components/index.ts"],
-      "@config": ["./src/config/index.ts"],
-      "@data": ["./src/data/index.ts"],
-      "@pages": ["./src/pages/index.ts"],
-      "@hooks": ["./src/hooks/index.ts"],
-      "@icons": ["./src/icons/index.ts"],
+      "*": ["./src"],
+      "@components/*": ["src/components/*"],
+      "@config/*": ["src/config/*"],
+      "@data/*": ["src/data/*"],
+      "@pages/*": ["src/pages/*"],
+      "@hooks/*": ["src/hooks/*"],
+      "@icons/*": ["src/icons/*"],
       "@styles": ["./src/styles/base.scss"],
-      "@utils": ["./src/utils/index.ts"],
-      "@state": ["./src/state/index.ts"],
-      "@types": ["./src/types/index.ts"],
+      "@utils/*": ["src/utils/*"],
+      "@types": ["src/types/index.ts"],
       "@p-frog/data": ["../../libs/data/src/index.ts"]
     },
     "module": "commonjs",

@@ -4,16 +4,11 @@ import styles from "./main.module.scss";
 import {SideNav} from "../index";
 import { Paper } from '@mui/material';
 import { useDispatch } from 'react-redux';
-import { fetchTasks, tasksActions } from 'src/data/store/tasks/tasks.slice';
+import { fetchTasks, tasksActions } from '@data/store/tasks/tasks.slice';
 import { Route, Routes } from 'react-router-dom';
-import { menuItems } from '@data';
+import { menuItems } from '@data/index';
 
 const Main = () => {
-  const dispatch = useDispatch();
-  useEffect(() => {
-    dispatch(tasksActions.add({ id: 1, title: "Yotam", description: "Yotam task", startDate: "2021-11-11", endDate: "2022-11-11" }))
-    dispatch(fetchTasks());
-  }, [dispatch]);
    
   const getRoutes = () => menuItems.map(menuItem => (<Route key={menuItem.title} path={menuItem.path} element={menuItem.component} />));
   
@@ -26,8 +21,8 @@ const Main = () => {
           alignContent: 'flex-start',
           height: '100%'
         }}>
-        <Box width={'10%'} height={'100%'} bgcolor={'primary.light'}>
-            <SideNav />
+        <Box width={'10%'} height={'100%'} bgcolor={'primary.main'}>
+            <SideNav menuItems={menuItems} color={'text.secondary'} />
         </Box>
         <Box flexGrow={1}>
           <Routes>

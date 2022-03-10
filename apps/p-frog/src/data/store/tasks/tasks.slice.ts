@@ -41,6 +41,7 @@ export const createTask = createAsyncThunk(
   }
 )
 
+
 export const initialTasksState: TasksState = tasksAdapter.getInitialState({
   loadingStatus: 'not loaded',
   error: null,
@@ -60,6 +61,10 @@ export const tasksSlice = createSlice({
       state.loadingStatus = 'loaded';
       tasksAdapter.addMany(state, action.payload.tasks);
     })
+    .addCase(createTask.fulfilled, (state: TasksState, action: PayloadAction<any>) => {
+      state.loadingStatus = 'loaded';
+      tasksAdapter.addOne(state, action.payload.task);
+    })
     .addMatcher<PendingAction>(
      (action) => action.type.endsWith("/pending"),
      (state: TasksState, action: PayloadAction<any>) => {
@@ -73,49 +78,10 @@ export const tasksSlice = createSlice({
     });
 }});
 
-/*
- * Export reducer for store configuration.
- */
 export const tasksReducer = tasksSlice.reducer;
 
-/*
- * Export action creators to be dispatched. For use with the `useDispatch` hook.
- *
- * e.g.
- * ```
- * import React, { useEffect } from 'react';
- * import { useDispatch } from 'react-redux';
- *
- * // ...
- *
- * const dispatch = useDispatch();
- * useEffect(() => {
- *   dispatch(tasksActions.add({ id: 1 }))
- * }, [dispatch]);
- * ```
- *
- * See: https://react-redux.js.org/next/api/hooks#usedispatch
- */
 export const tasksActions = tasksSlice.actions;
 
-/*
- * Export selectors to query state. For use with the `useSelector` hook.
- *
- * e.g.
- * ```
- * import { useSelector } from 'react-redux';
- *import { TasksAPI } from 'apps\p-frog\src\data\services\tasks.service';
-import { TaskModel } from '@models';
-import { Task } from '@schemas';
-import { Response } from 'express';
-
- * // ...
- *
- * const entities = useSelector(selectAllTasks);
- * ```
- *
- * See: https://react-redux.js.org/next/api/hooks#useselector
- */
 const { selectAll, selectEntities } = tasksAdapter.getSelectors();
 
 export const getTasksState = (rootState: RootState): TasksState =>

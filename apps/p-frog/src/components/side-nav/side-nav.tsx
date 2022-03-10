@@ -5,27 +5,26 @@ import {ListItemIcon, ListItemText, MenuList} from "@mui/material";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import styles from "./side-nav.module.scss";
 import { NavMenuItem } from '@types';
-import { menuItems } from '@data';
-import { Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 
-const SideNav = () => {
+const SideNav: React.FC<{ menuItems: NavMenuItem[], color?: string }> = ({ menuItems, color }) => {
 
   const getMenuItems = (menuItems: NavMenuItem[]) => {
     return menuItems.map((item) => (
-      <Link to={item.link}>
-        <MenuItem key={item.title}>
-              <ListItemIcon>
+      <NavLink to={item.link} key={item.title} style={{ textDecoration: 'none' }}>
+        <MenuItem key={item.title} sx={{ color: color }}>
+              <ListItemIcon sx={{ color: color }}>
                 <FontAwesomeIcon icon={item.icon}/>
               </ListItemIcon>
               <ListItemText>{item.title}</ListItemText>
         </MenuItem>
-      </Link>
+      </NavLink>
     ))
   }
 
   return (
       <Box flexDirection={'column'} className={styles.sideNav}>
-        <MenuList>
+        <MenuList color={"text.secondary"}>
           {getMenuItems(menuItems)}
         </MenuList>
       </Box>
