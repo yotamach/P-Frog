@@ -21,8 +21,11 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-    - run: npm install --force
-    - run: npx nx run p-frog:build:production
+    - name: Npm install
+      run: npm install --force
+    - name: Build client
+      run: npx nx run p-frog:build:production
+      
   build-server:
 
     runs-on: ubuntu-latest
@@ -34,5 +37,7 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-    - run: npm install --force
-    - run: npx nx run api:build
+    - name: Npm install
+      run: npm install --force
+    - name: Build server
+      run: npx nx run api:build

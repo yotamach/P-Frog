@@ -40,7 +40,7 @@ const Header = () => {
           <Typography
             variant="h6"
             noWrap
-            component="div"
+            component="h6"
             sx={{ mr: 15, display: { xs: 'none', md: 'flex' } }}
           >
             LOGO
