@@ -12,4 +12,8 @@ export class TasksAPI {
             data: task
         });
     }
+
+    delete(id: string): Promise<AxiosResponse> {
+        return request.post<AxiosResponse>(`tasks/`+ id, {});
+    }
 }

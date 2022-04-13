@@ -2,7 +2,7 @@ import {NavMenuItem} from "../../types";
 import fontawesome from '@fortawesome/fontawesome'
 import { faCheckSquare, faChartArea } from '@fortawesome/fontawesome-free-solid'
 import { Dashboard, Settings, Tasks } from "@pages/index";
-import { CreateTask, TasksList } from "@pages/tasks/components";
+import { TasksList } from "@pages/tasks/components";
 
 fontawesome.library.add(faCheckSquare, faChartArea);
 
@@ -44,7 +44,7 @@ export const tasksMenuItems: NavMenuItem[] = [
     icon: 'archive',
     link: 'create-task',
     path: 'create-task',
-    component: <CreateTask />
+    component: <TasksList />
   }
   ,{
     title: 'Edit Task',

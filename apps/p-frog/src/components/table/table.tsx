@@ -1,7 +1,9 @@
-import { TableContainer, Paper, TableHead, TableRow, TableCell, TableBody } from '@mui/material';
+import { TableContainer, Paper, TableHead, TableRow, TableCell, TableBody, Box, IconButton, Checkbox } from '@mui/material';
 import MUITable from '@mui/material/Table';
-
 import styles from './table.scss';
+import { ReactElement } from 'react';
+import { useTable, Column, useRowSelect, Row } from 'react-table';
+import React, { useEffect, forwardRef } from 'react';
 
 export interface ColumnProps {
   title: string;
@@ -9,43 +11,102 @@ export interface ColumnProps {
   field: string;
 };
 
-interface RowProps {
-  key: string;
-  values: CellProps[];
-};
-
 interface CellProps {
   column: string;
   value: any;
 };
 
-interface TableProps {
-  columns: ColumnProps[];
-  data: RowProps[];
+export interface TopToolBarItem {
+  icon: ReactElement;
+  label: string; 
+  click: (event: React.MouseEvent<HTMLButtonElement>, selectedRows: Row<object>[]) => void;
 }
 
-export default function Table({ columns, data }: TableProps) {
+interface TableProps {
+  columns: Column<any>[];
+  data: any[];
+  topToolBar: TopToolBarItem[];
+}
+
+export default function Table({ topToolBar, columns, data }: TableProps) {
+
+  const {
+    getTableProps,
+    getTableBodyProps,
+    headerGroups,
+    rows,
+    selectedFlatRows,
+    prepareRow
+  } = useTable(
+    {
+      columns,
+      data,
+    },
+    useRowSelect,
+    hooks => {
+      hooks.visibleColumns.push((columns: any) => [
+        // Let's make a column for selection
+        {
+          id: 'selection',
+          Header: '',
+          Cell: ({ row, toggleAllRowsSelected }) => (
+            <div>
+              <Checkbox 
+              {...row.getToggleRowSelectedProps({
+                onChange: () => {
+                  const selected = row.isSelected;
+                  toggleAllRowsSelected(false);
+                  row.toggleRowSelected(!selected);
+                }
+              })} />
+            </div>
+          ),
+        },
+        ...columns,
+      ])
+    }
+  )
+
+  const topToolBarPanel = getTopToolBar(topToolBar, selectedFlatRows);
   return (
     <TableContainer component={Paper}>
-      <MUITable sx={{ minWidth: 650 }} aria-label="table">
-        <TableHead sx={{ bgcolor: 'primary.main'}}>
-          <TableRow>
-            {columns.map((column: ColumnProps) => <TableCell style={{ color: 'white' }} key={column.title} align={column.align}>{column.title}</TableCell>)}
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {data.length ? data.map((row: RowProps) => (
-            <TableRow
-              key={row.key}
-              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-            >
-              {columns.map(({ title, field }) => (<TableCell key={title} component="th" scope="row">
-                {row.values[field]}
-              </TableCell>))}
+      {<Box>
+        {topToolBarPanel}
+      </Box>}
+      <MUITable sx={{ minWidth: 650 }} aria-label="table" {...getTableProps()}>
+        <TableHead sx={{ bgcolor: 'primary.main' }}>
+          {headerGroups.map(headerGroup => (
+            <TableRow {...headerGroup.getHeaderGroupProps()}>
+              {headerGroup.headers.map(column => (
+                <TableCell sx={{ color: 'text.secondary' }} {...column.getHeaderProps()}>{column.render('Header')}</TableCell>
+              ))}
             </TableRow>
-          )) : <TableRow key={'noDataRow'}><TableCell key={'noData'}>No data</TableCell></TableRow>}
+          ))}
+        </TableHead>
+        <TableBody {...getTableBodyProps()}>
+          {data.length ? rows.map((row, i) => {
+            prepareRow(row)
+            return (
+              <TableRow {...row.getRowProps()}>
+                {row.cells.map(cell => {
+                  return <TableCell {...cell.getCellProps()}>{cell.render('Cell')}</TableCell>
+                })}
+              </TableRow>
+            )
+          }) : <TableRow key={'noDataRow'}><TableCell key={'noData'}>No data</TableCell></TableRow>}
         </TableBody>
         </MUITable>
       </TableContainer>
   );
+}
+
+
+function getTopToolBar(topToolBar: TopToolBarItem[], selectedRows: Row<object>[] = []) {
+  const buttonsLists = topToolBar.map((button) => (
+      <IconButton key={button.label} onClick={(event) => button.click(event, selectedRows)} aria-label={button.label} size="large">
+        {button.icon}
+      </IconButton>));
+  return <Paper elevation={2}>
+      {buttonsLists}
+  </Paper>
 }

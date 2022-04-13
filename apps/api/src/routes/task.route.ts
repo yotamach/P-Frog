@@ -21,10 +21,11 @@ taskRouter.get('/login', (req: Request, res: Response) => {
 });
 
 taskRouter.post('/',async (req: Request, res: Response) => {
-  log.info("/signup: post route");
+  log.info("/create task: post route");
   try {
-    const user: TaskModel = req.body;
-    const taskDetails = await taskService.createTask(user);
+    const task: TaskModel = { ...req.body.data };
+    log.info(`post: Task to create ${JSON.stringify(task)}`);
+    const taskDetails = await taskService.createTask(task);
     log.info(`post: Task created succsfully! ${taskDetails}`);
     res.send(taskDetails);
   } catch(e) {
@@ -68,6 +69,19 @@ taskRouter.get('/', (req: Request, res: Response) => {
     }
     else {
       res.send({ success: true, tasks});
+    }
+  });
+});
+
+taskRouter.delete('/:id', (req: Request, res: Response) => {
+  log.info(`Get route`);
+  const {id} = req.params;
+  taskService.deleteTask(id, (err, task) => {
+    if (err) {
+      res.send({ success: false, error: err});
+    }
+    else {
+      res.send({ success: true, task});
     }
   });
 });

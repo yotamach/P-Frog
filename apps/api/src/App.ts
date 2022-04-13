@@ -1,6 +1,5 @@
 import * as express from "express";
 import {BASE_API} from "./config/config";
-import * as bodyParser from "body-parser";
 import { AppRouter } from "@models";
 import { connect } from "mongoose";
 import { Logger } from "tslog";
@@ -28,8 +27,8 @@ export class App {
 
   configure(): void {
     this.app.use(cors());
-    this.app.use(bodyParser.urlencoded({ extended: false }))
-    this.app.use(bodyParser.json())
+    this.app.use(express.json());
+    this.app.use(express.urlencoded({ extended: false }));
   }
 
   addRouter(appRouter: AppRouter): void {

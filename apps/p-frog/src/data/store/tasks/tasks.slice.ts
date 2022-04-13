@@ -41,6 +41,14 @@ export const createTask = createAsyncThunk(
   }
 )
 
+export const deleteTask = createAsyncThunk(
+  'tasks/deleteTask',
+  async (id: string) => {
+    const response = await tasksAPI.delete(id);
+    return response.data;
+  }
+)
+
 
 export const initialTasksState: TasksState = tasksAdapter.getInitialState({
   loadingStatus: 'not loaded',
@@ -63,7 +71,11 @@ export const tasksSlice = createSlice({
     })
     .addCase(createTask.fulfilled, (state: TasksState, action: PayloadAction<any>) => {
       state.loadingStatus = 'loaded';
-      tasksAdapter.addOne(state, action.payload.task);
+      tasksAdapter.addOne(state, action.payload);
+    })
+    .addCase(deleteTask.fulfilled, (state: TasksState, action: PayloadAction<any>) => {
+      state.loadingStatus = 'loaded';
+      tasksAdapter.removeOne(state, action.payload);
     })
     .addMatcher<PendingAction>(
      (action) => action.type.endsWith("/pending"),

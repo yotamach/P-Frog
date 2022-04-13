@@ -14,7 +14,6 @@ export function Tasks(props: TasksProps) {
   const { tasks, getTasks } = useTask();
   const getRoutes = () => tasksMenuItems.map(tasksMenuItem => (<Route key={tasksMenuItem.title} path={tasksMenuItem.path} element={tasksMenuItem.component} />));
 
-  console.log(tasks);
   return (
     <Box sx={{
       p: 1,
