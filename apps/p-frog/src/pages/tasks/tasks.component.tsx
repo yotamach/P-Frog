@@ -20,17 +20,16 @@ export function Tasks(props: TasksProps) {
       display: 'flex',
       flexWrap: 'wrap',
       alignContent: 'flex-start',
-      height: '100%'
     }}>
       <Box sx={{ width: '100%' }}>
         <Typography variant="h5" component="h5">Tasks</Typography>
       </Box>
       <Divider />
-      <Box sx={{ width: '10%' }}>
-        <SideNav menuItems={tasksMenuItems} color={'text.primary'} />
+      <Box sx={{ width: '200px' }} pt={2}>
+        <SideNav menuItems={tasksMenuItems} color={'text.primary'} bgcolor="background.default" />
       </Box>
-      <Box flexGrow={1} sx={{ height: '100%' }}>
-        <Paper elevation={3} sx={{ p: 1, height: '100%' }} >
+      <Box height="89vh" flexGrow={1} sx={{ overflowY: 'scroll' }}>
+        <Paper elevation={3} sx={{ p: 1 }} >
           <Routes>
             {getRoutes()}
           </Routes>

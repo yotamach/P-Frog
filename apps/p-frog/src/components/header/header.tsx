@@ -11,11 +11,12 @@ import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import styles from "./header.module.scss";
+import { AccountCircle } from '@mui/icons-material';
 
 const pages = ['Products', 'Pricing', 'Blog'];
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
-const Header = () => {
+const Header = ({ title = undefined }: { title?: string | undefined }) => {
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
 
@@ -37,14 +38,15 @@ const Header = () => {
   return (
     <AppBar position="relative" className={styles.header}>
         <Toolbar>
-          <Typography
+          {title && <Typography
             variant="h6"
             noWrap
             component="h6"
+            color={'background.default'}
             sx={{ mr: 15, display: { xs: 'none', md: 'flex' } }}
           >
-            LOGO
-          </Typography>
+            {title}
+          </Typography>}
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
             <IconButton
               size="large"
@@ -104,7 +106,7 @@ const Header = () => {
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+                <AccountCircle sx={{ background: 'background.default' }} />
               </IconButton>
             </Tooltip>
             <Menu

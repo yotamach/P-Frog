@@ -12,7 +12,7 @@ export const FormTextField: React.FC<FormTextFieldProps> = ({name, control, rule
 		render={({ field: { onChange, value = '' }, fieldState: { error } }) => (
 			<TextField
 				label={label}
-				variant="filled"
+				variant="outlined"
 				value={value}
 				onChange={onChange}
 				error={!!error}
@@ -61,7 +61,7 @@ export const FormTextAreaField: React.FC<FormDateFieldProps> = ({name, control, 
 		render={({ field: { onChange, value = '' }, fieldState: { error } }) => (
 			<TextField
 				label={label}
-				variant="filled"
+				variant="outlined"
 				value={value}
 				multiline
 				rows={rows}

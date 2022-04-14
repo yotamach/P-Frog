@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import classes from './tasks-list.module.scss';
-import { useTask,usePopper } from '@hooks/index';
-import { Table } from '@components/index';
-import { ColumnProps, TopToolBarItem } from '@components/table/table';
+import { useTask,usePopper,useDialog } from '@hooks/index';
+import { Loader, ModalPopper, Table } from '@components/index';
+import { TopToolBarItem } from '@components/table/table';
 import { Delete, Add, Edit } from '@mui/icons-material';
-import { ModalPopper } from '@components/popper/modal-popper';
 import { useForm } from 'react-hook-form';
 import { FormDateField, FormTextField } from '@components/form/FormFields';
 import { Box, Button, Grid } from '@mui/material';
@@ -20,7 +19,8 @@ export interface TasksListProps {
 export function TasksList({ prop }: TasksListProps) {
   const { control, handleSubmit, reset } = useForm();
   const { tasksList, tasks, getTasks } = useTask(); 
-  const { popper, open, setOpen, setPopper } = usePopper();
+  const { popper, open: openPopper, setOpen: setOpenPopper, setPopper } = usePopper();
+  const { setDialog, setOpen: setOpenDialog, dialog, open: openDialog } = useDialog();
   const { component, anchorEl, title } = popper;
   const dispatch = useDispatch();
   useEffect(() => {
@@ -29,26 +29,19 @@ export function TasksList({ prop }: TasksListProps) {
 
   const onAddTask = handleSubmit((data: any) => {
     console.log(data);
-    // const task: Task = {
-    //   title: data.title,
-    //   description: data.description,
-    //   startDate: data.startDate.toString(),
-    //   endDate: data.endDate.toString()
-    // };
-    // const tasy: Task = {
-    //   title: "hoho",
-    //   description: "bob?!?",
-    //   startDate: "1985/2/5",
-    //   endDate: "1999/2/5",
-    // }
-    // dispatch(createTask(tasy));
-
+    const task: Task = {
+      title: data.title,
+      description: data.description,
+      startDate: data.startDate.toString(),
+      endDate: data.endDate.toString()
+    };
+    dispatch(createTask(task));
     reset({});
-    setOpen(false);
+    setOpenPopper(false);
   });
 
   const onCancel = () => {
-    setOpen(false);
+    setOpenPopper(false);
   }
 
 
@@ -63,7 +56,7 @@ export function TasksList({ prop }: TasksListProps) {
         });
         console.log('Add'); 
         console.log(rows); 
-        setOpen(true); 
+        setOpenPopper(true); 
       }
     },
     {
@@ -76,7 +69,7 @@ export function TasksList({ prop }: TasksListProps) {
           anchorEl: event.currentTarget
         });
         console.log('Edit'); 
-        setOpen(true); 
+        setOpenPopper(true); 
       }
     },  
     {
@@ -111,7 +104,8 @@ export function TasksList({ prop }: TasksListProps) {
     )
 
   return (<div className={classes.tasksList}>
-      <ModalPopper placement={'bottom-start'} anchorEl={anchorEl} title={title} open={open} component={component} />
+      <Loader visible={tasks.loadingStatus === 'loading'} />
+      <ModalPopper placement={'bottom-start'} anchorEl={anchorEl} title={title} open={openPopper} component={component} />
       <Table topToolBar={getTopToolBar()} columns={columns} data={tasksList} />
     </div>);
 }

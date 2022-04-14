@@ -1,8 +1,10 @@
 import Footer from './footer/footer';
 import Header from './header/header';
+import Loader from './loader/loader';
 import Main from './main/main';
 import SideNav from './side-nav/side-nav';
 import Table from './table/table';
+import { ModalPopper } from './popper/modal-popper';
 
 
 export {
@@ -10,5 +12,7 @@ export {
   Main,
   SideNav,
   Footer,
-  Table
+  Table,
+  Loader,
+  ModalPopper
 }

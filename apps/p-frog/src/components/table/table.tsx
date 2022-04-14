@@ -78,7 +78,7 @@ export default function Table({ topToolBar, columns, data }: TableProps) {
           {headerGroups.map(headerGroup => (
             <TableRow {...headerGroup.getHeaderGroupProps()}>
               {headerGroup.headers.map(column => (
-                <TableCell sx={{ color: 'text.secondary' }} {...column.getHeaderProps()}>{column.render('Header')}</TableCell>
+                <TableCell sx={{ color: 'background.default' }} {...column.getHeaderProps()}>{column.render('Header')}</TableCell>
               ))}
             </TableRow>
           ))}

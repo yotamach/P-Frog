@@ -8,18 +8,6 @@ const log: Logger = new Logger();
 const taskRouter: Router = Router();
 const taskService: TaskService = new TaskService();
 
-taskRouter.get('/login', (req: Request, res: Response) => {
-  log.info(`Login route`);
-  taskService.getTaskByParams(req.body, (err, task) => {
-    if (err) {
-      res.send({ success: false, error: err});
-    }
-    else {
-      res.send({ success: true, task});
-    }
-  });
-});
-
 taskRouter.post('/',async (req: Request, res: Response) => {
   log.info("/create task: post route");
   try {

@@ -9,10 +9,13 @@ export const lighThemeOptions: ThemeOptions = {
     secondary: {
       main: '#959cc2',
     },
+    background: {
+      default: '#ffffff'
+    },
     text: {
       primary: '#000000',
       disabled: 'rgba(0,0,0,0.29)',
-      secondary: '#ffffff',
+      secondary: 'rgba(0, 0, 0, 0.54)'
     },
     error: {
       main: '#f44336',

@@ -1,11 +1,11 @@
 /* Your styles goes here. */
 .app{
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: 240px 1fr;
   grid-template-rows: 50px 1fr 50px;
   grid-template-areas:
-          'header'
-          'main'
-          'footer';
+    "header header"
+    "sidenav main"
+    "footer footer";
   height: 100vh;
 }
