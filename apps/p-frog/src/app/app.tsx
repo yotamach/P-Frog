@@ -7,6 +7,7 @@ import { Message } from '@p-frog/data';
 import { Provider } from 'react-redux';
 import { menuItems, store } from '@data/index';
 import { BrowserRouter } from 'react-router-dom';
+import { SnackbarProvider } from 'notistack';
 
 const theme: Theme = createTheme(lighThemeOptions);
 
@@ -16,14 +17,21 @@ export const App = () => {
   return (
     <ThemeProvider theme={theme}>
         <Provider store={store}>
-          <BrowserRouter>
-            <div className={styles.app}>
-              <Header title={'LOGO'} />
-              <SideNav menuItems={menuItems} color={'white'} />
-              <Main/>
-              <Footer />
-            </div>
-          </BrowserRouter>
+          <SnackbarProvider
+              anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'right',
+            }}
+          >
+            <BrowserRouter>
+              <div className={styles.app}>
+                <Header title={'LOGO'} />
+                <SideNav menuItems={menuItems} color={'white'} />
+                <Main/>
+                <Footer />
+              </div>
+            </BrowserRouter>
+          </SnackbarProvider>
       </Provider>
     </ThemeProvider>
   );

@@ -14,6 +14,6 @@ export class TasksAPI {
     }
 
     delete(id: string): Promise<AxiosResponse> {
-        return request.post<AxiosResponse>(`tasks/`+ id, {});
+        return request.delete<AxiosResponse>(`tasks/`+ id, {});
     }
 }

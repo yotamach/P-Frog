@@ -18,7 +18,7 @@ taskRouter.post('/',async (req: Request, res: Response) => {
     res.send(taskDetails);
   } catch(e) {
     log.error(`post: Failed to create task - ${e}`);
-    res.send(e);
+    res.status(500).send(e);
   }
 });
 
@@ -63,15 +63,20 @@ taskRouter.get('/', (req: Request, res: Response) => {
 
 taskRouter.delete('/:id', (req: Request, res: Response) => {
   log.info(`Get route`);
-  const {id} = req.params;
-  taskService.deleteTask(id, (err, task) => {
-    if (err) {
-      res.send({ success: false, error: err});
-    }
-    else {
-      res.send({ success: true, task});
-    }
-  });
+  try{
+    const {id} = req.params;
+    taskService.deleteTask(id, (err, task) => {
+      if (err) {
+        res.status(404).send({ success: false, error: err});
+      }
+      else {
+        res.send({ success: true, task});
+      }
+    });
+  }
+  catch(e) {
+    res.status(500).send(e);
+  }
 });
 
 const taskRoutes : AppRouter = { url: '/tasks', router: taskRouter};

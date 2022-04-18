@@ -5,6 +5,7 @@ import Main from './main/main';
 import SideNav from './side-nav/side-nav';
 import Table from './table/table';
 import { ModalPopper } from './popper/modal-popper';
+import { Popup } from './popup/popup';
 
 
 export {
@@ -14,5 +15,6 @@ export {
   Footer,
   Table,
   Loader,
-  ModalPopper
+  ModalPopper,
+  Popup
 }

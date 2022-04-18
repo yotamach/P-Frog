@@ -7,6 +7,7 @@ import {
   PayloadAction
 } from '@reduxjs/toolkit';
 import { PendingAction, RejectedAction, Task } from '@types';
+import { VariantType } from 'notistack';
 import { TasksAPI } from '../../services';
 import { RootState } from '../store';
 
@@ -14,8 +15,14 @@ export const TASKS_FEATURE_KEY = 'tasks';
 
 const tasksAPI: TasksAPI = new TasksAPI();
 
+type StatusMessage = {
+  type: VariantType,
+  message: string;
+};
+
 export interface TasksState extends EntityState<Task> {
   loadingStatus: 'not loaded' | 'loading' | 'loaded' | 'error';
+  statusMessage: StatusMessage | null;
   error: string | null | undefined;
 }
 
@@ -53,6 +60,7 @@ export const deleteTask = createAsyncThunk(
 export const initialTasksState: TasksState = tasksAdapter.getInitialState({
   loadingStatus: 'not loaded',
   error: null,
+  statusMessage: null
 });
 
 export const tasksSlice = createSlice({
@@ -72,21 +80,26 @@ export const tasksSlice = createSlice({
     .addCase(createTask.fulfilled, (state: TasksState, action: PayloadAction<any>) => {
       state.loadingStatus = 'loaded';
       tasksAdapter.addOne(state, action.payload);
+      state.statusMessage = { type: 'success', message: 'Task added successfuly!' }
     })
     .addCase(deleteTask.fulfilled, (state: TasksState, action: PayloadAction<any>) => {
       state.loadingStatus = 'loaded';
-      tasksAdapter.removeOne(state, action.payload);
+      tasksAdapter.removeOne(state, action.payload.task.id);
+      state.statusMessage = { type: 'success', message: 'Task removed successfuly!' }
     })
     .addMatcher<PendingAction>(
      (action) => action.type.endsWith("/pending"),
      (state: TasksState, action: PayloadAction<any>) => {
       state.loadingStatus = 'loading';
+      state.statusMessage = null;
+
      })
     .addMatcher<RejectedAction>(
       (action) => action.type.endsWith("/rejected"),
-      (state: TasksState, action: PayloadAction<any>) => {
+      (state: TasksState, action: any) => {
        state.loadingStatus = 'error';
-       state.error = action.payload;
+       state.error = action?.error;
+       state.statusMessage = { type: 'error', message: String(action?.error?.message) }
     });
 }});
 

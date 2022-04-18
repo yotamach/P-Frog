@@ -11,7 +11,6 @@ import './tasks.component.module.scss';
 export interface TasksProps {}
 
 export function Tasks(props: TasksProps) {
-  const { tasks, getTasks } = useTask();
   const getRoutes = () => tasksMenuItems.map(tasksMenuItem => (<Route key={tasksMenuItem.title} path={tasksMenuItem.path} element={tasksMenuItem.component} />));
 
   return (
