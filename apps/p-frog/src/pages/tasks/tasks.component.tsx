@@ -4,6 +4,8 @@ import { useTask } from '@hooks/index';
 import { Divider, Paper } from '@mui/material';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
+import { useSnackbar } from 'notistack';
+import { useEffect } from 'react';
 import { Route, Routes } from 'react-router';
 import './tasks.component.module.scss';
 
@@ -12,6 +14,21 @@ export interface TasksProps {}
 
 export function Tasks(props: TasksProps) {
   const getRoutes = () => tasksMenuItems.map(tasksMenuItem => (<Route key={tasksMenuItem.title} path={tasksMenuItem.path} element={tasksMenuItem.component} />));
+  const { getTasks, tasks, tasksList } = useTask(); 
+  const { enqueueSnackbar } = useSnackbar();
+
+  useEffect(() => {
+    getTasks();
+  }, []);
+
+  const { loadingStatus, statusMessage } = tasks;
+  useEffect(() => {
+      if(statusMessage && (loadingStatus === 'loaded' || loadingStatus || 'error'))
+      {
+        const { message, type: variant } = statusMessage;
+        enqueueSnackbar(message, { variant });
+      }
+  },[loadingStatus]);
 
   return (
     <Box sx={{

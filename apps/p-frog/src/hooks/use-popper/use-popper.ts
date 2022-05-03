@@ -1,5 +1,5 @@
 import React, { ReactNode } from 'react';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 
 export interface UsePopper {
   open: boolean;
@@ -24,11 +24,11 @@ export function usePopper(): UsePopper {
     component
   };
 
-  const setPopper = ({ component = null, title = '', anchorEl = null } :{ component: ReactNode, title: string, anchorEl: HTMLElement | null }) => {
+  const setPopper = useMemo(() => ({ component = null, title = '', anchorEl = null } :{ component: ReactNode, title: string, anchorEl: HTMLElement | null }) => {
     setComponent(component);
     setTitle(title);
     setAnchorEl(anchorEl);
-  };
+  },[component, title, anchorEl]);
 
 
   return { popper, open, setOpen, setPopper};

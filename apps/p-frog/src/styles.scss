@@ -12,3 +12,9 @@ body::-webkit-scrollbar-track
 	border-radius: 10px;
 	background-color: #F5F5F5;
 }
+
+.MuiFormHelperText-root{
+  &.Mui-error{
+    margin: 0;
+  }  
+}

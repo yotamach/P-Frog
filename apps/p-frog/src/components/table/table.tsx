@@ -1,7 +1,7 @@
 import { TableContainer, Paper, TableHead, TableRow, TableCell, TableBody, Box, IconButton, Checkbox } from '@mui/material';
 import MUITable from '@mui/material/Table';
 import styles from './table.scss';
-import { ReactElement } from 'react';
+import { ReactElement, useMemo } from 'react';
 import { useTable, Column, useRowSelect, Row } from 'react-table';
 import React, { useEffect, forwardRef } from 'react';
 
@@ -19,6 +19,7 @@ interface CellProps {
 export interface TopToolBarItem {
   icon: ReactElement;
   label: string; 
+  disabled?: boolean;
   click: (event: React.MouseEvent<HTMLButtonElement>, selectedRows: Row<object>[]) => void;
 }
 
@@ -26,9 +27,10 @@ interface TableProps {
   columns: Column<any>[];
   data: any[];
   topToolBar: TopToolBarItem[];
+  onSelectRow: (row: Row<object> | null) => void;
 }
 
-export default function Table({ topToolBar, columns, data }: TableProps) {
+export default function Table({ topToolBar, columns, data, onSelectRow }: TableProps) {
 
   const {
     getTableProps,
@@ -36,43 +38,37 @@ export default function Table({ topToolBar, columns, data }: TableProps) {
     headerGroups,
     rows,
     selectedFlatRows,
-    prepareRow
+    toggleAllRowsSelected,
+    prepareRow,
   } = useTable(
     {
       columns,
       data,
     },
     useRowSelect,
-    hooks => {
-      hooks.visibleColumns.push((columns: any) => [
-        // Let's make a column for selection
-        {
-          id: 'selection',
-          Header: '',
-          Cell: ({ row, toggleAllRowsSelected }) => (
-            <div>
-              <Checkbox 
-              {...row.getToggleRowSelectedProps({
-                onChange: () => {
-                  const selected = row.isSelected;
-                  toggleAllRowsSelected(false);
-                  row.toggleRowSelected(!selected);
-                }
-              })} />
-            </div>
-          ),
-        },
-        ...columns,
-      ])
-    }
   )
 
-  const topToolBarPanel = getTopToolBar(topToolBar, selectedFlatRows);
+  const selectRow = (row: Row<object>) => {
+      const selected = row.isSelected;
+      toggleAllRowsSelected(false);
+      row.toggleRowSelected(!selected);
+      onSelectRow(!selected ? row : null);
+  }
+
+  function getTopToolBar(topToolBar: TopToolBarItem[]) {
+    const buttonsLists = topToolBar.map((button) => (
+        <IconButton key={button.label} onClick={(event) => button.click(event, selectedFlatRows)} aria-label={button.label} size="large" disabled={button.disabled}>
+          {button.icon}
+        </IconButton>));
+    return <Paper elevation={2}>
+        {buttonsLists}
+    </Paper>
+  }
+
   return (
+    <>
+    <Box>{getTopToolBar(topToolBar)}</Box>
     <TableContainer component={Paper}>
-      {<Box>
-        {topToolBarPanel}
-      </Box>}
       <MUITable sx={{ minWidth: 650 }} aria-label="table" {...getTableProps()}>
         <TableHead sx={{ bgcolor: 'primary.main' }}>
           {headerGroups.map(headerGroup => (
@@ -87,7 +83,7 @@ export default function Table({ topToolBar, columns, data }: TableProps) {
           {data.length ? rows.map((row, i) => {
             prepareRow(row)
             return (
-              <TableRow {...row.getRowProps()}>
+              <TableRow style={{ backgroundColor: row.isSelected ? '#ccc' : 'transparent' }} {...row.getRowProps()} onClick={(e) => selectRow(row)}>
                 {row.cells.map(cell => {
                   return <TableCell {...cell.getCellProps()}>{cell.render('Cell')}</TableCell>
                 })}
@@ -97,16 +93,7 @@ export default function Table({ topToolBar, columns, data }: TableProps) {
         </TableBody>
         </MUITable>
       </TableContainer>
+      </>
   );
 }
 
-
-function getTopToolBar(topToolBar: TopToolBarItem[], selectedRows: Row<object>[] = []) {
-  const buttonsLists = topToolBar.map((button) => (
-      <IconButton key={button.label} onClick={(event) => button.click(event, selectedRows)} aria-label={button.label} size="large">
-        {button.icon}
-      </IconButton>));
-  return <Paper elevation={2}>
-      {buttonsLists}
-  </Paper>
-}

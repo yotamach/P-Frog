@@ -30,29 +30,49 @@ export const tasksAdapter = createEntityAdapter<Task>();
 
 export const fetchTasks = createAsyncThunk(
   'tasks/fechtAll',
-  async (_, { rejectWithValue } ) => {
+  async (_, thunkAPI ) => {
     try{
       const response = await tasksAPI.fetchAll();
       return response.data;
     } catch(e: any) {
-        return rejectWithValue(e.response.data);
+        return thunkAPI.rejectWithValue(e.response.data);
     }
   }
 );
 
 export const createTask = createAsyncThunk(
   'tasks/createTask',
-  async (task: Task) => {
-    const response = await tasksAPI.create(task);
-    return response.data;
+  async (task: Task, thunkAPI) => {
+    try{
+      const response = await tasksAPI.create(task);
+      return response.data;
+    } catch(e: any) {
+        return thunkAPI.rejectWithValue(e.response.data);
+    }
+  }
+)
+
+export const updateTask = createAsyncThunk(
+  'tasks/updateTask',
+  async ({ id ,task }: {id: string, task: Task}, thunkAPI) => {
+    try{
+      const response = await tasksAPI.update(id, task);
+      return { id, task: response.data.task };
+    } catch(e: any) {
+        return thunkAPI.rejectWithValue(e.response.data);
+    }
   }
 )
 
 export const deleteTask = createAsyncThunk(
   'tasks/deleteTask',
-  async (id: string) => {
-    const response = await tasksAPI.delete(id);
-    return response.data;
+  async (id: string, thunkAPI) => {
+    try{
+      const response = await tasksAPI.delete(id);
+      return response.data;
+    } catch(e: any) {
+        return thunkAPI.rejectWithValue(e.response.data);
+    }
   }
 )
 
@@ -82,18 +102,25 @@ export const tasksSlice = createSlice({
       tasksAdapter.addOne(state, action.payload);
       state.statusMessage = { type: 'success', message: 'Task added successfuly!' }
     })
+    .addCase(updateTask.fulfilled, (state: TasksState, action: PayloadAction<any>) => {
+      state.loadingStatus = 'loaded';
+      const { id ,task } = action.payload;
+      delete task.id;
+      tasksAdapter.updateOne(state, { id, changes: task });
+      state.statusMessage = { type: 'success', message: 'Task updated successfuly!' }
+    })
     .addCase(deleteTask.fulfilled, (state: TasksState, action: PayloadAction<any>) => {
       state.loadingStatus = 'loaded';
       tasksAdapter.removeOne(state, action.payload.task.id);
       state.statusMessage = { type: 'success', message: 'Task removed successfuly!' }
     })
     .addMatcher<PendingAction>(
-     (action) => action.type.endsWith("/pending"),
-     (state: TasksState, action: PayloadAction<any>) => {
-      state.loadingStatus = 'loading';
-      state.statusMessage = null;
-
-     })
+      (action) => action.type.endsWith("/pending"),
+      (state: TasksState, action: PayloadAction<any>) => {
+       state.loadingStatus = 'loading';
+       state.statusMessage = null;
+ 
+    })
     .addMatcher<RejectedAction>(
       (action) => action.type.endsWith("/rejected"),
       (state: TasksState, action: any) => {

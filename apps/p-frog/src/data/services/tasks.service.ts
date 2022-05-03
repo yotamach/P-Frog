@@ -13,6 +13,10 @@ export class TasksAPI {
         });
     }
 
+    update(id: string, task: Task): Promise<AxiosResponse> {
+        return request.patch<AxiosResponse>(`tasks/`+ id, task);
+    }
+
     delete(id: string): Promise<AxiosResponse> {
         return request.delete<AxiosResponse>(`tasks/`+ id, {});
     }

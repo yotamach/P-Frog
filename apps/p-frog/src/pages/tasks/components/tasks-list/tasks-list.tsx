@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import classes from './tasks-list.module.scss';
 import { useTask,usePopper,useDialog } from '@hooks/index';
 import { Loader, ModalPopper, Popup, Table } from '@components/index';
@@ -12,6 +12,8 @@ import { createTask } from '@data/store/tasks/tasks.slice';
 import { useDispatch } from 'react-redux';
 import { Task } from '@types';
 import { ActionButton } from '@components/popup/popup';
+import { Validators } from '@data/index';
+import { Row } from 'react-table';
 
 export interface TasksListProps {
   prop?: string;
@@ -19,12 +21,11 @@ export interface TasksListProps {
 
 export function TasksList({ prop }: TasksListProps) {
   const { control, handleSubmit, reset } = useForm();
-  const { tasksList, tasks, removeTask, addTask } = useTask(); 
+  const [ selectedRow, setSelectedRow ] = useState<Row<any> | null>(null);
+  const { tasksList, tasks, removeTask, editTask, addTask } = useTask(); 
   const { popper, open: openPopper, setOpen: setOpenPopper, setPopper } = usePopper();
   const { setDialog, setOpen: setOpenDialog, dialog, open: openDialog } = useDialog();
   const { component, anchorEl, title } = popper;
-  const dispatch = useDispatch();
-
   const onAddTask = handleSubmit((data: any) => {
     const task: Task = {
       title: data.title,
@@ -35,6 +36,22 @@ export function TasksList({ prop }: TasksListProps) {
     addTask(task);
     reset({});
     setOpenPopper(false);
+    setSelectedRow(null);
+  });
+
+  const onUpdateTask = handleSubmit((data: any) => {
+    const task: Task = {
+      title: data.title,
+      description: data.description,
+      startDate: data.startDate.toString(),
+      endDate: data.endDate.toString()
+    };
+    console.log(selectedRow);
+    console.log(selectedRow?.original?.id);
+    editTask(selectedRow?.original?.id,task);
+    reset({});
+    setOpenPopper(false);
+    setSelectedRow(null);
   });
 
   const onCancel = () => {
@@ -47,31 +64,34 @@ export function TasksList({ prop }: TasksListProps) {
       label: 'Add task',
       click: (event, rows) => { 
         setPopper({
-          component: AddTaskPoperContent({control, onAddTask, onCancel}),
+          component: TaskPoperContent({control, onSubmit: onAddTask, onCancel, row: rows[0]}),
           title: 'Edit task',
           anchorEl: event.currentTarget
-        });
-        console.log('Add'); 
-        console.log(rows); 
+        })
+        reset({});
         setOpenPopper(true); 
+        
       }
     },
     {
       icon: <Edit fontSize="inherit" />,
       label: 'Edit task',
-      click: (event) => { 
+      disabled: !selectedRow,
+      click: (event, rows) => { 
         setPopper({
-          component: AddTaskPoperContent({control, onAddTask,onCancel}),
+          component: TaskPoperContent({control, onSubmit: onUpdateTask, onCancel}),
           title: 'Edit task',
           anchorEl: event.currentTarget
         });
-        console.log('Edit'); 
+        setSelectedRow(rows[0]);
+        reset({ ...rows[0].values });
         setOpenPopper(true); 
       }
     },  
     {
       icon: <Delete fontSize="inherit" />,
       label: 'Delete task',
+      disabled: !selectedRow,
       click: (event, rows) => { 
         setDialog({ title: 'Delete Task', content: getDeletePopupContent(), data: rows[0].original });
         setOpenDialog(true);
@@ -86,9 +106,9 @@ export function TasksList({ prop }: TasksListProps) {
     {
       title: 'Delete',
       onClick: () => {
-        console.log(dialog.data)
         removeTask(dialog.data.key);
         setOpenDialog(false);
+        setSelectedRow(null);
       }
     },
     {
@@ -99,28 +119,33 @@ export function TasksList({ prop }: TasksListProps) {
     }
   ])
 
-  const AddTaskPoperContent: React.FC<{ control: Control, onAddTask: any, onCancel: any }> = ({ control, onAddTask, onCancel }) => {
+  const TaskPoperContent: React.FC<{ control: Control, onSubmit: any, onCancel: any, row?: Row<object> }> = ({ control, onSubmit, onCancel, row }) => {
+    const submit = (event: any) => {
+      event.preventDefault();
+      onSubmit(row);
+    };
+
     return (<Box width={400}>
-      <form onSubmit={onAddTask} >
+      <form onSubmit={submit} >
         <Grid container spacing={1}>
-          <Grid item xs={6}>
-            <FormTextField control={control} name={'title'} label='Title' />
+          <Grid item xs={6} pb={1}>
+            <FormTextField control={control} name={'title'} label='Title' rules={Validators.required} />
           </Grid>
-          <Grid item xs={6}>
-            <FormTextField control={control} name={'description'} label='Description' />
+          <Grid item xs={6} pb={1}>
+            <FormTextField control={control} name={'description'} label='Description' rules={Validators.required} />
           </Grid>
-          <Grid item xs={6}>
-            <FormDateField control={control} name={'startDate'} label='Start Date' />
+          <Grid item xs={6} pb={1}>
+            <FormDateField control={control} name={'startDate'} label='Start Date' rules={Validators.required} />
           </Grid>
-          <Grid item xs={6} mb={1}>
-            <FormDateField control={control} name={'endDate'} label='End Date' />
+          <Grid item xs={6} mb={1} pb={1}>
+            <FormDateField control={control} name={'endDate'} label='End Date' rules={Validators.required} />
           </Grid>
           <Grid item container xs={12} spacing={1} sx={{ justifyContent: 'space-between' }}>      
             <Grid item xs={2}>
-              <Button type='submit' variant="contained" size="small" color="primary">OK</Button>
+              <Button type='submit' variant="contained" size="medium" color="primary">OK</Button>
             </Grid> 
             <Grid item xs={2}>
-              <Button type='button' onClick={onCancel} variant="outlined" size="small" color="secondary">Close</Button>
+              <Button type='button' onClick={onCancel} variant="outlined" size="medium" color="secondary">Close</Button>
             </Grid> 
           </Grid>
         </Grid>
@@ -149,10 +174,16 @@ export function TasksList({ prop }: TasksListProps) {
           ],
       []);
 
+
+  const onSelectRow = async (row: Row<object> | null) =>{
+    setSelectedRow(row);
+    console.log(row);
+  }
+
   return (<div className={classes.tasksList}>
       <Loader visible={tasks.loadingStatus === 'loading'} />
       <Popup open={openDialog} onClose={() => setOpenDialog(false)} title={'Delete Task'} content={getDeletePopupContent()} actionsButtons={getDeletePopupActionsButtons()} />
       <ModalPopper placement={'bottom-start'} anchorEl={anchorEl} title={title} open={openPopper} component={component} />
-      <Table topToolBar={getTopToolBar()} columns={columns} data={tasksList} />
+      <Table topToolBar={getTopToolBar()} columns={columns} data={tasksList} onSelectRow={onSelectRow} />
     </div>);
 }

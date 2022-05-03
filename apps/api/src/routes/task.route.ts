@@ -26,11 +26,13 @@ taskRouter.patch('/:id', (req: Request, res: Response) => {
   log.info(`Update task`);
   const task: TaskModel = req.body;
   const {id} = req.params;
+  log.info(id);
   taskService.updateTask(task, id, (err, task) => {
     if (err) {
       res.send({ success: false, error: err});
     }
     else {
+      log.info(JSON.stringify(task));
       res.send({ success: true, task});
     }
   });

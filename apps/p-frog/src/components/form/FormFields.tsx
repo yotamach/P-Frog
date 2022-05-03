@@ -4,6 +4,8 @@ import { FormControl, FormControlLabel, Radio, RadioGroup, TextField } from "@mu
 import { Control, Controller } from "react-hook-form";
 import LocalizationProvider from "@mui/lab/LocalizationProvider";
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
+import classes from "./FormFields.module.scss";
+
 
 export const FormTextField: React.FC<FormTextFieldProps> = ({name, control, rules = {}, label, type = 'text'}) => {
 	return (<Controller
@@ -11,17 +13,17 @@ export const FormTextField: React.FC<FormTextFieldProps> = ({name, control, rule
 		control={control}
 		render={({ field: { onChange, value = '' }, fieldState: { error } }) => (
 			<TextField
-				label={label}
-				variant="outlined"
-				value={value}
-				onChange={onChange}
-				error={!!error}
-				helperText={error ? error.message : null}
-				type={type}
-				fullWidth
-			/>
+					label={label}
+					variant="outlined"
+					value={value}
+					onChange={onChange}
+					error={!!error}
+					helperText={error ? error.message : null}
+					type={type}
+					fullWidth
+				/>
 		)}
-		rules={rules}
+		rules={rules(name)}
 	/>
 	);
 }
@@ -49,7 +51,7 @@ export const FormDateField: React.FC<FormTextFieldProps> = ({name, control, rule
 				/>
 			</LocalizationProvider>
 		)}
-		rules={rules}
+		rules={rules(name)}
 	/>
 	);
 }
@@ -72,7 +74,7 @@ export const FormTextAreaField: React.FC<FormDateFieldProps> = ({name, control, 
 				fullWidth
 			/>
 		)}
-		rules={rules}
+		rules={rules(name)}
 	/>
 	);
 }
@@ -104,7 +106,7 @@ export const RadioGroupField: React.FC<RadioGroupFieldProps> = ({row = true, opt
 				</RadioGroup>
 			</FormControl>
 		)}
-		rules={rules}
+		rules={rules(name)}
 	/>
 	);
 }
