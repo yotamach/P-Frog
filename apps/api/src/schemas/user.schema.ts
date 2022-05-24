@@ -4,15 +4,17 @@ import {
   Model,
   Schema
 } from 'mongoose';
+import { UserModel } from '@models';
+import { GenericDict } from '@p-frog/data';
 
-export interface IUser extends Document {
-  email: string;
-  firstName: string;
-  lastName: string;
-}
+export interface IUser extends Document, UserModel {};
 
 const UserSchema: Schema = new Schema({
   email: {
+    type: String,
+    required: true
+  },
+  password: {
     type: String,
     required: true
   },
@@ -27,7 +29,8 @@ const UserSchema: Schema = new Schema({
   userName: {
     type: String,
     required: true
-  }
+  },
+  token: { type: String },
 });
 
-export const User: Model <IUser> = model('User', UserSchema);
+export const User: Model<any, GenericDict, GenericDict, GenericDict> = model('User', UserSchema);

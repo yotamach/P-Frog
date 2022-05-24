@@ -6,8 +6,9 @@ import { Header, Main, Footer, SideNav } from '@components/index';
 import { Message } from '@p-frog/data';
 import { Provider } from 'react-redux';
 import { menuItems, store } from '@data/index';
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { SnackbarProvider } from 'notistack';
+import { Dashboard, Home, Registration, Welcome } from '@pages/index';
 
 const theme: Theme = createTheme(lighThemeOptions);
 
@@ -25,10 +26,11 @@ export const App = () => {
           >
             <BrowserRouter>
               <div className={styles.app}>
-                <Header title={'LOGO'} />
-                <SideNav menuItems={menuItems} color={'white'} />
-                <Main/>
-                <Footer />
+                <Routes>
+                  <Route path='/' element={<Welcome />}  />
+                  <Route path='/home' element={<Home />}  />
+                  <Route path='/registration' element={<Registration />}  />
+                </Routes>
               </div>
             </BrowserRouter>
           </SnackbarProvider>

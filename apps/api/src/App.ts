@@ -1,10 +1,12 @@
-import * as express from "express";
+import express from "express";
 import {BASE_API} from "./config/config";
 import { AppRouter } from "@models";
 import { connect } from "mongoose";
 import { Logger } from "tslog";
 import { Port } from "@p-frog/data";
-import * as cors from 'cors';
+import cors from 'cors';
+import cookieParser  from 'cookie-parser'
+import expressSession from 'express-session'
 
 const log: Logger = new Logger();
 
@@ -29,12 +31,37 @@ export class App {
     this.app.use(cors());
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: false }));
+    this.app.use(cookieParser());
+    this.app.use(expressSession({
+      secret: 'Pfrog-session',
+      resave: false,
+      saveUninitialized: false
+    }))
+
   }
 
   addRouter(appRouter: AppRouter): void {
     const { url, router } = appRouter;
     this.app.use(BASE_API + url, router);
   }
+
+  addDefaultRoutes(): void {
+    this.app.use(function(req, res, next) {
+      const err = new Error('Not Found');
+      next(err);
+    });
+    
+    // error handler
+    this.app.use(function(req, res, next ,err) {
+      // set locals, only providing error in development
+      res.locals.message = err.message;
+      res.locals.error = req.app.get('env') === 'development' ? err : {};
+    
+      // render the error page
+      res.status(err.status || 500);
+      res.render('error');
+    });
+  };
 
   dbConnect(host: string, userName: string, password: string, schema: string) {
     connect(`mongodb+srv://${userName}:${password}@${host}/${schema}?retryWrites=true&w=majority
