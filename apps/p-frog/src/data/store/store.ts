@@ -1,6 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit'
+import { authReducer, AUTH_FEATURE_KEY } from './auth/auth.slice';
 import { tasksReducer, TASKS_FEATURE_KEY } from './tasks/tasks.slice'
-import { AUTH_FEATURE_KEY } from 'apps\p-frog\src\app\data\store\auth.slice';
 
 export const store = configureStore({
     reducer: {

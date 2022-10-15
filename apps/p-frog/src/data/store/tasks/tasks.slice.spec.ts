@@ -10,7 +10,7 @@ describe('tasks reducer', () => {
     expect(tasksReducer(undefined, { type: '' })).toEqual(expected);
   });
 
-  it('should handle fetchTaskss', () => {
+  it('should handle fetchTasks', () => {
     let state = tasksReducer(undefined, fetchTasks.pending('Task'));
 
     expect(state).toEqual(

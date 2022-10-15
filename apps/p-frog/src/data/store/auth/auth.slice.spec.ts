@@ -1,46 +1,46 @@
-import { fetchTasks, tasksAdapter, tasksReducer } from './auth.slice';
+import { authReducer, initialAuthState, Login } from './auth.slice';
 
-describe('tasks reducer', () => {
+describe('auth reducer', () => {
   it('should handle initial state', () => {
-    const expected = tasksAdapter.getInitialState({
-      loadingStatus: 'not loaded',
-      error: null,
-    });
+    const expected = initialAuthState;
 
-    expect(tasksReducer(undefined, { type: '' })).toEqual(expected);
+    expect(authReducer(undefined, { type: '' })).toEqual(expected);
   });
 
-  it('should handle fetchTaskss', () => {
-    let state = tasksReducer(undefined, fetchTasks.pending('Task'));
+  it('should handle Login', () => {
+    let state = authReducer(undefined, Login.pending('Auth'));
 
     expect(state).toEqual(
       expect.objectContaining({
         loadingStatus: 'loading',
         error: null,
-        entities: {},
+        isAuth: false,
+        statusMessage: null
       })
     );
 
-    state = tasksReducer(state, fetchTasks.fulfilled([{ id: 1 }], 'Task'));
+    state = authReducer(state, Login.fulfilled(undefined, 'Auth'));
 
     expect(state).toEqual(
       expect.objectContaining({
         loadingStatus: 'loaded',
         error: null,
-        entities: { 1: { id: 1 } },
+        isAuth: true,
+        statusMessage: null
       })
     );
 
-    state = tasksReducer(
+    state = authReducer(
       state,
-      fetchTasks.rejected(new Error('Uh oh'), 'Task')
+      Login.rejected(null, 'Auth')
     );
 
     expect(state).toEqual(
       expect.objectContaining({
-        loadingStatus: 'error',
-        error: 'Uh oh',
-        entities: { 1: { id: 1 } },
+        error: { message: "Rejected"},
+        isAuth: true, 
+        loadingStatus: "error", 
+        statusMessage: null
       })
     );
   });

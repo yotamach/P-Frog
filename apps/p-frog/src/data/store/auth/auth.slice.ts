@@ -1,9 +1,7 @@
 import {
   createAsyncThunk,
-  createEntityAdapter,
   createSelector,
   createSlice,
-  EntityState,
   PayloadAction
 } from '@reduxjs/toolkit';
 import { PendingAction, RejectedAction, Task } from '@types';
@@ -14,14 +12,14 @@ export const AUTH_FEATURE_KEY = 'auth';
 
 const tasksAPI: TasksAPI = new TasksAPI();
 
-export interface TasksState extends EntityState<Task> {
+export interface AuthState {
   loadingStatus: 'not loaded' | 'loading' | 'loaded' | 'error';
   error: string | null | undefined;
+  isAuth: boolean;
+  statusMessage?: any;
 }
 
-export const tasksAdapter = createEntityAdapter<Task>();
-
-export const fetchTasks = createAsyncThunk(
+export const Login = createAsyncThunk(
   'auth/login',
   async (_, thunkAPI ) => {
     try{
@@ -33,7 +31,7 @@ export const fetchTasks = createAsyncThunk(
   }
 );
 
-export const createTask = createAsyncThunk(
+export const SignUp = createAsyncThunk(
   'auth/signup',
   async (task: Task, thunkAPI) => {
     try{
@@ -45,20 +43,8 @@ export const createTask = createAsyncThunk(
   }
 )
 
-export const updateTask = createAsyncThunk(
-  'tasks/updateTask',
-  async ({ id ,task }: {id: string, task: Task}, thunkAPI) => {
-    try{
-      const response = await tasksAPI.update(id, task);
-      return { id, task: response.data.task };
-    } catch(e: any) {
-        return thunkAPI.rejectWithValue(e.response.data);
-    }
-  }
-)
-
-export const deleteTask = createAsyncThunk(
-  'tasks/deleteTask',
+export const SignOut = createAsyncThunk(
+  'auth/signout',
   async (id: string, thunkAPI) => {
     try{
       const response = await tasksAPI.delete(id);
@@ -70,67 +56,57 @@ export const deleteTask = createAsyncThunk(
 )
 
 
-export const initialTasksState: TasksState = tasksAdapter.getInitialState({
+export const initialAuthState: AuthState = {
   loadingStatus: 'not loaded',
   error: null,
+  isAuth: false,
   statusMessage: null
-});
+};
 
-export const tasksSlice = createSlice({
+export const authSlice = createSlice({
   name: AUTH_FEATURE_KEY,
-  initialState: initialTasksState,
-  reducers: {
-    add: tasksAdapter.addOne,
-    remove: tasksAdapter.removeOne,
-    update: tasksAdapter.updateOne,
-  },
+  initialState: initialAuthState,
+  reducers: {},
   extraReducers: (builder) => {
     builder
-    .addCase(fetchTasks.fulfilled, (state: TasksState, action: PayloadAction<any>) => {
+    .addCase(Login.fulfilled, (state: AuthState, action: PayloadAction<any>) => {
       state.loadingStatus = 'loaded';
-      tasksAdapter.addMany(state, action.payload.tasks);
+      state.error = null;
+      state.isAuth = true;
     })
-    .addCase(createTask.fulfilled, (state: TasksState, action: PayloadAction<any>) => {
+    .addCase(SignOut.fulfilled, (state: AuthState, action: PayloadAction<any>) => {
       state.loadingStatus = 'loaded';
-      tasksAdapter.addOne(state, action.payload);
+      state.error = null;
+      state.isAuth = false;
     })
-    .addCase(updateTask.fulfilled, (state: TasksState, action: PayloadAction<any>) => {
+    .addCase(SignUp.fulfilled, (state: AuthState, action: PayloadAction<any>) => {
       state.loadingStatus = 'loaded';
-      const { id ,task } = action.payload;
-      delete task.id;
-      tasksAdapter.updateOne(state, { id, changes: task });
-    })
-    .addCase(deleteTask.fulfilled, (state: TasksState, action: PayloadAction<any>) => {
-      state.loadingStatus = 'loaded';
-      tasksAdapter.removeOne(state, action.payload.task.id);
+      state.error = null;
+      state.isAuth = false;
     })
     .addMatcher<PendingAction>(
       (action) => action.type.endsWith("/pending"),
-      (state: TasksState, action: PayloadAction<any>) => {
+      (state: AuthState, action: PayloadAction<any>) => {
        state.loadingStatus = 'loading';
  
     })
     .addMatcher<RejectedAction>(
       (action) => action.type.endsWith("/rejected"),
-      (state: TasksState, action: any) => {
+      (state: AuthState, action: any) => {
        state.loadingStatus = 'error';
        state.error = action?.error;
     });
 }});
 
-export const tasksReducer = tasksSlice.reducer;
+export const authReducer = authSlice.reducer;
 
-export const tasksActions = tasksSlice.actions;
+export const authActions = authSlice.actions;
 
-const { selectAll, selectEntities } = tasksAdapter.getSelectors();
 
-export const getTasksState = (rootState: RootState): TasksState =>
+export const getAuthsState = (rootState: RootState): AuthState =>
   rootState[AUTH_FEATURE_KEY];
 
-export const selectAllTasks = createSelector(getTasksState, selectAll);
-
-export const selectTasksEntities = createSelector(
-  getTasksState,
-  selectEntities
+export const isAuth = createSelector(
+  getAuthsState,((state: AuthState) => state.isAuth)
 );
 
