@@ -63,11 +63,12 @@ export class App {
     });
   };
 
-  dbConnect(host: string, userName: string, password: string, schema: string) {
-    connect(`mongodb+srv://${userName}:${password}@${host}/${schema}?retryWrites=true&w=majority
-
-    `);
-    log.info(`Connected to mongoDB URL: mongodb://${host}/ DB: ${schema}`);
+  dbConnect(host: string, port: string, userName: string, password: string, schema: string) {
+    connect(`mongodb://${userName}:${password}@${host}:${port}/${schema}`).then(() => {
+      log.info(`Connected to mongoDB DB: ${schema}`);
+    }).catch((e) => {
+      log.error(`Connecteion to mongoDB was failed, reason ${e}`);
+    });
   }
 }
 
