@@ -1,0 +1,15 @@
+version: '3.3'
+services:
+    mongodb:
+        ports:
+            - '27017:27017'
+
+        container_name: p-frog_mongo
+        restart: always
+        logging:
+            options:
+                max-size: 1g
+        environment:
+            - MONGO_INITDB_ROOT_USERNAME=admin
+            - MONGO_INITDB_ROOT_PASSWORD=pfrogpswrd
+        image: mongo
