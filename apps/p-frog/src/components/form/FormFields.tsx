@@ -23,7 +23,7 @@ export const FormTextField: React.FC<FormTextFieldProps> = ({name, control, rule
 					fullWidth
 				/>
 		)}
-		rules={rules(name)}
+		rules={rules}
 	/>
 	);
 }
@@ -51,7 +51,7 @@ export const FormDateField: React.FC<FormTextFieldProps> = ({name, control, rule
 				/>
 			</LocalizationProvider>
 		)}
-		rules={rules(name)}
+		rules={rules}
 	/>
 	);
 }
@@ -74,7 +74,7 @@ export const FormTextAreaField: React.FC<FormDateFieldProps> = ({name, control, 
 				fullWidth
 			/>
 		)}
-		rules={rules(name)}
+		rules={rules}
 	/>
 	);
 }
@@ -106,7 +106,7 @@ export const RadioGroupField: React.FC<RadioGroupFieldProps> = ({row = true, opt
 				</RadioGroup>
 			</FormControl>
 		)}
-		rules={rules(name)}
+		rules={rules}
 	/>
 	);
 }

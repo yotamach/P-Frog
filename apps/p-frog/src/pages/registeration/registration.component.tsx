@@ -1,9 +1,9 @@
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { Route, Link } from 'react-router-dom';
-import BasicDetails from './components/basic-details/basic-details';
+import BasicDetails from './components/basic-details/basic-details.component';
 import './registration.component.module.scss';
-import MoreDetails from './components/more-details/nore-details.component';
+import MoreDetails from './components/more-details/more-details.component';
 
 /* eslint-disable-next-line */
 export interface TasksProps {}
