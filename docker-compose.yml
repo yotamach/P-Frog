@@ -3,7 +3,6 @@ services:
     mongodb:
         ports:
             - '27017:27017'
-
         container_name: p-frog_mongo
         restart: always
         logging:

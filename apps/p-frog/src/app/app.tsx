@@ -8,7 +8,7 @@ import { Provider } from 'react-redux';
 import { menuItems, store } from '@data/index';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { SnackbarProvider } from 'notistack';
-import { Dashboard, Home, Registration, Welcome } from '@pages/index';
+import { Dashboard, Home, Login, Registration, Welcome } from '@pages/index';
 
 const theme: Theme = createTheme(lighThemeOptions);
 
@@ -30,6 +30,7 @@ export const App = () => {
                   <Route path='/' element={<Welcome />}  />
                   <Route path='/home' element={<Home />}  />
                   <Route path='/registration' element={<Registration />}  />
+                  <Route path='/login' element={<Login />} />
                 </Routes>
               </div>
             </BrowserRouter>
