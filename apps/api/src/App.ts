@@ -8,7 +8,13 @@ import cors from 'cors';
 import cookieParser  from 'cookie-parser'
 import expressSession from 'express-session'
 
-const log: Logger = new Logger();
+const log: Logger = new Logger({
+  name: 'P-Frog API',
+  displayDateTime: true,
+  displayFunctionName: true,
+  displayFilePath: 'displayAll',
+  dateTimePattern: 'year-month-day hour:minute:second.millisecond',
+});
 
 // Suppress Mongoose strictQuery deprecation warning
 set('strictQuery', false);
