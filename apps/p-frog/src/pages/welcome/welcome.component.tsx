@@ -1,7 +1,6 @@
 import Box from "@mui/material/Box";
 import { Route, Link } from 'react-router-dom';
 
-import './welcome.component.module.scss';
 import Typography from '@mui/material/Typography';
 import { Divider, Paper } from "@mui/material";
 import { Fragment } from "react";

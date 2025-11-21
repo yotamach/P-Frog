@@ -4,11 +4,12 @@
   "projectType": "application",
   "targets": {
     "build": {
-      "executor": "@nrwl/web:webpack",
+      "executor": "@nx/webpack:webpack",
       "outputs": ["{options.outputPath}"],
       "defaultConfiguration": "production",
       "options": {
         "compiler": "babel",
+        "target": "web",
         "outputPath": "dist/apps/p-frog",
         "index": "apps/p-frog/src/index.html",
         "baseHref": "/",
@@ -18,7 +19,10 @@
         "assets": ["apps/p-frog/src/favicon.ico", "apps/p-frog/src/assets"],
         "styles": ["apps/p-frog/src/styles.scss"],
         "scripts": [],
-        "webpackConfig": "apps/p-frog/webpack.config.js"
+        "webpackConfig": "apps/p-frog/webpack.config.js",
+        "stylePreprocessorOptions": {
+          "includePaths": []
+        }
       },
       "configurations": {
         "production": {
@@ -38,7 +42,7 @@
       }
     },
     "serve": {
-      "executor": "@nrwl/web:dev-server",
+      "executor": "@nx/webpack:dev-server",
       "options": {
         "buildTarget": "p-frog:build",
         "hmr": true,
@@ -52,14 +56,14 @@
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/eslint:lint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["apps/p-frog/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "outputs": ["coverage/apps/p-frog"],
       "options": {
         "jestConfig": "apps/p-frog/jest.config.js",

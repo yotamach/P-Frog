@@ -3,7 +3,6 @@ import { Box, Button, Card, CardActions, CardContent, CardHeader, Fade, Paper, P
 import zIndex from '@mui/material/styles/zIndex';
 import { typography } from '@mui/system';
 import React, { Component, useState } from 'react';
-import classes from './modal-popper.module.scss';
 
 export interface PopperProps {
   placement: PopperPlacementType;
@@ -20,7 +19,7 @@ export function ModalPopper({ title,  component, placement, open, anchorEl }: Po
     {({ TransitionProps }) => (
       <Fade {...TransitionProps} timeout={350}>
         <Card>
-        <Box pl={1} textAlign={'center'} bgcolor={'primary.main'} className={classes.modalHeader} color={'text.secondary'}>
+        <Box pl={1} textAlign={'center'} bgcolor={'primary.main'} sx={{ border: '1px solid' }} color={'text.secondary'}>
             <Typography component="div" variant="h5">
                 {title}
             </Typography>

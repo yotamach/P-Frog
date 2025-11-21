@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import {createTheme, Theme, ThemeProvider} from "@mui/material";
-import styles from "./app.module.scss";
 import {lighThemeOptions} from "../theme";
 import { Header, Main, Footer, SideNav } from '@components/index';
 import { Message } from '@p-frog/data';
@@ -25,7 +24,7 @@ export const App = () => {
             }}
           >
             <BrowserRouter>
-              <div className={styles.app}>
+              <div className="grid grid-cols-[240px_1fr] grid-rows-[50px_1fr_50px] h-screen" style={{gridTemplateAreas: '"header header" "sidenav main" "footer footer"'}}>
                 <Routes>
                   <Route path='/' element={<Welcome />}  />
                   <Route path='/home' element={<Home />}  />

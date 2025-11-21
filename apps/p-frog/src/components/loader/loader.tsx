@@ -1,5 +1,4 @@
 import { Backdrop, CircularProgress } from '@mui/material';
-import './loader.module.scss';
 
 export interface LoaderProps {
   visible: boolean;

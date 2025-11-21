@@ -4,7 +4,6 @@ import { FormControl, FormControlLabel, Radio, RadioGroup, TextField } from "@mu
 import { Control, Controller } from "react-hook-form";
 import LocalizationProvider from "@mui/lab/LocalizationProvider";
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
-import classes from "./FormFields.module.scss";
 
 
 export const FormTextField: React.FC<FormTextFieldProps> = ({name, control, rules = {}, label, type = 'text'}) => {

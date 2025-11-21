@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { TasksAPI } from './tasks.service';
-const BASE_URL = `http://${process.env.NX_SERVER_HOST}:${process.env.NX_SERVER_PORT}/api/` 
+const BASE_URL = `http://${import.meta.env.VITE_SERVER_HOST || 'localhost'}:${import.meta.env.VITE_SERVER_PORT || '3333'}/api/` 
 
 export const request = axios.create({
     baseURL: BASE_URL,

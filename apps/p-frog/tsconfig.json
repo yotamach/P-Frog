@@ -15,7 +15,7 @@
       "@types": ["src/types/index.ts"],
       "@p-frog/data": ["../../libs/data/src/index.ts"]
     },
-    "module": "commonjs",
+    "module": "ESNext",
     "jsx": "react-jsx",
     "allowJs": true,
     "esModuleInterop": true,
@@ -26,7 +26,6 @@
     "noPropertyAccessFromIndexSignature": false,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
-    "suppressImplicitAnyIndexErrors": true,
   },
   "files": [],
   "include": [],

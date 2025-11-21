@@ -3,13 +3,12 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "start": "vite --config apps/p-frog/vite.config.ts",
+    "start": "env-cmd --file ./apps/p-frog/.env.development nx serve",
     "start:server-prod": "env-cmd --file./apps/api/.env.production nx serve api",
     "start:server-dev": "env-cmd --file ./apps/api/.env.development nx serve api",
-    "build": "vite build --config apps/p-frog/vite.config.ts",
+    "build": "nx build",
     "client:test": "nx test",
-    "test:server": "nx test api",
-    "preview": "vite preview --config apps/p-frog/vite.config.ts"
+    "test:server": "nx test api"
   },
   "private": true,
   "dependencies": {
@@ -66,14 +65,17 @@
     "tslog": "^3.3.1"
   },
   "devDependencies": {
-    "@nx/cypress": "22.1.0",
-    "@nx/eslint-plugin": "22.1.0",
-    "@nx/express": "22.1.0",
-    "@nx/jest": "22.1.0",
-    "@nx/js": "22.1.0",
-    "@nx/linter": "19.8.15",
-    "@nx/node": "22.1.0",
-    "@nx/workspace": "22.1.0",
+    "@nrwl/cli": "13.4.3",
+    "@nrwl/cypress": "13.4.3",
+    "@nrwl/eslint-plugin-nx": "13.4.3",
+    "@nrwl/express": "13.4.3",
+    "@nrwl/jest": "13.4.3",
+    "@nrwl/linter": "13.4.3",
+    "@nrwl/node": "13.4.3",
+    "@nrwl/react": "13.4.3",
+    "@nrwl/tao": "13.4.3",
+    "@nrwl/web": "13.4.3",
+    "@nrwl/workspace": "13.4.3",
     "@testing-library/react": "12.1.2",
     "@testing-library/react-hooks": "7.0.2",
     "@types/express": "^4.17.13",
@@ -84,8 +86,6 @@
     "@types/react-router-dom": "5.3.1",
     "@typescript-eslint/eslint-plugin": "~5.3.0",
     "@typescript-eslint/parser": "~5.3.0",
-    "@vitejs/plugin-react": "^4.3.0",
-    "autoprefixer": "^10.4.0",
     "cypress": "^9.1.0",
     "eslint": "^8.8.0",
     "eslint-config-prettier": "8.1.0",
@@ -95,13 +95,9 @@
     "eslint-plugin-react": "7.26.1",
     "eslint-plugin-react-hooks": "^4.2.1-rc.0-next-9d4e8e84f-20220207",
     "jest": "27.2.3",
-    "nx": "22.1.0",
-    "postcss": "^8.4.0",
     "prettier": "^2.3.1",
     "react-test-renderer": "17.0.2",
-    "tailwindcss": "^3.4.0",
     "ts-jest": "27.0.5",
-    "typescript": "^4.5.5",
-    "vite": "^5.4.0"
+    "typescript": "^4.5.5"
   }
 }

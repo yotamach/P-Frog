@@ -2,8 +2,6 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { Route, Link } from 'react-router-dom';
 
-import './settings.component.module.scss';
-
 /* eslint-disable-next-line */
 export interface TasksProps {}
 

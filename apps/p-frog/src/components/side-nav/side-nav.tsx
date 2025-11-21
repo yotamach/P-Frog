@@ -3,7 +3,6 @@ import Box from "@mui/material/Box";
 import MenuItem from "@mui/material/MenuItem";
 import {ListItemIcon, ListItemText, MenuList, Typography} from "@mui/material";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import styles from "./side-nav.module.scss";
 import { NavMenuItem } from '@types';
 import { NavLink } from 'react-router-dom';
 
@@ -23,7 +22,7 @@ const SideNav: React.FC<{ title?: string, menuItems: NavMenuItem[], color?: stri
   }
 
   return (
-      <Box flexDirection={'column'} bgcolor={bgcolor} className={styles.sideNav} p={2}>
+      <Box flexDirection={'column'} bgcolor={bgcolor} sx={{ gridArea: 'sidenav' }} p={2}>
           {title && <Typography
             variant="h6"
             noWrap

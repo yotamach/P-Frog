@@ -7,7 +7,6 @@ import Typography from '@mui/material/Typography';
 import { useSnackbar } from 'notistack';
 import { useEffect } from 'react';
 import { Route, Routes } from 'react-router';
-import './tasks.component.module.scss';
 
 /* eslint-disable-next-line */
 export interface TasksProps {}

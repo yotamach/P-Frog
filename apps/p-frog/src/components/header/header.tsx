@@ -10,7 +10,6 @@ import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
-import styles from "./header.module.scss";
 import { AccountCircle } from '@mui/icons-material';
 
 const pages = ['Products', 'Pricing', 'Blog'];
@@ -36,7 +35,7 @@ const Header = ({ title = undefined }: { title?: string | undefined }) => {
   };
 
   return (
-    <AppBar position="relative" className={styles.header}>
+    <AppBar position="relative" sx={{ gridArea: 'header', padding: '0px 2px' }}>
         <Toolbar>
           {title && <Typography
             variant="h6"

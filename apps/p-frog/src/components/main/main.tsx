@@ -1,6 +1,5 @@
 import { useEffect } from 'react';
 import Box from "@mui/material/Box";
-import styles from "./main.module.scss";
 import {SideNav} from "../index";
 import { Paper } from '@mui/material';
 import { useDispatch } from 'react-redux';
@@ -13,7 +12,7 @@ const Main = () => {
   const getRoutes = () => menuItems.map(menuItem => (<Route key={menuItem.title} path={menuItem.path} element={menuItem.component} />));
   
   return (
-    <Paper elevation={2} className={styles.main} >
+    <Paper elevation={2} sx={{ gridArea: 'main' }} >
         <Routes>
           {getRoutes()}
         </Routes>

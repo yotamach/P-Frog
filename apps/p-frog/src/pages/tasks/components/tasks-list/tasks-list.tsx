@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import classes from './tasks-list.module.scss';
 import { useTask,usePopper,useDialog } from '@hooks/index';
 import { Loader, ModalPopper, Popup, Table } from '@components/index';
 import { TopToolBarItem } from '@components/table/table';
@@ -180,7 +179,7 @@ export function TasksList({ prop }: TasksListProps) {
     console.log(row);
   }
 
-  return (<div className={classes.tasksList}>
+  return (<div className="relative overflow-y-scroll">
       <Loader visible={tasks.loadingStatus === 'loading'} />
       <Popup open={openDialog} onClose={() => setOpenDialog(false)} title={'Delete Task'} content={getDeletePopupContent()} actionsButtons={getDeletePopupActionsButtons()} />
       <ModalPopper placement={'bottom-start'} anchorEl={anchorEl} title={title} open={openPopper} component={component} />

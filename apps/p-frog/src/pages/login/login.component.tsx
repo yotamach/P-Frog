@@ -1,4 +1,3 @@
-import classes from './login.component.module.scss';
 import { Grid } from '@mui/material';
 import LoginForm from './components/login-form.component';
 import { Box } from '@mui/system';
@@ -8,7 +7,7 @@ interface LoginProps {}
 
 function Login(props: LoginProps) {
   return (
-  <Box bgcolor={'primary.main'} className={classes.loginBackground}>
+  <Box bgcolor={'primary.main'} className="flex w-screen h-screen justify-center items-center">
     <Box width={500}>
       <LoginForm />
     </Box>

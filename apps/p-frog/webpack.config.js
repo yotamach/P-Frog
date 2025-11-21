@@ -1,4 +1,4 @@
-const getConfig = require('@nrwl/react/plugins/webpack')
+const { composePlugins, withNx } = require('@nx/webpack');
 const path = require(`path`);
 const alias = require(`./aliases`);
 
@@ -10,9 +10,8 @@ const resolvedAliases = Object.fromEntries(
 );
 const cssModuleRegex = /\.module\.css$/;
 
-module.exports = (config) => {
-  config = getConfig(config);
-  config.resolve.alias = resolvedAliases;
+module.exports = composePlugins(withNx(), (config) => {
+  config.resolve.alias = { ...config.resolve.alias, ...resolvedAliases };
 
   config.module.rules.forEach((rule, idx) => {
     // Find rule tests for CSS.
@@ -45,4 +44,4 @@ module.exports = (config) => {
   });
 
   return config;
-}
+});
