@@ -6,12 +6,12 @@
     "e2e": {
       "executor": "@nx/cypress:cypress",
       "options": {
-        "cypressConfig": "apps/p-frog-e2e/cypress.json",
-        "devServerTarget": "p-frog:serve"
+        "cypressConfig": "apps/p-frog-e2e/cypress.config.ts",
+        "baseUrl": "http://localhost:4200"
       },
       "configurations": {
         "production": {
-          "devServerTarget": "p-frog:serve:production"
+          "baseUrl": "http://localhost:4200"
         }
       }
     },

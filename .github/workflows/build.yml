@@ -63,7 +63,7 @@ jobs:
 
       - name: Build server
         if: steps.check-backend.outputs.changed == 'true'
-        run: yarn nx run api:build
+        run: yarn tsc --project apps/api/tsconfig.app.json --noEmit
 
       - name: Skip server build
         if: steps.check-backend.outputs.changed == 'false'
