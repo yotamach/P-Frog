@@ -1,4 +1,4 @@
-name: Build
+name: Lint
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 jobs:
-  build-client:
+  lint-client:
     runs-on: ubuntu-latest
 
     steps:
@@ -23,10 +23,10 @@ jobs:
       - name: Install dependencies
         run: yarn install --frozen-lockfile || yarn install
 
-      - name: Build client
-        run: yarn build
+      - name: Lint client
+        run: yarn nx run p-frog:lint
 
-  build-server:
+  lint-server:
     runs-on: ubuntu-latest
 
     steps:
@@ -61,10 +61,53 @@ jobs:
             echo "changed=false" >> $GITHUB_OUTPUT
           fi
 
-      - name: Build server
+      - name: Lint server
         if: steps.check-backend.outputs.changed == 'true'
-        run: yarn nx run api:build
+        run: yarn nx run api:lint
 
-      - name: Skip server build
+      - name: Skip server lint
         if: steps.check-backend.outputs.changed == 'false'
-        run: echo "No backend changes detected, skipping build"
+        run: echo "No backend changes detected, skipping lint"
+
+  lint-libs:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+          cache: 'yarn'
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile || yarn install
+
+      - name: Check for lib changes
+        id: check-libs
+        run: |
+          if [ "${{ github.event_name }}" == "push" ] && [ "${{ github.ref }}" == "refs/heads/main" ]; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          elif [ "${{ github.event_name }}" == "pull_request" ]; then
+            git fetch origin ${{ github.base_ref }}
+            CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD)
+            if echo "$CHANGED_FILES" | grep -qE '^libs/'; then
+              echo "changed=true" >> $GITHUB_OUTPUT
+            else
+              echo "changed=false" >> $GITHUB_OUTPUT
+            fi
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Lint libs
+        if: steps.check-libs.outputs.changed == 'true'
+        run: yarn nx run data:lint
+
+      - name: Skip libs lint
+        if: steps.check-libs.outputs.changed == 'false'
+        run: echo "No library changes detected, skipping lint"
