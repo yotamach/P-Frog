@@ -27,7 +27,7 @@
       }
     },
     "serve": {
-      "executor": "@nx/node:execute",
+      "executor": "@nx/js:node",
       "options": {
         "buildTarget": "api:build"
       }

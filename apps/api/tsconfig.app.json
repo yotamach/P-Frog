@@ -5,6 +5,12 @@
     "module": "commonjs",
     "types": ["node", "express"]
   },
+  "ts-node": {
+    "transpileOnly": true,
+    "compilerOptions": {
+      "module": "commonjs"
+    }
+  },
   "exclude": ["**/*.spec.ts", "**/*.test.ts"],
   "include": ["**/*.ts"]
 }

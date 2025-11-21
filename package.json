@@ -4,9 +4,10 @@
   "license": "MIT",
   "scripts": {
     "start": "vite --config apps/p-frog/vite.config.ts",
-    "start:server-prod": "env-cmd --file./apps/api/.env.production nx serve api",
-    "start:server-dev": "env-cmd --file ./apps/api/.env.development nx serve api",
+    "start:server-prod": "env-cmd --file ./apps/api/.env.production npx tsx --tsconfig apps/api/tsconfig.app.json apps/api/src/main.ts",
+    "start:server-dev": "nodemon",
     "build": "vite build --config apps/p-frog/vite.config.ts",
+    "build:server": "nx build api",
     "client:test": "nx test",
     "test:server": "nx test api",
     "preview": "vite preview --config apps/p-frog/vite.config.ts"
@@ -71,7 +72,7 @@
     "@nx/express": "22.1.0",
     "@nx/jest": "22.1.0",
     "@nx/js": "22.1.0",
-    "@nx/linter": "19.8.15",
+    "@nx/linter": "22.1.0",
     "@nx/node": "22.1.0",
     "@nx/workspace": "22.1.0",
     "@testing-library/react": "12.1.2",

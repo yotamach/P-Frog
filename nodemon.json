@@ -1,0 +1,9 @@
+{
+  "watch": ["apps/api/src"],
+  "ext": "ts,json",
+  "ignore": ["apps/api/src/**/*.spec.ts"],
+  "exec": "env-cmd --file ./apps/api/.env.development npx tsx --tsconfig apps/api/tsconfig.app.json apps/api/src/main.ts",
+  "env": {
+    "NODE_ENV": "development"
+  }
+}

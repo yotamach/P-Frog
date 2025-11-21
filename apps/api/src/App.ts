@@ -1,7 +1,7 @@
 import express from "express";
 import {BASE_API} from "./config/config";
 import { AppRouter } from "@models";
-import { connect } from "mongoose";
+import { connect, set } from "mongoose";
 import { Logger } from "tslog";
 import { Port } from "@p-frog/data";
 import cors from 'cors';
@@ -9,6 +9,9 @@ import cookieParser  from 'cookie-parser'
 import expressSession from 'express-session'
 
 const log: Logger = new Logger();
+
+// Suppress Mongoose strictQuery deprecation warning
+set('strictQuery', false);
 
 export class App {
   private readonly host: string;
@@ -24,7 +27,7 @@ export class App {
     const server = this.app.listen(this.port, () => {
       log.info('Listening at https://' + this.host + ':' + this.port + BASE_API);
     });
-    server.on('error', log.error);
+    server.on('error', (error) => log.error('Server error:', error));
   }
 
   configure(): void {
