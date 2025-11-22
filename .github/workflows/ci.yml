@@ -262,7 +262,6 @@ jobs:
         run: echo "No server changes detected, skipping lint"
 
   lint-libs:
-    needs: [build-server]
     runs-on: ubuntu-latest
 
     steps:
