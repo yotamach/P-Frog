@@ -41,12 +41,13 @@ export class App {
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: false }));
     this.app.use(cookieParser());
-    this.app.use(expressSession({
-      secret: 'Pfrog-session',
-      resave: false,
-      saveUninitialized: false
-    }))
-
+    this.app.use(
+      expressSession({
+        secret: 'Pfrog-session',
+        resave: false,
+        saveUninitialized: false,
+      }) as any
+    );
   }
 
   addRouter(appRouter: AppRouter): void {

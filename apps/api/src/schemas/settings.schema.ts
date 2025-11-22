@@ -40,4 +40,4 @@ const SettingsSchema: Schema = new Schema({
   }
 });
 
-export const Settings: Model <ISettings> = model('settings', SettingsSchema);
+export const Settings = model<ISettings>('settings', SettingsSchema);

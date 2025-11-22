@@ -41,4 +41,4 @@ TaskSchema.set('toJSON', {
 }); 
 
 
-export const Task: Model <ITask> = model('Task', TaskSchema);
+export const Task: Model<ITask> = model<ITask>('Task', TaskSchema);
