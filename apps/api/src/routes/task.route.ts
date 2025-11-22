@@ -61,7 +61,7 @@ taskRouter.get('/', (req: Request, res: Response) => {
       res.send({ success: false, error: err});
     }
     else {
-      log.info(`GET /tasks - Retrieved ${tasks?.length || 0} tasks successfully`);
+      log.info(`GET /tasks - Tasks retrieved successfully`);
       res.send({ success: true, tasks});
     }
   });

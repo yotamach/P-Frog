@@ -61,7 +61,7 @@ userRouter.get('/',auth, (req: Request, res: Response) => {
       res.send({ success: false, error: err});
     }
     else {
-      log.info(`GET /users - Retrieved ${users?.length || 0} users successfully`);
+      log.info(`GET /users - Users retrieved successfully`);
       res.send({ success: true, users});
     }
   });
