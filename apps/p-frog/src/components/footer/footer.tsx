@@ -1,21 +1,10 @@
 import * as React from 'react';
-import Box from "@mui/material/Box";
-import { Typography } from '@mui/material';
 
 const Footer = () => {
-
   return (
-    <Box boxShadow={2} flex='1' alignItems={"center"} sx={{ gridArea: 'footer' }} bgcolor={'primary.main'}>
-          <Typography
-            variant="body1"
-            noWrap
-            component="div"
-            color="text.secondary"
-            sx={{ flexGrow: 1 }}
-          >
-            Yotam Achrak
-          </Typography>   
-        </Box>
+    <span className="text-gray-600">
+      © {new Date().getFullYear()} P-Frog by Yotam Achrak
+    </span>
   );
 };
 export default Footer;

@@ -1,10 +1,8 @@
+import { Suspense } from 'react';
 import { SideNav } from '@components/index';
-import { tasksMenuItems } from '@data/index';
+import { tasksMenuItems } from '@data/constans/MenuItems';
 import { useTask } from '@hooks/index';
-import { Divider, Paper } from '@mui/material';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import { useSnackbar } from 'notistack';
+import { CircularProgress } from '@mui/material';
 import { useEffect } from 'react';
 import { Route, Routes } from 'react-router';
 
@@ -13,44 +11,37 @@ export interface TasksProps {}
 
 export function Tasks(props: TasksProps) {
   const getRoutes = () => tasksMenuItems.map(tasksMenuItem => (<Route key={tasksMenuItem.title} path={tasksMenuItem.path} element={tasksMenuItem.component} />));
-  const { getTasks, tasks, tasksList } = useTask(); 
-  const { enqueueSnackbar } = useSnackbar();
+  const { getTasks } = useTask(); 
 
   useEffect(() => {
     getTasks();
   }, []);
 
-  const { loadingStatus, statusMessage } = tasks;
-  useEffect(() => {
-      if(statusMessage && (loadingStatus === 'loaded' || loadingStatus || 'error'))
-      {
-        const { message, type: variant } = statusMessage;
-        enqueueSnackbar(message, { variant });
-      }
-  },[loadingStatus]);
-
   return (
-    <Box sx={{
-      p: 1,
-      display: 'flex',
-      flexWrap: 'wrap',
-      alignContent: 'flex-start',
-    }}>
-      <Box sx={{ width: '100%' }}>
-        <Typography variant="h5" component="h5">Tasks</Typography>
-      </Box>
-      <Divider />
-      <Box sx={{ width: '200px' }} pt={2}>
-        <SideNav menuItems={tasksMenuItems} color={'text.primary'} bgcolor="background.default" />
-      </Box>
-      <Box height="89vh" flexGrow={1} sx={{ overflowY: 'scroll' }}>
-        <Paper elevation={3} sx={{ p: 1 }} >
-          <Routes>
-            {getRoutes()}
-          </Routes>
-        </Paper>
-      </Box>        
-    </Box>
+    <div className="flex h-full gap-6">
+      {/* Tasks Sidebar */}
+      <div className="w-64 border-r border-border bg-white rounded-lg shadow-sm">
+        <div className="p-4 border-b border-border">
+          <h2 className="text-xl font-semibold text-gray-900">Tasks</h2>
+        </div>
+        <SideNav menuItems={tasksMenuItems} color="gray-700" />
+      </div>
+
+      {/* Tasks Content */}
+      <div className="flex-1 overflow-auto">
+        <div className="card p-6">
+          <Suspense fallback={
+            <div className="flex justify-center p-8">
+              <CircularProgress />
+            </div>
+          }>
+            <Routes>
+              {getRoutes()}
+            </Routes>
+          </Suspense>
+        </div>
+      </div>
+    </div>
   );
 }
 

@@ -1,10 +1,12 @@
-import { useSelector, useDispatch } from 'react-redux';
-import { TasksState, getTasksState, fetchTasks, deleteTask, createTask, updateTask } from '@data/store/tasks/tasks.slice';
 import { Task } from '@types';
 import { useMemo } from 'react';
+import { useTasks, useCreateTask, useUpdateTask, useDeleteTask } from '@data/queries/tasks.queries';
 
 export interface UseTask {
-  tasks: TasksState;
+  tasks: Task[];
+  isLoading: boolean;
+  isError: boolean;
+  error: any;
   getTasks: () => void;
   removeTask: (id: string) => void;
   editTask: (id: string, task: Task) => void;
@@ -12,17 +14,32 @@ export interface UseTask {
   tasksList: any[];
 }
 
-
-
 export function useTask(): UseTask {
-  const tasks = useSelector(getTasksState);
-  const dispatch = useDispatch();
-  const getTasks = () => dispatch(fetchTasks());
-  const addTask = (task: Task) => { dispatch(createTask(task)) };
-  const editTask = useMemo(() =>(id: string, task: Task) => { dispatch(updateTask({id, task})) }, []);
-  const removeTask = (id: string) => { dispatch(deleteTask(id)) };
-  const tasksList = useMemo(() => Object.entries(tasks.entities).map(([key, values]) => ({ key, ...values })),[tasks]);
+  const { data: tasks = [], isLoading, isError, error, refetch } = useTasks();
+  const createTaskMutation = useCreateTask();
+  const updateTaskMutation = useUpdateTask();
+  const deleteTaskMutation = useDeleteTask();
 
-  return { tasksList, tasks, getTasks, addTask, editTask, removeTask };
+  const getTasks = () => refetch();
+  const addTask = (task: Task) => createTaskMutation.mutate(task);
+  const editTask = (id: string, task: Task) => updateTaskMutation.mutate({ id, task });
+  const removeTask = (id: string) => deleteTaskMutation.mutate(id);
+  
+  const tasksList = useMemo(() => 
+    tasks.map((task) => ({ key: task.id, ...task })),
+    [tasks]
+  );
+
+  return { 
+    tasksList, 
+    tasks,
+    isLoading,
+    isError,
+    error,
+    getTasks, 
+    addTask, 
+    editTask, 
+    removeTask 
+  };
 }
 

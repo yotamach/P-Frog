@@ -1,8 +1,12 @@
+import { lazy } from 'react';
 import {NavMenuItem} from "../../types";
 import fontawesome from '@fortawesome/fontawesome'
 import { faCheckSquare, faChartArea } from '@fortawesome/fontawesome-free-solid'
-import { Dashboard, Settings, Tasks } from "@pages/index";
 import { TasksList } from "@pages/tasks/components";
+
+const Dashboard = lazy(() => import('@pages/dashboard/dashboard.component'));
+const Settings = lazy(() => import('@pages/settings/settings.component'));
+const Tasks = lazy(() => import('@pages/tasks/tasks.component'));
 
 fontawesome.library.add(faCheckSquare, faChartArea);
 
