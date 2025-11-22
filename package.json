@@ -10,7 +10,8 @@
     "build:server": "tsc --project apps/api/tsconfig.app.json",
     "client:test": "nx test",
     "test:server": "nx test api",
-    "preview": "vite preview --config apps/p-frog/vite.config.ts"
+    "preview": "vite preview --config apps/p-frog/vite.config.ts",
+    "postinstall": "bash tools/install-hooks.sh"
   },
   "private": true,
   "dependencies": {

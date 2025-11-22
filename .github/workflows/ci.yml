@@ -9,6 +9,28 @@ on:
     branches: [master]
 
 jobs:
+  # BRANCH NAME VALIDATION (safety net for local hook)
+  validate-branch-name:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    
+    steps:
+      - name: Check branch name
+        run: |
+          BRANCH_NAME="${{ github.head_ref }}"
+          echo "Validating branch name: $BRANCH_NAME"
+          
+          if [[ ! "$BRANCH_NAME" =~ ^PF-[0-9]+_[A-Za-z]+$ ]]; then
+            echo "❌ Branch name does not match required pattern: ^PF-\\d+_[A-Za-z]+$"
+            echo "Example valid branch names:"
+            echo "  - PF-123_FeatureName"
+            echo "  - PF-456_BugFix"
+            echo "  - PF-789_Update"
+            exit 1
+          fi
+          
+          echo "✅ Branch name is valid"
+
   # BUILD JOBS
   build-client:
     runs-on: ubuntu-latest
