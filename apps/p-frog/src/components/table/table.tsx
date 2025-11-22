@@ -1,6 +1,5 @@
 import { TableContainer, Paper, TableHead, TableRow, TableCell, TableBody, Box, IconButton, Checkbox } from '@mui/material';
 import MUITable from '@mui/material/Table';
-import styles from './table.scss';
 import { ReactElement, useMemo } from 'react';
 import { useTable, Column, useRowSelect, Row } from 'react-table';
 import React, { useEffect, forwardRef } from 'react';

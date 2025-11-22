@@ -5,10 +5,10 @@
 P-Frog is an Nx monorepo with a React frontend (`apps/p-frog`), Express backend (`apps/api`), and shared library (`libs/data`). The backend uses MongoDB via Mongoose for persistence.
 
 ### Monorepo Structure
-- **apps/p-frog**: React 17 SPA with Material-UI v5, Redux Toolkit, React Router v6
+- **apps/p-frog**: React 17 SPA with Material-UI v5, TanStack Query/Store, React Router v6, Tailwind CSS
 - **apps/api**: Express REST API with JWT authentication
 - **libs/data**: Shared TypeScript interfaces used across frontend and backend
-- **db/**: Local MongoDB data directory (gitignored, used with docker-compose)
+- **db/**: Local MongoDB data directory (created by docker-compose, contains actual database files)
 
 ## Critical Path Aliases
 
@@ -23,7 +23,7 @@ Both apps use extensive path aliases to avoid relative imports:
 
 ### Frontend (`apps/p-frog/webpack.config.js` via `aliases.js`)
 - `@components/*` → `src/components/*`
-- `@data/*` → `src/data/*` (Redux store, constants, validators)
+- `@data/*` → `src/data/*` (TanStack Query hooks, constants, validators)
 - `@hooks/*` → `src/hooks/*`
 - `@pages/*` → `src/pages/*` (components mapped in React Router)
 
@@ -45,16 +45,17 @@ MONGO_INITDB_ROOT_PASSWORD=pfrogpswrd
 ```
 
 **Start order**:
-1. MongoDB: `docker-compose up` (starts MongoDB on port 27017)
-2. Backend: `yarn start:server-dev` (uses `env-cmd --file ./apps/api/.env.development nx serve api`)
-3. Frontend: `yarn start` (uses `env-cmd --file ./apps/p-frog/.env.development nx serve`)
+1. MongoDB: `docker-compose up -d` (starts MongoDB 7.0 on port 27017, creates `db/` folder)
+2. Backend: `yarn start:server-dev` (uses nodemon with `env-cmd --file ./apps/api/.env.development`)
+3. Frontend: `yarn start` (uses Vite dev server)
 
 ### Testing
 - Frontend: `yarn client:test` → `nx test`
 - Backend: `yarn test:server` → `nx test api`
 
 ### Building
-- `yarn build` → `nx build` (builds default project: p-frog)
+- Frontend: `yarn build` → `vite build`
+- Backend: `yarn build:server` → `tsc --project apps/api/tsconfig.app.json`
 
 ## Backend Patterns
 
@@ -93,17 +94,27 @@ The `App` class exposes `dbConnect()` called from `main.ts`:
 ```typescript
 app.dbConnect(DB_HOST, DB_PORT, DB_USERNAME, DB_PASSWORD, DB_SCHEMA);
 ```
-Connection string: `mongodb://${userName}:${password}@${host}:${port}/${schema}`
+Connection string: `mongodb://${userName}:${password}@${host}:${port}/${schema}?authSource=admin`
+
+**Important**: The connection string includes `?authSource=admin` to authenticate against the admin database.
 
 ## Frontend Patterns
 
-### Redux Toolkit State Management
+### TanStack Query & Store State Management
 
-Store configured in `apps/p-frog/src/data/store/store.ts` with slices:
-- `TASKS_FEATURE_KEY`: Task management (async thunks: `fetchTasks`, `createTask`, `updateTask`, `deleteTask`)
-- `AUTH_FEATURE_KEY`: Authentication state
+**TanStack Query** (v4.36.1) is used for server state management:
+- Query client configured in `apps/p-frog/src/data/store/queryClient.ts`
+- Query hooks in `apps/p-frog/src/data/queries/` (e.g., `tasks.queries.ts`)
+- Main hooks: `useTasks()`, `useCreateTask()`, `useUpdateTask()`, `useDeleteTask()`
+- Automatic caching, refetching, and loading states
+- Success/error notifications handled via `notistack` in mutation hooks
 
-**Custom hooks pattern**: Components use hooks like `use-task` (in `hooks/use-task/use-task.ts`) that encapsulate Redux selectors and dispatch logic.
+**TanStack Store** (v0.0.1-beta.4) is used for client state:
+- Auth store in `apps/p-frog/src/data/store/authStore.ts`
+- Actions: `setAuth()`, `clearAuth()`, `setAuthError()`
+- Selectors: `selectIsAuth`, `selectUser`, `selectAuthError`
+
+**Custom hooks pattern**: Components use hooks like `useTask` (in `hooks/use-task/use-task.ts`) that wrap TanStack Query hooks for cleaner component code.
 
 ### React Router v6 Structure
 
@@ -122,6 +133,7 @@ Theme defined in `apps/p-frog/src/theme.ts` as `lighThemeOptions`, wrapped in `c
 - Atomic components in `components/` (footer, header, form, table, loader, popup, etc.)
 - Page-specific components nested in `pages/*/components/` (e.g., `pages/tasks/components/tasks-list/`)
 - All exported through `index.ts` barrels for clean imports
+- **Lazy loading**: Page components in `MenuItems.tsx` use `React.lazy()` to avoid circular dependencies
 
 ### Forms
 - Uses `react-hook-form` v7
@@ -129,9 +141,12 @@ Theme defined in `apps/p-frog/src/theme.ts` as `lighThemeOptions`, wrapped in `c
 - Validation rules in `apps/p-frog/src/data/constans/validators.ts` (imported as `Validators` from `@data/index`)
 
 ### Styling
-- SCSS modules (`.module.scss`) configured in `webpack.config.js`
-- CSS module support via `css-modules-typescript-loader`
-- Global styles in `src/styles.scss`
+- **Tailwind CSS v3.4.0** - Primary styling system
+- Global styles and CSS variables in `src/globals.css`
+- Material-UI components still used alongside Tailwind
+- CSS custom properties for theming (see `globals.css` `:root` section)
+- Modern utility classes: `card`, `app-header`, `app-sidebar`, `nav-item`, etc.
+- **No SCSS modules** - all removed in favor of Tailwind
 
 ## Nx-Specific Commands
 
@@ -157,3 +172,6 @@ Default generators configured in `nx.json`:
 4. **Mongoose transforms**: All schemas transform `_id` to `id` in JSON - use `id` in frontend code
 5. **Path aliases**: Must be configured in both `tsconfig.json` (for TypeScript) and `webpack.config.js` (for Webpack bundling) for frontend
 6. **CORS**: Backend has CORS enabled globally via `app.use(cors())` in `App.ts`
+7. **Circular dependencies**: Avoid importing page components directly in `MenuItems.tsx` - use `React.lazy()` instead
+8. **MongoDB auth**: Connection string must include `?authSource=admin` parameter
+9. **Nodemon**: Development server uses `nodemon` (v3.1.1) which must be installed in devDependencies

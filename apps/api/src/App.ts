@@ -74,7 +74,7 @@ export class App {
   };
 
   dbConnect(host: string, port: string, userName: string, password: string, schema: string) {
-    connect(`mongodb://${userName}:${password}@${host}:${port}/${schema}`).then(() => {
+    connect(`mongodb://${userName}:${password}@${host}:${port}/${schema}?authSource=admin`).then(() => {
       log.info(`Connected to mongoDB DB: ${schema}`);
     }).catch((e) => {
       log.error(`Connecteion to mongoDB was failed, reason ${e}`);

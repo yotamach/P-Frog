@@ -11,4 +11,6 @@ services:
         environment:
             - MONGO_INITDB_ROOT_USERNAME=admin
             - MONGO_INITDB_ROOT_PASSWORD=pfrogpswrd
-        image: mongo
+        image: mongo:7.0
+        volumes:
+            - ./db:/data/db

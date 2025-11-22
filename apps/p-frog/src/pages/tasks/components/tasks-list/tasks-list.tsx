@@ -7,8 +7,6 @@ import { useForm } from 'react-hook-form';
 import { FormDateField, FormTextField } from '@components/form/FormFields';
 import { Box, Button, DialogContentText, Grid } from '@mui/material';
 import { Control } from 'react-hook-form';
-import { createTask } from '@data/store/tasks/tasks.slice';
-import { useDispatch } from 'react-redux';
 import { Task } from '@types';
 import { ActionButton } from '@components/popup/popup';
 import { Validators } from '@data/index';
@@ -21,7 +19,7 @@ export interface TasksListProps {
 export function TasksList({ prop }: TasksListProps) {
   const { control, handleSubmit, reset } = useForm();
   const [ selectedRow, setSelectedRow ] = useState<Row<any> | null>(null);
-  const { tasksList, tasks, removeTask, editTask, addTask } = useTask(); 
+  const { tasksList, isLoading, removeTask, editTask, addTask } = useTask(); 
   const { popper, open: openPopper, setOpen: setOpenPopper, setPopper } = usePopper();
   const { setDialog, setOpen: setOpenDialog, dialog, open: openDialog } = useDialog();
   const { component, anchorEl, title } = popper;
@@ -180,7 +178,7 @@ export function TasksList({ prop }: TasksListProps) {
   }
 
   return (<div className="relative overflow-y-scroll">
-      <Loader visible={tasks.loadingStatus === 'loading'} />
+      <Loader visible={isLoading} />
       <Popup open={openDialog} onClose={() => setOpenDialog(false)} title={'Delete Task'} content={getDeletePopupContent()} actionsButtons={getDeletePopupActionsButtons()} />
       <ModalPopper placement={'bottom-start'} anchorEl={anchorEl} title={title} open={openPopper} component={component} />
       <Table topToolBar={getTopToolBar()} columns={columns} data={tasksList} onSelectRow={onSelectRow} />
