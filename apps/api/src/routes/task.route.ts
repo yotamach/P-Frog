@@ -39,44 +39,51 @@ taskRouter.patch('/:id', (req: Request, res: Response) => {
 });
 
 taskRouter.get('/:id', (req: Request, res: Response) => {
-  log.info(`Get route`);
   const {id} = req.params;
+  log.info(`GET /tasks/${id} - Fetching task by id`);
   taskService.getTaskByParams({ id }, (err, task) => {
     if (err) {
+      log.error(`GET /tasks/${id} - Error: ${err}`);
       res.send({ success: false, error: err});
     }
     else {
+      log.info(`GET /tasks/${id} - Task retrieved successfully`);
       res.send({ success: true, task});
     }
   });
 });
 
 taskRouter.get('/', (req: Request, res: Response) => {
-  log.info(`Get route`);
+  log.info('GET /tasks - Fetching all tasks');
   taskService.getTasks((err, tasks) => {
     if (err) {
+      log.error(`GET /tasks - Error: ${err}`);
       res.send({ success: false, error: err});
     }
     else {
+      log.info(`GET /tasks - Retrieved ${tasks?.length || 0} tasks successfully`);
       res.send({ success: true, tasks});
     }
   });
 });
 
 taskRouter.delete('/:id', (req: Request, res: Response) => {
-  log.info(`Get route`);
+  const {id} = req.params;
+  log.info(`DELETE /tasks/${id} - Deleting task`);
   try{
-    const {id} = req.params;
     taskService.deleteTask(id, (err, task) => {
       if (err) {
+        log.error(`DELETE /tasks/${id} - Error: ${err}`);
         res.status(404).send({ success: false, error: err});
       }
       else {
+        log.info(`DELETE /tasks/${id} - Task deleted successfully`);
         res.send({ success: true, task});
       }
     });
   }
   catch(e) {
+    log.error(`DELETE /tasks/${id} - Exception: ${e}`);
     res.status(500).send(e);
   }
 });
