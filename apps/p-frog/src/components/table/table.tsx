@@ -25,7 +25,7 @@ export interface TopToolBarItem {
 interface TableProps {
   columns: Column<any>[];
   data: any[];
-  topToolBar: TopToolBarItem[];
+  topToolBar?: TopToolBarItem[];
   onSelectRow: (row: Row<object> | null) => void;
 }
 
@@ -66,14 +66,26 @@ export default function Table({ topToolBar, columns, data, onSelectRow }: TableP
 
   return (
     <>
-    <Box>{getTopToolBar(topToolBar)}</Box>
-    <TableContainer component={Paper}>
+    {topToolBar && <Box>{getTopToolBar(topToolBar)}</Box>}
+    <TableContainer component={Paper} sx={{ boxShadow: 'none', border: 'none' }}>
       <MUITable sx={{ minWidth: 650 }} aria-label="table" {...getTableProps()}>
-        <TableHead sx={{ bgcolor: 'primary.main' }}>
+        <TableHead sx={{ bgcolor: 'hsl(var(--table-header-bg))', borderBottom: '2px solid hsl(var(--table-border))' }}>
           {headerGroups.map(headerGroup => (
             <TableRow {...headerGroup.getHeaderGroupProps()}>
               {headerGroup.headers.map(column => (
-                <TableCell sx={{ color: 'background.default' }} {...column.getHeaderProps()}>{column.render('Header')}</TableCell>
+                <TableCell 
+                  sx={{ 
+                    color: 'hsl(var(--table-text))', 
+                    fontWeight: 600,
+                    fontSize: '0.875rem',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.05em',
+                    py: 2
+                  }} 
+                  {...column.getHeaderProps()}
+                >
+                  {column.render('Header')}
+                </TableCell>
               ))}
             </TableRow>
           ))}
@@ -82,13 +94,53 @@ export default function Table({ topToolBar, columns, data, onSelectRow }: TableP
           {data.length ? rows.map((row, i) => {
             prepareRow(row)
             return (
-              <TableRow style={{ backgroundColor: row.isSelected ? '#ccc' : 'transparent' }} {...row.getRowProps()} onClick={(e) => selectRow(row)}>
+              <TableRow 
+                style={{ 
+                  backgroundColor: row.isSelected ? 'hsl(var(--table-selected))' : 'white',
+                  cursor: 'pointer',
+                  transition: 'background-color 150ms'
+                }} 
+                sx={{
+                  '&:hover': {
+                    bgcolor: row.isSelected ? 'hsl(var(--table-selected))' : 'hsl(var(--table-hover))'
+                  },
+                  borderBottom: '1px solid hsl(var(--table-border))'
+                }}
+                {...row.getRowProps()} 
+                onClick={(e) => selectRow(row)}
+              >
                 {row.cells.map(cell => {
-                  return <TableCell {...cell.getCellProps()}>{cell.render('Cell')}</TableCell>
+                  return (
+                    <TableCell 
+                      sx={{ 
+                        color: 'hsl(var(--table-text))',
+                        fontSize: '0.875rem',
+                        py: 2
+                      }} 
+                      {...cell.getCellProps()}
+                    >
+                      {cell.render('Cell')}
+                    </TableCell>
+                  )
                 })}
               </TableRow>
             )
-          }) : <TableRow key={'noDataRow'}><TableCell key={'noData'}>No data</TableCell></TableRow>}
+          }) : (
+            <TableRow key={'noDataRow'}>
+              <TableCell 
+                key={'noData'} 
+                colSpan={headerGroups[0]?.headers.length || 1}
+                sx={{ 
+                  textAlign: 'center', 
+                  color: 'hsl(var(--table-text-muted))',
+                  py: 8,
+                  fontSize: '0.875rem'
+                }}
+              >
+                No tasks available
+              </TableCell>
+            </TableRow>
+          )}
         </TableBody>
         </MUITable>
       </TableContainer>

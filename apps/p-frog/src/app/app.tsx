@@ -19,14 +19,12 @@ export const App = () => {
           }}
         >
           <BrowserRouter>
-            <div className="min-h-screen bg-gray-50">
-              <Routes>
-                <Route path='/' element={<Welcome />} />
-                <Route path='/home' element={<Home />} />
-                <Route path='/registration' element={<Registration />} />
-                <Route path='/login' element={<Login />} />
-              </Routes>
-            </div>
+            <Routes>
+              <Route path='/welcome' element={<Welcome />} />
+              <Route path='/registration' element={<Registration />} />
+              <Route path='/login' element={<Login />} />
+              <Route path='*' element={<Home />} />
+            </Routes>
           </BrowserRouter>
         </SnackbarProvider>
       </QueryClientProvider>

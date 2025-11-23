@@ -23,6 +23,7 @@ export function TasksList({ prop }: TasksListProps) {
   const { popper, open: openPopper, setOpen: setOpenPopper, setPopper } = usePopper();
   const { setDialog, setOpen: setOpenDialog, dialog, open: openDialog } = useDialog();
   const { component, anchorEl, title } = popper;
+
   const onAddTask = handleSubmit((data: any) => {
     const task: Task = {
       title: data.title,
@@ -43,58 +44,42 @@ export function TasksList({ prop }: TasksListProps) {
       startDate: data.startDate.toString(),
       endDate: data.endDate.toString()
     };
-    console.log(selectedRow);
-    console.log(selectedRow?.original?.id);
-    editTask(selectedRow?.original?.id,task);
+    editTask(selectedRow?.original?.id, task);
     reset({});
     setOpenPopper(false);
     setSelectedRow(null);
   });
 
-  const onCancel = () => {
-    setOpenPopper(false);
-  }
+  const handleCreateClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setPopper({
+      component: TaskPoperContent({control, onSubmit: onAddTask, onCancel: () => setOpenPopper(false)}),
+      title: 'Create Task',
+      anchorEl: event.currentTarget
+    });
+    reset({});
+    setOpenPopper(true);
+  };
 
+  const handleEditClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    if (!selectedRow) return;
+    setPopper({
+      component: TaskPoperContent({control, onSubmit: onUpdateTask, onCancel: () => setOpenPopper(false)}),
+      title: 'Edit Task',
+      anchorEl: event.currentTarget
+    });
+    reset({ ...selectedRow.values });
+    setOpenPopper(true);
+  };
 
-  const getTopToolBar = (): TopToolBarItem[] => ([{
-      icon: <Add fontSize="inherit" />,
-      label: 'Add task',
-      click: (event, rows) => { 
-        setPopper({
-          component: TaskPoperContent({control, onSubmit: onAddTask, onCancel, row: rows[0]}),
-          title: 'Edit task',
-          anchorEl: event.currentTarget
-        })
-        reset({});
-        setOpenPopper(true); 
-        
-      }
-    },
-    {
-      icon: <Edit fontSize="inherit" />,
-      label: 'Edit task',
-      disabled: !selectedRow,
-      click: (event, rows) => { 
-        setPopper({
-          component: TaskPoperContent({control, onSubmit: onUpdateTask, onCancel}),
-          title: 'Edit task',
-          anchorEl: event.currentTarget
-        });
-        setSelectedRow(rows[0]);
-        reset({ ...rows[0].values });
-        setOpenPopper(true); 
-      }
-    },  
-    {
-      icon: <Delete fontSize="inherit" />,
-      label: 'Delete task',
-      disabled: !selectedRow,
-      click: (event, rows) => { 
-        setDialog({ title: 'Delete Task', content: getDeletePopupContent(), data: rows[0].original });
-        setOpenDialog(true);
-        console.log('Delete'); 
-      }
-    }]);
+  const handleDeleteClick = () => {
+    if (!selectedRow) return;
+    setDialog({ 
+      title: 'Delete Task', 
+      content: getDeletePopupContent(), 
+      data: selectedRow.original 
+    });
+    setOpenDialog(true);
+  };
 
 
   const getDeletePopupContent = () => (<DialogContentText>Are you sure you want to delete This Task?</DialogContentText>)
@@ -174,13 +159,63 @@ export function TasksList({ prop }: TasksListProps) {
 
   const onSelectRow = async (row: Row<object> | null) =>{
     setSelectedRow(row);
-    console.log(row);
   }
 
-  return (<div className="relative overflow-y-scroll">
-      <Loader visible={isLoading} />
-      <Popup open={openDialog} onClose={() => setOpenDialog(false)} title={'Delete Task'} content={getDeletePopupContent()} actionsButtons={getDeletePopupActionsButtons()} />
-      <ModalPopper placement={'bottom-start'} anchorEl={anchorEl} title={title} open={openPopper} component={component} />
-      <Table topToolBar={getTopToolBar()} columns={columns} data={tasksList} onSelectRow={onSelectRow} />
-    </div>);
+  return (
+    <div className="space-y-4">
+      {/* Action Buttons */}
+      <div className="flex gap-3">
+        <button
+          onClick={handleCreateClick}
+          className="px-4 py-2 text-white rounded-lg font-medium transition-colors shadow-sm flex items-center gap-2"
+          style={{ backgroundColor: 'hsl(var(--button-create))' }}
+        >
+          <Add fontSize="small" />
+          Create Task
+        </button>
+        <button
+          onClick={handleEditClick}
+          disabled={!selectedRow}
+          className="px-4 py-2 text-white rounded-lg font-medium transition-colors shadow-sm flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+          style={{ 
+            backgroundColor: selectedRow ? 'hsl(var(--button-edit))' : 'hsl(var(--button-disabled))'
+          }}
+        >
+          <Edit fontSize="small" />
+          Edit Task
+        </button>
+        <button
+          onClick={handleDeleteClick}
+          disabled={!selectedRow}
+          className="px-4 py-2 text-white rounded-lg font-medium transition-colors shadow-sm flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+          style={{ 
+            backgroundColor: selectedRow ? 'hsl(var(--button-delete))' : 'hsl(var(--button-disabled))'
+          }}
+        >
+          <Delete fontSize="small" />
+          Delete Task
+        </button>
+      </div>
+
+      {/* Tasks Table */}
+      <div className="bg-white rounded-lg shadow-sm overflow-hidden" style={{ border: '1px solid hsl(var(--border))' }}>
+        <Loader visible={isLoading} />
+        <Popup 
+          open={openDialog} 
+          onClose={() => setOpenDialog(false)} 
+          title={'Delete Task'} 
+          content={getDeletePopupContent()} 
+          actionsButtons={getDeletePopupActionsButtons()} 
+        />
+        <ModalPopper 
+          placement={'bottom-start'} 
+          anchorEl={anchorEl} 
+          title={title} 
+          open={openPopper} 
+          component={component} 
+        />
+        <Table columns={columns} data={tasksList} onSelectRow={onSelectRow} />
+      </div>
+    </div>
+  );
 }

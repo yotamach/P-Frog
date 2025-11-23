@@ -18,15 +18,37 @@ export function ModalPopper({ title,  component, placement, open, anchorEl }: Po
     <Popper style={{zIndex: 10000}} open={open} anchorEl={anchorEl} placement={placement} transition>
     {({ TransitionProps }) => (
       <Fade {...TransitionProps} timeout={350}>
-        <Card>
-        <Box pl={1} textAlign={'center'} bgcolor={'primary.main'} sx={{ border: '1px solid' }} color={'text.secondary'}>
-            <Typography component="div" variant="h5">
-                {title}
+        <Card sx={{ 
+          boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+          border: '1px solid hsl(var(--border))',
+          borderRadius: 'calc(var(--radius) * 2)',
+          overflow: 'hidden'
+        }}>
+          <Box 
+            pl={2} 
+            pr={2}
+            pt={1.5}
+            pb={1.5}
+            sx={{ 
+              bgcolor: 'hsl(var(--secondary))',
+              borderBottom: '1px solid hsl(var(--border))'
+            }}
+          >
+            <Typography 
+              component="div" 
+              variant="h6" 
+              sx={{ 
+                color: 'hsl(var(--foreground))',
+                fontWeight: 600,
+                fontSize: '1.125rem'
+              }}
+            >
+              {title}
             </Typography>
-        </Box>
-        <CardContent>
-          {component}
-        </CardContent>
+          </Box>
+          <CardContent sx={{ p: 3 }}>
+            {component}
+          </CardContent>
         </Card>
       </Fade>
     )}

@@ -1,4 +1,3 @@
-import { Fragment } from "react";
 import { menuItems } from "@data/constans/MenuItems";
 import { Footer, Header, Main, SideNav } from "@components/index";
 
@@ -7,32 +6,35 @@ export interface HomeProps {}
 
 export function Home(props: HomeProps) {
   return (
-    <div className="flex h-screen flex-col">
-      {/* Modern Header */}
-      <header className="app-header">
-        <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-white font-bold text-lg">
-            PF
-          </div>
-          <span className="text-xl font-semibold text-gray-900">P-Frog</span>
-        </div>
-      </header>
+    <div className="flex flex-col h-screen w-full" style={{ backgroundColor: 'hsl(var(--background))' }}>
+      {/* Header - Full Width */}
+      <Header />
 
-      {/* Main Layout */}
-      <div className="flex flex-1 overflow-hidden min-h-0">
-        {/* Modern Sidebar */}
-        <aside className="app-sidebar">
-          <SideNav menuItems={menuItems} color={'gray-700'} />
+      {/* Main Layout - Sidebar + Content */}
+      <div className="flex flex-1 overflow-hidden">
+        {/* Sidebar Navigation */}
+        <aside 
+          className="overflow-y-auto" 
+          style={{ 
+            width: 'var(--sidebar-width)', 
+            backgroundColor: 'hsl(var(--sidebar-bg))', 
+            borderRight: '1px solid hsl(var(--sidebar-border))'
+          }}
+        >
+          <SideNav menuItems={menuItems} />
         </aside>
 
-        {/* Main Content */}
-        <main className="app-main min-h-full">
+        {/* Main Content Area */}
+        <main className="flex-1 overflow-auto p-8" style={{ backgroundColor: 'hsl(var(--secondary))' }}>
           <Main />
         </main>
       </div>
 
-      {/* Modern Footer */}
-      <footer className="h-12 border-t border-border bg-white flex items-center px-6 text-sm text-muted-foreground">
+      {/* Footer - Full Width */}
+      <footer 
+        className="flex items-center justify-center px-6 py-4 text-sm text-white" 
+        style={{ backgroundColor: 'hsl(var(--footer-bg))' }}
+      >
         <Footer />
       </footer>
     </div>

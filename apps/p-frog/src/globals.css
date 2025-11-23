@@ -26,6 +26,26 @@
     --ring: 142 76% 36%;
     --radius: 0.5rem;
 
+    /* Custom theme colors */
+    --header-bg: 249 115 22; /* orange-500 */
+    --header-bg-end: 234 88 12; /* orange-600 */
+    --sidebar-bg: 219 234 254; /* blue-100 */
+    --sidebar-border: 191 219 254; /* blue-200 */
+    --sidebar-text: 30 58 138; /* blue-900 */
+    --sidebar-hover: 191 219 254; /* blue-200 */
+    --sidebar-active: 59 130 246; /* blue-500 */
+    --footer-bg: 234 88 12; /* orange-600 */
+    --table-header-bg: 249 250 251; /* gray-50 */
+    --table-border: 229 231 235; /* gray-200 */
+    --table-text: 31 41 55; /* gray-800 */
+    --table-text-muted: 107 114 128; /* gray-500 */
+    --table-hover: 249 250 251; /* gray-50 */
+    --table-selected: 219 234 254; /* blue-100 */
+    --button-create: 59 130 246; /* blue-500 */
+    --button-edit: 249 115 22; /* orange-500 */
+    --button-delete: 239 68 68; /* red-500 */
+    --button-disabled: 209 213 219; /* gray-300 */
+
     /* Spacing */
     --header-height: 4rem;
     --sidebar-width: 16rem;
@@ -59,12 +79,19 @@
   * {
     border-color: hsl(var(--border));
   }
+  html,
+  body,
+  #root {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
   body {
     background-color: hsl(var(--background));
     color: hsl(var(--foreground));
     font-feature-settings: "rlig" 1, "calt" 1;
-    margin: 0;
-    overflow-y: hidden;
+    overflow: hidden;
   }
 }
 
