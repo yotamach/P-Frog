@@ -1,15 +1,16 @@
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import { Route, Link } from 'react-router-dom';
-
 /* eslint-disable-next-line */
 export interface TasksProps {}
 
 export function Settings(props: TasksProps) {
   return (
-    <Box sx={{ p: 1 }}>
-        <Typography variant="h1" component="h2">Settings</Typography>
-    </Box>
+    <section className="space-y-4 rounded-2xl border border-dashed border-white/40 bg-white/90 p-8 shadow-sm">
+      <h1 className="text-3xl font-extrabold" style={{ color: 'hsl(var(--sidebar-text))' }}>
+        Settings
+      </h1>
+      <p className="text-sm" style={{ color: 'hsl(var(--table-text-muted))' }}>
+        Configure workspace preferences, integrations, and notification rules for your team.
+      </p>
+    </section>
   );
 }
 

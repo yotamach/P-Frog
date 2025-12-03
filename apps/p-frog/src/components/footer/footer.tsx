@@ -2,9 +2,9 @@ import * as React from 'react';
 
 const Footer = () => {
   return (
-    <span className="text-white">
+    <div className="w-full text-center text-white text-sm">
       © {new Date().getFullYear()} P-Frog by Yotam Achrak
-    </span>
+    </div>
   );
 };
 export default Footer;

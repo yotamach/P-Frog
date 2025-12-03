@@ -70,81 +70,85 @@ export default function Table({ topToolBar, columns, data, onSelectRow }: TableP
 
   return (
     <>
-    {topToolBar && <div className="mb-4">{getTopToolBar(topToolBar)}</div>}
-    <div className="overflow-x-auto">
-      <table className="min-w-full" aria-label="table" {...getTableProps()}>
-        <thead 
-          className="border-b-2"
-          style={{ 
-            backgroundColor: 'hsl(var(--table-header-bg))',
-            borderColor: 'hsl(var(--table-border))'
-          }}
-        >
+    {topToolBar && <Box>{getTopToolBar(topToolBar)}</Box>}
+    <TableContainer component={Paper} sx={{ boxShadow: 'none', border: 'none' }}>
+      <MUITable sx={{ minWidth: 650 }} aria-label="table" {...getTableProps()}>
+        <TableHead sx={{ bgcolor: 'hsl(var(--table-header-bg))', borderBottom: '2px solid hsl(var(--table-border))' }}>
           {headerGroups.map(headerGroup => (
-            <tr {...headerGroup.getHeaderGroupProps()}>
+            <TableRow {...headerGroup.getHeaderGroupProps()}>
               {headerGroup.headers.map(column => (
-                <th 
-                  className="px-4 py-3 text-left text-sm font-semibold uppercase tracking-wider"
-                  style={{ color: 'hsl(var(--table-text))' }}
+                <TableCell 
+                  sx={{ 
+                    color: 'hsl(var(--table-text))', 
+                    fontWeight: 600,
+                    fontSize: '0.875rem',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.05em',
+                    py: 2
+                  }} 
                   {...column.getHeaderProps()}
                 >
                   {column.render('Header')}
-                </th>
+                </TableCell>
               ))}
-            </tr>
+            </TableRow>
           ))}
-        </thead>
-        <tbody {...getTableBodyProps()}>
+        </TableHead>
+        <TableBody {...getTableBodyProps()}>
           {data.length ? rows.map((row, i) => {
             prepareRow(row)
             return (
-              <tr 
-                className="cursor-pointer transition-colors duration-150 border-b"
+              <TableRow 
                 style={{ 
                   backgroundColor: row.isSelected ? 'hsl(var(--table-selected))' : 'white',
-                  borderColor: 'hsl(var(--table-border))'
-                }}
-                onMouseEnter={(e) => {
-                  if (!row.isSelected) {
-                    e.currentTarget.style.backgroundColor = 'hsl(var(--table-hover))';
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (!row.isSelected) {
-                    e.currentTarget.style.backgroundColor = 'white';
-                  }
+                  cursor: 'pointer',
+                  transition: 'background-color 150ms'
+                }} 
+                sx={{
+                  '&:hover': {
+                    bgcolor: row.isSelected ? 'hsl(var(--table-selected))' : 'hsl(var(--table-hover))'
+                  },
+                  borderBottom: '1px solid hsl(var(--table-border))'
                 }}
                 {...row.getRowProps()} 
                 onClick={(e) => selectRow(row)}
               >
                 {row.cells.map(cell => {
                   return (
-                    <td 
-                      className="px-4 py-3 text-sm"
-                      style={{ color: 'hsl(var(--table-text))' }}
+                    <TableCell 
+                      sx={{ 
+                        color: 'hsl(var(--table-text))',
+                        fontSize: '0.875rem',
+                        py: 2
+                      }} 
                       {...cell.getCellProps()}
                     >
                       {cell.render('Cell')}
-                    </td>
+                    </TableCell>
                   )
                 })}
-              </tr>
+              </TableRow>
             )
           }) : (
-            <tr key={'noDataRow'}>
-              <td 
+            <TableRow key={'noDataRow'}>
+              <TableCell 
                 key={'noData'} 
                 colSpan={headerGroups[0]?.headers.length || 1}
-                className="text-center py-8 text-sm"
-                style={{ color: 'hsl(var(--table-text-muted))' }}
+                sx={{ 
+                  textAlign: 'center', 
+                  color: 'hsl(var(--table-text-muted))',
+                  py: 8,
+                  fontSize: '0.875rem'
+                }}
               >
                 No tasks available
-              </td>
-            </tr>
+              </TableCell>
+            </TableRow>
           )}
-        </tbody>
-        </table>
-      </div>
+        </TableBody>
+        </MUITable>
+      </TableContainer>
       </>
   );
 }
+

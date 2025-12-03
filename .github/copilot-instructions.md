@@ -5,7 +5,7 @@
 P-Frog is an Nx monorepo with a React frontend (`apps/p-frog`), Express backend (`apps/api`), and shared library (`libs/data`). The backend uses MongoDB via Mongoose for persistence.
 
 ### Monorepo Structure
-- **apps/p-frog**: React 17 SPA with Material-UI v5, TanStack Query/Store, React Router v6, Tailwind CSS
+- **apps/p-frog**: React 17 SPA with Tailwind CSS v4, TanStack Query/Store, React Router v6
 - **apps/api**: Express REST API with JWT authentication
 - **libs/data**: Shared TypeScript interfaces used across frontend and backend
 - **db/**: Local MongoDB data directory (created by docker-compose, contains actual database files)
@@ -125,10 +125,6 @@ Routes defined in `apps/p-frog/src/app/app.tsx`:
 
 Page components are in `apps/p-frog/src/pages/*` and referenced via `@pages/index` barrel export.
 
-### Material-UI v5 Theming
-
-Theme defined in `apps/p-frog/src/theme.ts` as `lighThemeOptions`, wrapped in `createTheme()` and provided via `ThemeProvider` in `app.tsx`.
-
 ### Component Organization
 - Atomic components in `components/` (footer, header, form, table, loader, popup, etc.)
 - Page-specific components nested in `pages/*/components/` (e.g., `pages/tasks/components/tasks-list/`)
@@ -139,17 +135,23 @@ Theme defined in `apps/p-frog/src/theme.ts` as `lighThemeOptions`, wrapped in `c
 - Uses `react-hook-form` v7
 - Custom form fields: `FormTextField`, `FormDateField` in `@components/form/FormFields`
 - Validation rules in `apps/p-frog/src/data/constans/validators.ts` (imported as `Validators` from `@data/index`)
-
+### Forms
+- Uses `react-hook-form` v7
+- Custom Tailwind form components: `FormTextField`, `FormDateField`, `FormTextAreaField`, `RadioGroupField` in `@components/form/FormFields`
+- All form inputs styled with Tailwind and theme CSS variables
+- Validation rules in `apps/p-frog/src/data/constans/validators.ts` (imported as `Validators` from `@data/index`)
 ### Styling
-- **Tailwind CSS v3.4.0** - Primary styling system
-- Global styles and CSS variables in `src/globals.css`
-- Material-UI components still used alongside Tailwind
-- CSS custom properties for theming (see `globals.css` `:root` section)
-- Modern utility classes: `card`, `app-header`, `app-sidebar`, `nav-item`, etc.
+- **Tailwind CSS v4.1.17** - Primary and only styling system (Material-UI completely removed)
+- Global styles and CSS variables in `src/globals.css` using new v4 `@import "tailwindcss"` syntax
+- **No config files needed** - Tailwind v4 uses `@theme` directive in CSS instead of `tailwind.config.js`
+- Vite plugin: `@tailwindcss/vite` in `vite.config.ts`
+- **Hybrid styling approach**: 
+  - Tailwind classes for layout, spacing, sizing, typography (flex, gap, px-5, rounded-lg, hover:-translate-y-0.5)
+  - Inline styles with CSS variables for theme colors (backgroundColor: 'hsl(var(--button-create))')
+- Theme colors defined in `@theme` block and legacy `:root` for backward compatibility
+- Custom components: Header avatar, Popup/Dialog, Modal Popper, Table, Form fields - all built with Tailwind
+- **No Material-UI dependencies** - completely removed from project
 - **No SCSS modules** - all removed in favor of Tailwind
-
-## Nx-Specific Commands
-
 This project uses **Nx 13.4.3** (older version):
 
 - `nx serve [app]` - Dev server for app
@@ -175,3 +177,5 @@ Default generators configured in `nx.json`:
 7. **Circular dependencies**: Avoid importing page components directly in `MenuItems.tsx` - use `React.lazy()` instead
 8. **MongoDB auth**: Connection string must include `?authSource=admin` parameter
 9. **Nodemon**: Development server uses `nodemon` (v3.1.1) which must be installed in devDependencies
+10. **Tailwind v4**: No `tailwind.config.js` or `postcss.config.js` - configuration in CSS via `@theme` directive. Use `@tailwindcss/vite` plugin, not PostCSS
+11. **Theme colors**: Use hybrid approach - Tailwind for structure, inline styles for colors. Legacy CSS variables (--sidebar-bg: 0 0% 100%) kept for backward compatibility

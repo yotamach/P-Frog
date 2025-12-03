@@ -1,39 +1,47 @@
 import { menuItems } from "@data/constans/MenuItems";
-import { Footer, Header, Main, SideNav } from "@components/index";
+import { Footer, Header, SideNav } from "@components/index";
+import { Outlet } from 'react-router-dom';
 
 /* eslint-disable-next-line */
 export interface HomeProps {}
 
 export function Home(props: HomeProps) {
   return (
-    <div className="flex flex-col h-screen w-full" style={{ backgroundColor: 'hsl(var(--background))' }}>
-      {/* Header - Full Width */}
+    <div className="flex flex-col h-screen w-screen overflow-hidden">
+      {/* Header - fixed at top */}
       <Header />
 
-      {/* Main Layout - Sidebar + Content */}
-      <div className="flex flex-1 overflow-hidden">
-        {/* Sidebar Navigation */}
+      {/* Middle section with sidebar and main content */}
+      <div className="flex flex-row flex-1 overflow-hidden">
+        {/* Sidebar - 1/4 width on left */}
         <aside 
-          className="overflow-y-auto" 
-          style={{ 
-            width: 'var(--sidebar-width)', 
-            backgroundColor: 'hsl(var(--sidebar-bg))', 
-            borderRight: '1px solid hsl(var(--sidebar-border))'
+          className="w-1/4 flex-shrink-0 h-full border-r overflow-y-auto"
+          style={{
+            backgroundColor: 'hsl(var(--sidebar-bg))',
+            borderColor: 'hsl(var(--sidebar-border))'
           }}
         >
           <SideNav menuItems={menuItems} />
         </aside>
 
-        {/* Main Content Area */}
-        <main className="flex-1 overflow-auto p-8" style={{ backgroundColor: 'hsl(var(--secondary))' }}>
-          <Main />
+        {/* Main content - 3/4 width fills remaining space */}
+        <main 
+          className="w-3/4 flex-shrink-0 h-full overflow-auto p-8"
+          style={{
+            backgroundColor: 'hsl(var(--secondary))'
+          }}
+        >
+          <Outlet />
         </main>
       </div>
 
-      {/* Footer - Full Width */}
+      {/* Footer - fixed at bottom */}
       <footer 
-        className="flex items-center justify-center px-6 py-4 text-sm text-white" 
-        style={{ backgroundColor: 'hsl(var(--footer-bg))' }}
+        className="flex items-center justify-center flex-shrink-0 text-white text-sm"
+        style={{
+          height: 'var(--footer-height)',
+          backgroundColor: 'hsl(var(--footer-bg))'
+        }}
       >
         <Footer />
       </footer>

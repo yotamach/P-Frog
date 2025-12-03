@@ -3,11 +3,17 @@ import react from '@vitejs/plugin-react';
 import path from 'path';
 
 // https://vitejs.dev/config/
-export default defineConfig({
-  plugins: [react()],
-  root: path.resolve(__dirname, 'src'),
-  publicDir: path.resolve(__dirname, 'src/assets'),
-  resolve: {
+export default defineConfig(async () => {
+  const tailwindcss = await import('@tailwindcss/vite').then(m => m.default);
+  
+  return {
+    plugins: [react(), tailwindcss()],
+    root: path.resolve(__dirname, 'src'),
+    publicDir: path.resolve(__dirname, 'src/assets'),
+    optimizeDeps: {
+      include: ['react', 'react-dom', 'react-router-dom'],
+    },
+    resolve: {
     alias: {
       '@components': path.resolve(__dirname, 'src/components'),
       '@config': path.resolve(__dirname, 'src/config'),
@@ -35,4 +41,5 @@ export default defineConfig({
     outDir: path.resolve(__dirname, '../../dist/apps/p-frog'),
     emptyOutDir: true,
   },
+  };
 });
