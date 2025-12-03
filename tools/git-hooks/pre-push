@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Pre-push hook to validate branch name pattern: PF-{number}_{Letters}
+# Pre-push hook to validate branch name pattern: PF-{number}_{Description}
 
 # Get the current branch name
 BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)
@@ -10,23 +10,24 @@ if [ "$BRANCH_NAME" = "master" ]; then
     exit 0
 fi
 
-# Validate branch name pattern: PF-{number}_{Letters}
-if [[ ! "$BRANCH_NAME" =~ ^PF-[0-9]+_[A-Za-z]+$ ]]; then
+# Validate branch name pattern: PF-{number}_{Letters/Numbers/Underscores}
+if [[ ! "$BRANCH_NAME" =~ ^PF-[0-9]+_[A-Za-z0-9_]+$ ]]; then
     echo ""
     echo "❌ ERROR: Branch name '$BRANCH_NAME' does not match the required pattern"
     echo ""
-    echo "Branch naming convention: PF-{number}_{LettersOnly}"
+    echo "Branch naming convention: PF-{number}_{Description}"
     echo ""
     echo "Valid examples:"
     echo "  ✓ PF-123_FeatureName"
     echo "  ✓ PF-456_BugFix"
     echo "  ✓ PF-789_Update"
+    echo "  ✓ PF-4_Create_Home_Page"
+    echo "  ✓ PF-10_Update_API_v2"
     echo ""
     echo "Invalid examples:"
     echo "  ✗ feature/new-thing"
     echo "  ✗ PF-123"
-    echo "  ✗ PF-123_bug-fix (hyphens not allowed)"
-    echo "  ✗ PF-123_Feature_123 (numbers not allowed after underscore)"
+    echo "  ✗ PF-123_bug-fix (hyphens not allowed in description)"
     echo ""
     exit 1
 fi

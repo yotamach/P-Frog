@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Task } from '@types';
 import { TasksAPI } from '../services';
-import { useSnackbar } from 'notistack';
+import { useSnackbar } from '@components/notifications/snackbar-context';
 
 const tasksAPI = new TasksAPI();
 
