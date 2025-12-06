@@ -28,7 +28,7 @@ export function Home(props: HomeProps) {
         <main 
           className="w-3/4 flex-shrink-0 h-full overflow-auto p-8"
           style={{
-            backgroundColor: 'hsl(var(--secondary))'
+            backgroundColor: 'hsl(var(--table-selected))'
           }}
         >
           <Outlet />

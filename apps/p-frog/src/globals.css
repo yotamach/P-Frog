@@ -1,6 +1,8 @@
 @import "tailwindcss";
 
-@theme {
+/* Tailwind v4 theme configuration placeholder (enable once build tooling supports the @theme directive) */
+
+:root {
   /* Custom theme colors - White, Blue, Bordo scheme */
   --color-header-bg: hsl(345 85% 35%); /* bordo */
   --color-header-bg-end: hsl(345 85% 25%); /* dark bordo */
