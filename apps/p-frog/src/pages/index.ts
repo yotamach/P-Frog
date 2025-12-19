@@ -6,6 +6,7 @@ import Registration from './registeration/registration.component';
 import Home from './home/home.component';
 import { Welcome } from './welcome/welcome.component';
 import Login from './login/login.component';
+import NotFound from './not-found/not-found.component';
 export {
   Dashboard,
   Settings,
@@ -13,5 +14,6 @@ export {
   Registration,
   Home,
   Login,
-  Welcome
+  Welcome,
+  NotFound
 }
