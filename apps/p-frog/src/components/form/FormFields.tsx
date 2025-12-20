@@ -1,7 +1,7 @@
 import React from "react";
-import { Control, Controller } from "react-hook-form";
+import { Control, Controller, FieldValues, Path } from "react-hook-form";
 
-export const FormTextField: React.FC<FormTextFieldProps> = ({name, control, rules = {}, label, type = 'text'}) => {
+export const FormTextField = <T extends FieldValues>({name, control, rules = {}, label, type = 'text'}: FormTextFieldProps<T>) => {
 	return (<Controller
 		name={name}
 		control={control}
@@ -35,15 +35,15 @@ export const FormTextField: React.FC<FormTextFieldProps> = ({name, control, rule
 	);
 }
 
-interface FormTextFieldProps {
-	control: Control,
+interface FormTextFieldProps<T extends FieldValues = FieldValues> {
+	control: Control<T>,
 	rules?: any;
 	label: string;
-	name: string;
+	name: Path<T>;
 	type?: string;
 }
 
-export const FormDateField: React.FC<FormTextFieldProps> = ({name, control, rules = {}, label}) => {
+export const FormDateField = <T extends FieldValues>({name, control, rules = {}, label}: FormDateFieldProps<T>) => {
 	return (<Controller
 		name={name}
 		control={control}
@@ -54,7 +54,7 @@ export const FormDateField: React.FC<FormTextFieldProps> = ({name, control, rule
 				</label>
 				<input
 					type="date"
-					value={typeof value === 'string' ? value : value?.toISOString?.()?.split('T')[0] || ''}
+				value={typeof value === 'string' ? value : (value as any)?.toISOString?.()?.split('T')?.[0] || ''}
 					onChange={(e) => onChange(e.target.value)}
 					className={`w-full px-3 py-2 rounded-lg border transition-colors text-sm focus:outline-none focus:ring-2 ${
 						error 
@@ -77,7 +77,7 @@ export const FormDateField: React.FC<FormTextFieldProps> = ({name, control, rule
 	);
 }
 
-export const FormTextAreaField: React.FC<FormDateFieldProps> = ({name, control, rules = {}, label, type = 'text', rows = 3}) => {
+export const FormTextAreaField = <T extends FieldValues>({name, control, rules = {}, label, type = 'text', rows = 3}: FormDateFieldProps<T>) => {
 	return (<Controller
 		name={name}
 		control={control}
@@ -111,17 +111,17 @@ export const FormTextAreaField: React.FC<FormDateFieldProps> = ({name, control, 
 	);
 }
 
-interface FormDateFieldProps {
-	control: Control,
-	rules: any;
+interface FormDateFieldProps<T extends FieldValues = FieldValues> {
+	control: Control<T>,
+	rules?: any;
 	label: string;
-	name: string;
+	name: Path<T>;
 	type?: string;
 	multiline?: boolean;
 	rows?: number;
 }
 
-export const RadioGroupField: React.FC<RadioGroupFieldProps> = ({row = true, options = [], name, control, rules = {}}) => {
+export const RadioGroupField = <T extends FieldValues>({row = true, options = [], name, control, rules = {}}: RadioGroupFieldProps<T>) => {
 	return (<Controller
 		name={name}
 		control={control}
@@ -130,7 +130,7 @@ export const RadioGroupField: React.FC<RadioGroupFieldProps> = ({row = true, opt
 				<div className={`flex ${row ? 'flex-row gap-6' : 'flex-col gap-3'}`}>
 					{options.map(({label, value: optionValue}, index) => (
 						<label
-							key={name + index}
+						key={`${name}-${index}`}
 							className="flex flex-col-reverse items-center gap-2 cursor-pointer"
 						>
 							<span className="text-sm font-medium" style={{ color: 'hsl(var(--foreground))' }}>
@@ -157,11 +157,11 @@ export const RadioGroupField: React.FC<RadioGroupFieldProps> = ({row = true, opt
 	);
 }
 
-interface RadioGroupFieldProps {
-	control: Control,
-	rules: any;
+interface RadioGroupFieldProps<T extends FieldValues = FieldValues> {
+	control: Control<T>,
+	rules?: any;
 	label: string;
-	name: string;
+	name: Path<T>;
 	options: any[];
-	row: boolean;
+	row?: boolean;
 }

@@ -28,6 +28,7 @@ export default defineConfig({
       '@state': path.resolve(__dirname, 'src/state'),
       '@types': path.resolve(__dirname, 'src/types'),
       '@pages': path.resolve(__dirname, 'src/pages'),
+      '@p-frog/data': path.resolve(__dirname, '../../libs/data/index.ts'),
     },
   },
   server: {
