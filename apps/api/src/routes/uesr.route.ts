@@ -2,8 +2,8 @@ import { Request, Response, Router } from "express";
 import { UserModel } from '../models/user.model';
 import { Logger } from "tslog";
 import {AppRouter} from "@models";
-import {UserService} from "src/services";
-import { auth } from "src/middleware/authentication";
+import {UserService} from "@controllers";
+import { auth } from "../middleware/authentication";
 
 const log: Logger = new Logger();
 const userRouter: Router = Router();

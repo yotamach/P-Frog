@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useAuth } from '@hooks/use-auth/use-auth';
+import { FrogLogo, UserIcon } from '../../assets/icons';
 
 const Header = ({ title = undefined }: { title?: string | undefined }) => {
   const { user, isAuth } = useAuth();
@@ -14,7 +15,7 @@ const Header = ({ title = undefined }: { title?: string | undefined }) => {
 
   return (
     <header 
-      className="flex flex-row items-center justify-between flex-shrink-0 w-full px-8 shadow-lg"
+      className="flex flex-row items-center justify-between shrink-0 w-full px-8 shadow-lg"
       style={{
         height: 'var(--header-height)',
         background: 'linear-gradient(135deg, hsl(var(--header-bg)), hsl(var(--header-bg-end)))'
@@ -22,46 +23,8 @@ const Header = ({ title = undefined }: { title?: string | undefined }) => {
     >
       {/* Left side - Logo and Title */}
       <div className="flex flex-row items-center gap-4">
-        <svg 
-          width="48" 
-          height="48" 
-          viewBox="0 0 48 48" 
-          fill="none" 
-          xmlns="http://www.w3.org/2000/svg"
-          className="flex-shrink-0 transition-all hover:scale-110 hover:rotate-6 drop-shadow-lg"
-        >
-          {/* Circle background */}
-          <circle 
-            cx="24" 
-            cy="24" 
-            r="22" 
-            fill="rgba(255, 255, 255, 0.2)" 
-            stroke="rgba(255, 255, 255, 0.4)" 
-            strokeWidth="2"
-          />
-          {/* Frog body */}
-          <ellipse cx="24" cy="26" rx="10" ry="8" fill="white" opacity="0.9"/>
-          {/* Eyes */}
-          <circle cx="20" cy="20" r="4" fill="white" opacity="0.95"/>
-          <circle cx="28" cy="20" r="4" fill="white" opacity="0.95"/>
-          <circle cx="20" cy="20" r="2" fill="rgba(0,0,0,0.8)"/>
-          <circle cx="28" cy="20" r="2" fill="rgba(0,0,0,0.8)"/>
-          {/* Eye highlights */}
-          <circle cx="20.5" cy="19.5" r="1" fill="white"/>
-          <circle cx="28.5" cy="19.5" r="1" fill="white"/>
-          {/* Smile */}
-          <path 
-            d="M 20 30 Q 24 32 28 30" 
-            stroke="rgba(0,0,0,0.6)" 
-            strokeWidth="1.5" 
-            strokeLinecap="round" 
-            fill="none"
-          />
-          {/* Front legs */}
-          <ellipse cx="18" cy="32" rx="3" ry="2" fill="white" opacity="0.8"/>
-          <ellipse cx="30" cy="32" rx="3" ry="2" fill="white" opacity="0.8"/>
-        </svg>
-        <div className="flex flex-row flex-shrink-0 items-center gap-2 px-2">
+        <FrogLogo className="shrink-0 transition-all hover:scale-110 hover:rotate-6 drop-shadow-lg" />
+        <div className="flex flex-row shrink-0 items-center gap-2 px-2">
           <span className="text-4xl font-black text-white tracking-tighter leading-none whitespace-nowrap">
             {title || 'P-Frog'}
           </span>
@@ -72,7 +35,7 @@ const Header = ({ title = undefined }: { title?: string | undefined }) => {
       </div>
 
       {/* Right side - User Avatar */}
-      <div className="flex flex-row items-center gap-3 flex-shrink-0">
+      <div className="flex flex-row items-center gap-3 shrink-0">
         {isAuth && user && (
           <>
             <div className="hidden md:flex flex-col items-end">
@@ -102,9 +65,7 @@ const Header = ({ title = undefined }: { title?: string | undefined }) => {
               borderColor: 'rgba(255, 255, 255, 0.5)'
             }}
           >
-            <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
-            </svg>
+            <UserIcon />
           </div>
         )}
       </div>

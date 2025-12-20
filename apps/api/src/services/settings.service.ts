@@ -1,14 +1,13 @@
 import { Logger} from "tslog";
 import {SettingsModel } from "@models";
 import { CallbackError } from "mongoose";
-import { Dict } from '@p-frog/data';
 import { ISettings, Settings } from "@schemas";
 
 const log: Logger = new Logger();
 
 export class SettingsService {
 
-  getSettingsByParams(params: Dict, callback: (err: CallbackError, settings: ISettings) => void) {
+  getSettingsByParams(params: any, callback: (err: CallbackError, settings: ISettings) => void) {
     log.info(`SettingsService.getSettingsByParams: find settings`);
     return Settings.find(params, callback)
   }

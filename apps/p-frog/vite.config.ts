@@ -1,19 +1,22 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import tailwindcss from '@tailwindcss/vite';
+import svgr from '@svgr/rollup';
 import path from 'path';
 
 // https://vitejs.dev/config/
-export default defineConfig(async () => {
-  const tailwindcss = await import('@tailwindcss/vite').then(m => m.default);
-  
-  return {
-    plugins: [react(), tailwindcss()],
-    root: path.resolve(__dirname, 'src'),
-    publicDir: path.resolve(__dirname, 'src/assets'),
-    optimizeDeps: {
-      include: ['react', 'react-dom', 'react-router-dom'],
-    },
-    resolve: {
+export default defineConfig({
+  plugins: [
+    svgr({ exportType: 'named', namedExport: 'ReactComponent', icon: true }),
+    react(),
+    tailwindcss(),
+  ],
+  root: __dirname,
+  publicDir: 'public',
+  optimizeDeps: {
+    include: ['react', 'react-dom', 'react-router-dom'],
+  },
+  resolve: {
     alias: {
       '@components': path.resolve(__dirname, 'src/components'),
       '@config': path.resolve(__dirname, 'src/config'),
@@ -25,7 +28,6 @@ export default defineConfig(async () => {
       '@state': path.resolve(__dirname, 'src/state'),
       '@types': path.resolve(__dirname, 'src/types'),
       '@pages': path.resolve(__dirname, 'src/pages'),
-      '@p-frog/data': path.resolve(__dirname, '../../libs/data/src'),
     },
   },
   server: {
@@ -41,5 +43,4 @@ export default defineConfig(async () => {
     outDir: path.resolve(__dirname, '../../dist/apps/p-frog'),
     emptyOutDir: true,
   },
-  };
 });

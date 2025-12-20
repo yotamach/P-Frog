@@ -5,7 +5,6 @@ import {
   Schema
 } from 'mongoose';
 import { UserModel } from '@models';
-import { GenericDict } from '@p-frog/data';
 
 export interface IUser extends Document, UserModel {};
 
@@ -33,4 +32,4 @@ const UserSchema: Schema = new Schema({
   token: { type: String },
 });
 
-export const User: Model<any, GenericDict, GenericDict, GenericDict> = model('User', UserSchema);
+export const User: Model<any, any, any, any> = model('User', UserSchema);

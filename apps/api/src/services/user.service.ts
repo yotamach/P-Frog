@@ -2,7 +2,8 @@ import {Logger} from "tslog";
 import {UserModel} from "@models";
 import { IUser, User } from "@schemas";
 import { MongooseError } from "mongoose";
-import { Dict } from '@p-frog/data';
+
+type UserQueryParams = Record<string, unknown>;
 
 const log: Logger = new Logger();
 
@@ -13,7 +14,7 @@ export class UserService {
     return User.find(callback);
   }
 
-  getUserByParams(params: Dict, callback: (err: MongooseError, user: IUser) => void) {
+  getUserByParams(params: UserQueryParams, callback: (err: MongooseError, user: IUser) => void) {
     log.info(`UserService.getUserByParams: user fetched! params:${params}`);
     return User.find(params, callback)
   }
