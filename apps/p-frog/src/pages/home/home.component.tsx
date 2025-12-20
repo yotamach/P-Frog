@@ -1,5 +1,5 @@
 import { menuItems } from "@data/constans/MenuItems";
-import { Footer, Header, SideNav } from "@components/index";
+import { Footer, Header, SideNav, PageTransition } from "@components/index";
 import { Outlet } from 'react-router-dom';
 
 /* eslint-disable-next-line */
@@ -31,7 +31,9 @@ export function Home(props: HomeProps) {
             backgroundColor: 'hsl(var(--table-selected))'
           }}
         >
-          <Outlet />
+          <PageTransition>
+            <Outlet />
+          </PageTransition>
         </main>
       </div>
 

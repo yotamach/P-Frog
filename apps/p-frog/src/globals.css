@@ -179,6 +179,20 @@
   }
 }
 
+/* Page transition animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.page-fade-in {
+  animation: fadeIn 0.2s ease-in;
+}
+
 /* Scrollbar styling */
 ::-webkit-scrollbar {
   width: 8px;
