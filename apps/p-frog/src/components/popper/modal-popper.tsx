@@ -70,7 +70,7 @@ export function ModalPopper({ title, component, placement, open, anchorEl }: Pop
   return (
     <div
       ref={popperRef}
-      className="fixed z-[10000] transition-opacity duration-350"
+      className="fixed z-10000 transition-opacity duration-350"
       style={{ opacity: open ? 1 : 0 }}
     >
       <div 

@@ -1,12 +1,11 @@
 import express from "express";
-import {BASE_API} from "./config/config";
 import { AppRouter } from "@models";
 import { connect, set } from "mongoose";
 import { Logger } from "tslog";
-import { Port } from "@p-frog/data";
 import cors from 'cors';
 import cookieParser  from 'cookie-parser'
 import expressSession from 'express-session'
+import { BASE_API } from "./config/config";
 
 const log: Logger = new Logger({
   name: 'P-Frog API',
@@ -21,10 +20,10 @@ set('strictQuery', false);
 
 export class App {
   private readonly host: string;
-  private readonly port: Port;
+  private readonly port: number;
   private app = express();
 
-  constructor(host: string, port: Port) {
+  constructor(host: string, port: number) {
     this.host = host;
     this.port = port;
   }

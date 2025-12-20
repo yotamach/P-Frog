@@ -4,6 +4,10 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { SnackbarProvider } from '@components/notifications/snackbar-context';
 import { Home, Login, Registration, Welcome, NotFound } from '@pages/index';
 import { lazy, Suspense } from 'react';
+import { Dict } from '@p-frog/data';
+
+const bob: Dict = {};
+console.log(bob);
 
 const Dashboard = lazy(() => import('@pages/dashboard/dashboard.component'));
 const Settings = lazy(() => import('@pages/settings/settings.component'));

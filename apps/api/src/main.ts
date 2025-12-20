@@ -1,6 +1,7 @@
-import {App} from "./App";
+
 import {settingsRoutes, taskRoutes, userRoutes, authRoutes} from './routes/index';
 import './config/config'
+import { App } from './App';
 
 const { SERVER_HOST, SERVER_PORT, DB_HOST, DB_PORT, DB_SCHEMA, DB_USERNAME, DB_PASSWORD } = process.env;
 

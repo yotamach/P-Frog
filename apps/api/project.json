@@ -4,8 +4,9 @@
   "projectType": "application",
   "targets": {
     "build": {
-      "executor": "@nx/node:build",
+      "executor": "@nx/js:tsc",
       "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
       "options": {
         "outputPath": "dist/apps/api",
         "main": "apps/api/src/main.ts",
@@ -14,22 +15,29 @@
       },
       "configurations": {
         "production": {
-          "optimization": true,
-          "extractLicenses": true,
-          "inspect": false,
-          "fileReplacements": [
-            {
-              "replace": "apps/api/src/environments/environment.ts",
-              "with": "apps/api/src/environments/environment.prod.ts"
-            }
-          ]
+          "generatePackageJson": true
+        },
+        "development": {
+          "generatePackageJson": false
         }
       }
     },
     "serve": {
-      "executor": "@nx/js:node",
+      "executor": "nx:run-commands",
+      "defaultConfiguration": "development",
       "options": {
-        "buildTarget": "api:build"
+        "command": "npx nodemon",
+        "cwd": "{workspaceRoot}"
+      },
+      "configurations": {
+        "production": {
+          "command": "env-cmd --file ./apps/api/.env.production node dist/apps/api/main.js",
+          "cwd": "{workspaceRoot}"
+        },
+        "development": {
+          "command": "npx nodemon",
+          "cwd": "{workspaceRoot}"
+        }
       }
     },
     "lint": {
@@ -43,7 +51,7 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/apps/api"],
       "options": {
-        "jestConfig": "apps/api/jest.config.js",
+        "jestConfig": "apps/api/jest.config.cjs",
         "passWithNoTests": true
       }
     }

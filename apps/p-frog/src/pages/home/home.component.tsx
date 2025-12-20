@@ -15,7 +15,7 @@ export function Home(props: HomeProps) {
       <div className="flex flex-row flex-1 overflow-hidden">
         {/* Sidebar - 1/4 width on left */}
         <aside 
-          className="w-1/4 flex-shrink-0 h-full border-r overflow-y-auto"
+          className="w-1/4 shrink-0 h-full border-r overflow-y-auto"
           style={{
             backgroundColor: 'hsl(var(--sidebar-bg))',
             borderColor: 'hsl(var(--sidebar-border))'
@@ -26,7 +26,7 @@ export function Home(props: HomeProps) {
 
         {/* Main content - 3/4 width fills remaining space */}
         <main 
-          className="w-3/4 flex-shrink-0 h-full overflow-auto p-8"
+          className="w-3/4 shrink-0 h-full overflow-auto p-8"
           style={{
             backgroundColor: 'hsl(var(--table-selected))'
           }}
@@ -37,7 +37,7 @@ export function Home(props: HomeProps) {
 
       {/* Footer - fixed at bottom */}
       <footer 
-        className="flex items-center justify-center flex-shrink-0 text-white text-sm"
+        className="flex items-center justify-center shrink-0 text-white text-sm"
         style={{
           height: 'var(--footer-height)',
           backgroundColor: 'hsl(var(--footer-bg))'

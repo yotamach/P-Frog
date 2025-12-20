@@ -25,13 +25,13 @@ const SideNav: React.FC<{ title?: string, menuItems: NavMenuItem[], color?: stri
       >
         <FontAwesomeIcon 
           icon={item.icon} 
-          className="w-5 h-5 flex-shrink-0 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-12"
+          className="w-5 h-5 shrink-0 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-12"
         />
         <span className="whitespace-nowrap transition-[letter-spacing] duration-300 group-hover:tracking-wide">
           {item.title}
         </span>
         {/* Animated background on hover */}
-        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full transition-transform duration-600 ease-out pointer-events-none -z-10 group-hover:translate-x-full" />
+        <div className="absolute inset-0 bg-linear-to-r from-transparent via-white/10 to-transparent -translate-x-full transition-transform duration-600 ease-out pointer-events-none -z-10 group-hover:translate-x-full" />
       </NavLink>
     ))
   }

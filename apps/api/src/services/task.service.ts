@@ -1,7 +1,6 @@
 import {Logger} from "tslog";
 import {TaskModel } from "@models";
 import { CallbackError } from "mongoose";
-import { Dict } from '@p-frog/data';
 import { ITask, Task } from "@schemas";
 
 const log: Logger = new Logger();
@@ -13,7 +12,7 @@ export class TaskService {
     return Task.find(callback);
   }
 
-  getTaskByParams(params: Dict, callback: (err: CallbackError, task: ITask) => void) {
+  getTaskByParams(params: any, callback: (err: CallbackError, task: ITask) => void) {
     log.info(`taskService.getTaskByParams: find task`);
     return Task.find(params, callback)
   }

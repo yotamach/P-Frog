@@ -6,11 +6,13 @@
     "types": ["node", "express"]
   },
   "ts-node": {
-    "transpileOnly": true,
     "compilerOptions": {
       "module": "commonjs"
-    }
+    },
+    "transpileOnly": true
   },
   "exclude": ["**/*.spec.ts", "**/*.test.ts"],
-  "include": ["**/*.ts"]
+  "include": [
+    "**/*.ts"
+  ]
 }

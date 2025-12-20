@@ -4,54 +4,34 @@
   "projectType": "application",
   "targets": {
     "build": {
-      "executor": "@nx/webpack:webpack",
+      "executor": "@nx/vite:build",
       "outputs": ["{options.outputPath}"],
       "defaultConfiguration": "production",
       "options": {
-        "compiler": "babel",
-        "target": "web",
         "outputPath": "dist/apps/p-frog",
-        "index": "apps/p-frog/src/index.html",
-        "baseHref": "/",
-        "main": "apps/p-frog/src/main.tsx",
-        "polyfills": "apps/p-frog/src/polyfills.ts",
-        "tsConfig": "apps/p-frog/tsconfig.app.json",
-        "assets": ["apps/p-frog/src/favicon.ico", "apps/p-frog/src/assets"],
-        "styles": ["apps/p-frog/src/styles.scss"],
-        "scripts": [],
-        "webpackConfig": "apps/p-frog/webpack.config.js",
-        "stylePreprocessorOptions": {
-          "includePaths": []
-        }
+        "configFile": "apps/p-frog/vite.config.ts"
       },
       "configurations": {
         "production": {
-          "fileReplacements": [
-            {
-              "replace": "apps/p-frog/src/environments/environment.ts",
-              "with": "apps/p-frog/src/environments/environment.prod.ts"
-            }
-          ],
-          "optimization": true,
-          "outputHashing": "all",
-          "sourceMap": false,
-          "namedChunks": false,
-          "extractLicenses": true,
-          "vendorChunk": false
+          "mode": "production"
+        },
+        "development": {
+          "mode": "development"
         }
       }
     },
     "serve": {
-      "executor": "@nx/webpack:dev-server",
+      "executor": "@nx/vite:dev-server",
+      "defaultConfiguration": "development",
       "options": {
-        "buildTarget": "p-frog:build",
-        "hmr": true,
-        "proxyConfig": "apps/p-frog/proxy.conf.json"
+        "buildTarget": "p-frog:build"
       },
       "configurations": {
+        "development": {
+          "buildTarget": "p-frog:build:development"
+        },
         "production": {
-          "buildTarget": "p-frog:build:production",
-          "hmr": false
+          "buildTarget": "p-frog:build:production"
         }
       }
     },
