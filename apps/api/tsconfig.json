@@ -15,7 +15,7 @@
       "@schemas": ["src/schemas/index.ts"],
       "@utils": ["src/utils/index.ts"],
       "@types": ["src/types/index.ts"],
-      "@p-frog/data": ["../../libs/data/src/index.ts"]
+      "@p-frog/data": ["../../libs/data/index.ts"]
     }
   },
   "references": [

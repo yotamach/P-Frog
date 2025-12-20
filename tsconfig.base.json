@@ -13,7 +13,10 @@
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
-    "paths": {}
+    "paths": {
+      "p-frog/shared": ["libs/data/index.ts"],
+      "@p-frog/data": ["libs/data/index.ts"]
+    }
   },
   "exclude": ["node_modules", "tmp"]
 }
