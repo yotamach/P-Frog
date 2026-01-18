@@ -2,24 +2,28 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { AuthAPI } from '../services';
 import { useSnackbar } from '@components/notifications/snackbar-context';
 import { setAuth, setAuthError, clearAuth } from '../store/authStore';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const authAPI = new AuthAPI();
 
 export const AUTH_QUERY_KEY = 'auth';
-
 interface LoginCredentials {
   userName: string;
   password: string;
 }
 
 interface SignUpData {
-  userName: string;
+  email: string;
   password: string;
-  name?: string;
+  firstName: string;
+  lastName: string;
+  userName: string;
 }
 
 // Login mutation
 export function useLogin() {
+  const navigate = useNavigate();
+  const location = useLocation();
   const { enqueueSnackbar } = useSnackbar();
 
   return useMutation({
@@ -33,11 +37,19 @@ export function useLogin() {
         const user = data.data;
         const token = user.token;
         
+        // Save to localStorage for persistence
+        localStorage.setItem('token', token);
+        localStorage.setItem('user', JSON.stringify(user));
+        
         // Store auth state
         setAuth(true, user, token);
         
         // Show success message
         enqueueSnackbar('Login successful!', { variant: 'success' });
+        
+        // Redirect to the page they were trying to access, or home
+        const from = (location.state as any)?.from?.pathname || '/home';
+        navigate(from, { replace: true });
       }
     },
     onError: (error: any) => {
@@ -50,6 +62,7 @@ export function useLogin() {
 
 // Sign up mutation
 export function useSignUp() {
+  const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
 
   return useMutation({
@@ -58,42 +71,44 @@ export function useSignUp() {
       return response.data;
     },
     onSuccess: (data) => {
-      // Store auth state
-      setAuth(true, data.user, data.token);
-      
-      // Show success message
-      enqueueSnackbar('Account created successfully!', { variant: 'success' });
+      if (data.success) {
+        enqueueSnackbar('Registration successful! Please log in.', { variant: 'success' });
+        navigate('/login');
+      } else {
+        const errorMessage = data.message || 'Registration failed';
+        enqueueSnackbar(errorMessage, { variant: 'error' });
+      }
     },
     onError: (error: any) => {
-      const errorMessage = error?.response?.data?.message || error?.message || 'Sign up failed';
-      setAuthError(errorMessage);
+      const errorMessage = error?.response?.data?.message || 'Registration failed. Please try again.';
       enqueueSnackbar(errorMessage, { variant: 'error' });
     },
   });
 }
 
-// Sign out mutation
+// Sign out/logout mutation
 export function useSignOut() {
+  const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
 
   return useMutation({
-    mutationFn: async (userId: string) => {
-      const response = await authAPI.signOut(userId);
-      return response.data;
+    mutationFn: async () => {
+      // Clear local storage
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      
+      // Clear auth store
+      clearAuth();
     },
     onSuccess: () => {
-      // Clear auth state
-      setAuth(false);
-      
-      // Show success message
       enqueueSnackbar('Logged out successfully', { variant: 'success' });
-    },
-    onError: (error: any) => {
-      const errorMessage = error?.response?.data?.message || error?.message || 'Logout failed';
-      enqueueSnackbar(errorMessage, { variant: 'error' });
+      navigate('/login');
     },
   });
 }
+
+// Alias for useSignOut to support both naming conventions
+export const useLogout = useSignOut;
 
 // Profile query to validate token
 export function useProfile(enabled = false) {
@@ -112,3 +127,26 @@ export function useProfile(enabled = false) {
     },
   });
 }
+
+// Initialize auth from localStorage
+export const initializeAuth = () => {
+  const token = localStorage.getItem('token');
+  const userStr = localStorage.getItem('user');
+  
+  if (token && userStr) {
+    try {
+      const user = JSON.parse(userStr);
+      setAuth(true, user, token);
+      return true;
+    } catch {
+      // Invalid stored data, clear it
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      clearAuth();
+      return false;
+    }
+  }
+  
+  clearAuth();
+  return false;
+};

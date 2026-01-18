@@ -10,7 +10,9 @@ interface User {
     id?: string;
     userName: string;
     password: string;
-    name?: string;
+    firstName: string;
+    lastName: string;
+    userName: string;
 }
 
 export class AuthAPI {
@@ -21,9 +23,7 @@ export class AuthAPI {
     }
 
     signUp(user: User): Promise<AxiosResponse> {
-        return request.post<AxiosResponse>(this.endPoint + 'signup', {
-            data: user
-        });
+        return request.post<AxiosResponse>(this.endPoint + 'signup', user);
     }
 
     signOut(id: string): Promise<AxiosResponse> {

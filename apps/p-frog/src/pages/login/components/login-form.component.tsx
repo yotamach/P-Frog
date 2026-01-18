@@ -3,7 +3,7 @@ import { Button } from '@components/ui/button';
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { useLogin } from '@data/queries/auth.queries';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 interface LoginFormValues {
     userName: string;
@@ -18,15 +18,10 @@ function LoginForm() {
         }
     });
 
-    const navigate = useNavigate();
     const { mutate: login, isPending } = useLogin();
 
     const onSubmit = handleSubmit((values) => {
-        login(values, {
-            onSuccess: () => {
-                navigate('/home');
-            }
-        });
+        login(values);
     });
 
     return (
@@ -41,7 +36,14 @@ function LoginForm() {
             </div>
 
             <div className="space-y-5">
-                <FormTextField control={control} name="userName" label="Username" rules={{ required: 'Username is required' }} />
+                <FormTextField 
+                    control={control} 
+                    name="userName" 
+                    label="Username" 
+                    rules={{ 
+                        required: 'Username is required'
+                    }} 
+                />
                 <FormTextField
                     control={control}
                     name="password"
@@ -59,6 +61,19 @@ function LoginForm() {
             >
                 {isPending ? 'Logging in...' : 'Log In'}
             </Button>
+
+            <div className="mt-6 text-center">
+                <p className="text-sm" style={{ color: 'hsl(var(--table-text-muted))' }}>
+                    Don't have an account?{' '}
+                    <Link 
+                        to="/registration" 
+                        className="font-semibold hover:underline"
+                        style={{ color: 'hsl(var(--sidebar-active))' }}
+                    >
+                        Sign up
+                    </Link>
+                </p>
+            </div>
         </form>
     );
 }

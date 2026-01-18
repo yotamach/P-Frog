@@ -15,10 +15,16 @@ export function useAuth(): UseAuth {
   const error = useStore(authStore, selectAuthError);
 
   const login = (user: any, token: string) => {
+    // Save to localStorage
+    localStorage.setItem('token', token);
+    localStorage.setItem('user', JSON.stringify(user));
     setAuth(true, user, token);
   };
 
   const logout = () => {
+    // Clear localStorage
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
     clearAuth();
   };
 

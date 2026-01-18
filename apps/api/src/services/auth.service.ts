@@ -51,10 +51,18 @@ export class AuthService {
         log.info(`AuthService.Login: user credentials! params:${JSON.stringify(params)}`);
         return { status: HttpStatus.NOT_FOUND, resBody: { success: false, data: "username or password missing!"} };
       }
-      // Validate if user exist in our database
-      const user = await User.findOne({ userName }).exec();
+      // Validate if user exist in our database - check both userName and email
+      const user = await User.findOne({ 
+        $or: [{ userName }, { email: userName }] 
+      }).exec();
+      
+      if (!user) {
+        log.info(`AuthService.Login: user not found for userName/email: ${userName}`);
+        return { status: HttpStatus.BAD_REQUEST, resBody: { success: false, data: "Invalid Credentials!"} };
+      }
+      
       const isMatch = await bcrypt.compare(password, user.password);
-      if (user && isMatch) {
+      if (isMatch) {
         // Create token
         const token = jwt.sign(
           { user_id: user._id, userName },
