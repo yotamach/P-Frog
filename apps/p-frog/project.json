@@ -1,7 +1,9 @@
 {
-  "root": "apps/p-frog",
+  "name": "p-frog",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/p-frog/src",
   "projectType": "application",
+  "tags": [],
   "targets": {
     "build": {
       "executor": "@nx/vite:build",
@@ -44,12 +46,11 @@
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": ["coverage/apps/p-frog"],
+      "outputs": ["{workspaceRoot}/coverage/apps/p-frog"],
       "options": {
         "jestConfig": "apps/p-frog/jest.config.js",
         "passWithNoTests": true
       }
     }
-  },
-  "tags": []
+  }
 }

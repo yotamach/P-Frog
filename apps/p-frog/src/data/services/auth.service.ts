@@ -1,6 +1,17 @@
 import { AxiosResponse } from "axios";
 import { request } from './index';
-import { AuthCredentials, User } from "@p-frog/data";
+
+interface AuthCredentials {
+    email: string;
+    password: string;
+}
+
+interface User {
+    id?: string;
+    email: string;
+    password: string;
+    name?: string;
+}
 
 export class AuthAPI {
     endPoint = 'auth/'

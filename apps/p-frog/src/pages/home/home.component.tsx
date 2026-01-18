@@ -26,7 +26,7 @@ export function Home(props: HomeProps) {
 
         {/* Main content - 3/4 width fills remaining space */}
         <main 
-          className="w-3/4 shrink-0 h-full overflow-auto p-8"
+          className="w-3/4 shrink-0 h-full overflow-auto p-8 relative"
           style={{
             backgroundColor: 'hsl(var(--table-selected))'
           }}

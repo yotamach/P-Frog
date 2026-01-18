@@ -1,7 +1,10 @@
 {
-  "root": "apps/p-frog-e2e",
+  "name": "p-frog-e2e",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/p-frog-e2e/src",
   "projectType": "application",
+  "tags": [],
+  "implicitDependencies": ["p-frog"],
   "targets": {
     "e2e": {
       "executor": "@nx/cypress:cypress",
@@ -22,7 +25,5 @@
         "lintFilePatterns": ["apps/p-frog-e2e/**/*.{js,ts}"]
       }
     }
-  },
-  "tags": [],
-  "implicitDependencies": ["p-frog"]
+  }
 }

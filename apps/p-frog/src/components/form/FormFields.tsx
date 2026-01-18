@@ -36,7 +36,7 @@ export const FormTextField: React.FC<FormTextFieldProps> = ({name, control, rule
 }
 
 interface FormTextFieldProps {
-	control: Control,
+	control: Control<any>,
 	rules?: any;
 	label: string;
 	name: string;
@@ -112,7 +112,7 @@ export const FormTextAreaField: React.FC<FormDateFieldProps> = ({name, control, 
 }
 
 interface FormDateFieldProps {
-	control: Control,
+	control: Control<any>,
 	rules: any;
 	label: string;
 	name: string;
@@ -158,7 +158,7 @@ export const RadioGroupField: React.FC<RadioGroupFieldProps> = ({row = true, opt
 }
 
 interface RadioGroupFieldProps {
-	control: Control,
+	control: Control<any>,
 	rules: any;
 	label: string;
 	name: string;

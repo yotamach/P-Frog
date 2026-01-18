@@ -1,150 +1,121 @@
-import { ReactElement } from 'react';
-import { useTable, Column, useRowSelect, Row } from 'react-table';
-import React from 'react';
+import * as React from "react"
 
-export interface ColumnProps {
-  title: string;
-  align: 'left' | 'right' | 'center';
-  field: string;
-};
+import { cn } from "../../lib/utils"
 
-interface CellProps {
-  column: string;
-  value: any;
-};
+const Table = React.forwardRef<
+  HTMLTableElement,
+  React.HTMLAttributes<HTMLTableElement>
+>(({ className, ...props }, ref) => (
+  <div className="relative w-full overflow-auto">
+    <table
+      ref={ref}
+      className={cn("w-full caption-bottom text-sm", className)}
+      {...props}
+    />
+  </div>
+))
+Table.displayName = "Table"
 
-export interface TopToolBarItem {
-  icon: ReactElement;
-  label: string; 
-  disabled?: boolean;
-  click: (event: React.MouseEvent<HTMLButtonElement>, selectedRows: Row<object>[]) => void;
+const TableHeader = React.forwardRef<
+  HTMLTableSectionElement,
+  React.HTMLAttributes<HTMLTableSectionElement>
+>(({ className, ...props }, ref) => (
+  <thead ref={ref} className={cn("[&_tr]:border-b", className)} {...props} />
+))
+TableHeader.displayName = "TableHeader"
+
+const TableBody = React.forwardRef<
+  HTMLTableSectionElement,
+  React.HTMLAttributes<HTMLTableSectionElement>
+>(({ className, ...props }, ref) => (
+  <tbody
+    ref={ref}
+    className={cn("[&_tr:last-child]:border-0", className)}
+    {...props}
+  />
+))
+TableBody.displayName = "TableBody"
+
+const TableFooter = React.forwardRef<
+  HTMLTableSectionElement,
+  React.HTMLAttributes<HTMLTableSectionElement>
+>(({ className, ...props }, ref) => (
+  <tfoot
+    ref={ref}
+    className={cn(
+      "border-t bg-muted/50 font-medium [&>tr]:last:border-b-0",
+      className
+    )}
+    {...props}
+  />
+))
+TableFooter.displayName = "TableFooter"
+
+const TableRow = React.forwardRef<
+  HTMLTableRowElement,
+  React.HTMLAttributes<HTMLTableRowElement>
+>(({ className, ...props }, ref) => (
+  <tr
+    ref={ref}
+    className={cn(
+      "border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted",
+      className
+    )}
+    {...props}
+  />
+))
+TableRow.displayName = "TableRow"
+
+const TableHead = React.forwardRef<
+  HTMLTableCellElement,
+  React.ThHTMLAttributes<HTMLTableCellElement>
+>(({ className, ...props }, ref) => (
+  <th
+    ref={ref}
+    className={cn(
+      "h-10 px-2 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
+      className
+    )}
+    {...props}
+  />
+))
+TableHead.displayName = "TableHead"
+
+const TableCell = React.forwardRef<
+  HTMLTableCellElement,
+  React.TdHTMLAttributes<HTMLTableCellElement>
+>(({ className, ...props }, ref) => (
+  <td
+    ref={ref}
+    className={cn(
+      "p-2 align-middle [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
+      className
+    )}
+    {...props}
+  />
+))
+TableCell.displayName = "TableCell"
+
+const TableCaption = React.forwardRef<
+  HTMLTableCaptionElement,
+  React.HTMLAttributes<HTMLTableCaptionElement>
+>(({ className, ...props }, ref) => (
+  <caption
+    ref={ref}
+    className={cn("mt-4 text-sm text-muted-foreground", className)}
+    {...props}
+  />
+))
+TableCaption.displayName = "TableCaption"
+
+export {
+  Table,
+  TableHeader,
+  TableBody,
+  TableFooter,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableCaption,
 }
 
-interface TableProps {
-  columns: Column<any>[];
-  data: any[];
-  topToolBar?: TopToolBarItem[];
-  onSelectRow: (row: Row<object> | null) => void;
-}
-
-export default function Table({ topToolBar, columns, data, onSelectRow }: TableProps) {
-
-  const {
-    getTableProps,
-    getTableBodyProps,
-    headerGroups,
-    rows,
-    selectedFlatRows,
-    toggleAllRowsSelected,
-    prepareRow,
-  } = useTable(
-    {
-      columns,
-      data,
-    },
-    useRowSelect,
-  )
-
-  const selectRow = (row: Row<object>) => {
-      const selected = row.isSelected;
-      toggleAllRowsSelected(false);
-      row.toggleRowSelected(!selected);
-      onSelectRow(!selected ? row : null);
-  }
-
-  function getTopToolBar(topToolBar: TopToolBarItem[]) {
-    const buttonsLists = topToolBar.map((button) => (
-        <button 
-          key={button.label} 
-          onClick={(event) => button.click(event, selectedFlatRows)} 
-          aria-label={button.label}
-          disabled={button.disabled}
-          className="p-3 rounded-lg hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-        >
-          {button.icon}
-        </button>));
-    return <div className="flex gap-2 p-2 bg-white rounded-lg shadow-sm border" style={{ borderColor: 'hsl(var(--border))' }}>
-        {buttonsLists}
-    </div>
-  }
-
-  return (
-    <>
-    {topToolBar && <div className="mb-4">{getTopToolBar(topToolBar)}</div>}
-    <div className="overflow-x-auto">
-      <table className="min-w-full" aria-label="table" {...getTableProps()}>
-        <thead 
-          className="border-b-2"
-          style={{ 
-            backgroundColor: 'hsl(var(--table-header-bg))',
-            borderColor: 'hsl(var(--table-border))'
-          }}
-        >
-          {headerGroups.map(headerGroup => (
-            <tr {...headerGroup.getHeaderGroupProps()}>
-              {headerGroup.headers.map(column => (
-                <th 
-                  className="px-4 py-3 text-left text-sm font-semibold uppercase tracking-wider"
-                  style={{ color: 'hsl(var(--table-text))' }}
-                  {...column.getHeaderProps()}
-                >
-                  {column.render('Header')}
-                </th>
-              ))}
-            </tr>
-          ))}
-        </thead>
-        <tbody {...getTableBodyProps()}>
-          {data.length ? rows.map((row, i) => {
-            prepareRow(row)
-            return (
-              <tr 
-                className="cursor-pointer transition-colors duration-150 border-b"
-                style={{ 
-                  backgroundColor: row.isSelected ? 'hsl(var(--table-selected))' : 'white',
-                  borderColor: 'hsl(var(--table-border))'
-                }}
-                onMouseEnter={(e) => {
-                  if (!row.isSelected) {
-                    e.currentTarget.style.backgroundColor = 'hsl(var(--table-hover))';
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (!row.isSelected) {
-                    e.currentTarget.style.backgroundColor = 'white';
-                  }
-                }}
-                {...row.getRowProps()} 
-                onClick={(e) => selectRow(row)}
-              >
-                {row.cells.map(cell => {
-                  return (
-                    <td 
-                      className="px-4 py-3 text-sm"
-                      style={{ color: 'hsl(var(--table-text))' }}
-                      {...cell.getCellProps()}
-                    >
-                      {cell.render('Cell')}
-                    </td>
-                  )
-                })}
-              </tr>
-            )
-          }) : (
-            <tr key={'noDataRow'}>
-              <td 
-                key={'noData'} 
-                colSpan={headerGroups[0]?.headers.length || 1}
-                className="text-center py-8 text-sm"
-                style={{ color: 'hsl(var(--table-text-muted))' }}
-              >
-                No tasks available
-              </td>
-            </tr>
-          )}
-        </tbody>
-        </table>
-      </div>
-      </>
-  );
-}

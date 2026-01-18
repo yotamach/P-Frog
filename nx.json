@@ -2,7 +2,6 @@
   "extends": "nx/presets/npm.json",
   "defaultBase": "main",
   "plugins": [],
-  "plugins": [],
   "targetDefaults": {
     "build": {
       "dependsOn": ["^build"],

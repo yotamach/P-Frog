@@ -1,252 +1,273 @@
-import React, { useState } from 'react';
-import { useTask,usePopper,useDialog } from '@hooks/index';
-import { Loader, ModalPopper, Popup, Table } from '@components/index';
-import { TopToolBarItem } from '@components/table/table';
-import { useForm } from 'react-hook-form';
-import { FormDateField, FormTextField } from '@components/form/FormFields';
-import { Control } from 'react-hook-form';
+import * as React from 'react';
+import { useTasks, useCreateTask, useUpdateTask, useDeleteTask } from '@data/queries/tasks.queries';
+import {
+  Table,
+  Button,
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  TopBarTable,
+} from '@components/index';
+import { useReactTable, getCoreRowModel, flexRender, ColumnDef } from '@tanstack/react-table';
 import { Task } from '@types';
-import { ActionButton } from '@components/popup/popup';
+import { useForm } from 'react-hook-form';
+import { FormTextField, FormDateField } from '@components/form/FormFields';
 import { Validators } from '@data/index';
-import { Row } from 'react-table';
 
-export interface TasksListProps {
-  prop?: string;
-}
 
-export function TasksList({ prop }: TasksListProps) {
-  const { control, handleSubmit, reset } = useForm();
-  const [ selectedRow, setSelectedRow ] = useState<Row<any> | null>(null);
-  const { tasksList, isLoading, removeTask, editTask, addTask } = useTask(); 
-  const { popper, open: openPopper, setOpen: setOpenPopper, setPopper } = usePopper();
-  const { setDialog, setOpen: setOpenDialog, dialog, open: openDialog } = useDialog();
-  const { component, anchorEl, title } = popper;
+const TasksList: React.FC = () => {
+  const { data: tasks, isLoading, isError } = useTasks();
+  const createTask = useCreateTask();
+  const updateTask = useUpdateTask();
+  const deleteTask = useDeleteTask();
+  const [open, setOpen] = React.useState(false);
+  const [editingTask, setEditingTask] = React.useState<Task | null>(null);
+  const [selectedTask, setSelectedTask] = React.useState<Task | null>(null);
+  const [searchValue, setSearchValue] = React.useState('');
+  const { control, handleSubmit, reset } = useForm<Task>();
 
-  const onAddTask = handleSubmit((data: any) => {
-    const task: Task = {
-      title: data.title,
-      description: data.description,
-      startDate: data.startDate.toString(),
-      endDate: data.endDate.toString()
-    };
-    addTask(task);
-    reset({});
-    setOpenPopper(false);
-    setSelectedRow(null);
-  });
-
-  const onUpdateTask = handleSubmit((data: any) => {
-    const task: Task = {
-      title: data.title,
-      description: data.description,
-      startDate: data.startDate.toString(),
-      endDate: data.endDate.toString()
-    };
-    editTask(selectedRow?.original?.id, task);
-    reset({});
-    setOpenPopper(false);
-    setSelectedRow(null);
-  });
-
-  const handleCreateClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setPopper({
-      component: TaskPoperContent({control, onSubmit: onAddTask, onCancel: () => setOpenPopper(false)}),
-      title: 'Create Task',
-      anchorEl: event.currentTarget
-    });
-    reset({});
-    setOpenPopper(true);
+  const handleEdit = (task: Task) => {
+    reset(task);
+    setEditingTask(task);
+    setOpen(true);
   };
 
-  const handleEditClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    if (!selectedRow) return;
-    setPopper({
-      component: TaskPoperContent({control, onSubmit: onUpdateTask, onCancel: () => setOpenPopper(false)}),
-      title: 'Edit Task',
-      anchorEl: event.currentTarget
-    });
-    reset({ ...selectedRow.values });
-    setOpenPopper(true);
+  const handleRowClick = (task: Task) => {
+    setSelectedTask(selectedTask?.id === task.id ? null : task);
   };
 
-  const handleDeleteClick = () => {
-    if (!selectedRow) return;
-    setDialog({ 
-      title: 'Delete Task', 
-      content: getDeletePopupContent(), 
-      data: selectedRow.original 
-    });
-    setOpenDialog(true);
+  const handleTopBarEdit = () => {
+    if (selectedTask) {
+      handleEdit(selectedTask);
+    }
   };
 
-
-  const getDeletePopupContent = () => (
-    <p className="text-[0.95rem] leading-relaxed" style={{ color: 'hsl(var(--table-text))' }}>
-      Are you sure you want to delete this task?
-    </p>
-  )
-
-  const getDeletePopupActionsButtons = (): ActionButton[] => ([
-    {
-      title: 'Delete',
-      onClick: () => {
-        removeTask(dialog.data.key);
-        setOpenDialog(false);
-        setSelectedRow(null);
-      }
-    },
-    {
-      title: 'Cancel',
-      onClick: () => {
-        setOpenDialog(false);
+  const handleDelete = () => {
+    if (selectedTask?.id) {
+      if (window.confirm('Are you sure you want to delete this task?')) {
+        deleteTask.mutate(String(selectedTask.id), {
+          onSuccess: () => {
+            setSelectedTask(null);
+          }
+        });
       }
     }
-  ])
+  };
 
-  const TaskPoperContent: React.FC<{ control: Control, onSubmit: any, onCancel: any, row?: Row<object> }> = ({ control, onSubmit, onCancel, row }) => {
-    const submit = (event: any) => {
-      event.preventDefault();
-      onSubmit(row);
-    };
+  const filteredTasks = React.useMemo(() => {
+    if (!tasks) return [];
+    if (!searchValue) return tasks;
+    
+    const search = searchValue.toLowerCase();
+    return tasks.filter(task => 
+      task.title?.toLowerCase().includes(search) ||
+      task.description?.toLowerCase().includes(search)
+    );
+  }, [tasks, searchValue]);
 
+  // Clear selection if selected task is no longer in filtered results
+  React.useEffect(() => {
+    if (selectedTask && filteredTasks.length > 0) {
+      const stillExists = filteredTasks.some(task => task.id === selectedTask.id);
+      if (!stillExists) {
+        setSelectedTask(null);
+      }
+    }
+  }, [filteredTasks, selectedTask]);
+
+  const columns: ColumnDef<Task, any>[] = [
+    {
+      accessorKey: 'title',
+      header: 'Title',
+      cell: (info) => info.getValue(),
+    },
+    {
+      accessorKey: 'description',
+      header: 'Description',
+      cell: (info) => info.getValue(),
+    },
+    {
+      accessorKey: 'startDate',
+      header: 'Start Date',
+      cell: (info) => {
+        const value = info.getValue() as string | undefined;
+        return value ? new Date(value).toLocaleDateString() : '-';
+      },
+    },
+    {
+      accessorKey: 'endDate',
+      header: 'End Date',
+      cell: (info) => {
+        const value = info.getValue() as string | undefined;
+        return value ? new Date(value).toLocaleDateString() : '-';
+      },
+    },
+  ];
+
+  const table = useReactTable<Task>({
+    data: filteredTasks || [],
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+  });
+
+  const onSubmit = (data: Task) => {
+    if (editingTask && editingTask.id) {
+      updateTask.mutate(
+        {
+          id: String(editingTask.id),
+          task: data
+        },
+        {
+          onSuccess: () => {
+            setOpen(false);
+            reset();
+            setEditingTask(null);
+          }
+        }
+      );
+    } else {
+      createTask.mutate(data, {
+        onSuccess: () => {
+          setOpen(false);
+          reset();
+          setEditingTask(null);
+        }
+      });
+    }
+  };
+
+  const handleCreate = () => {
+    reset({});
+    setEditingTask(null);
+    setSelectedTask(null);
+    setOpen(true);
+  };
+
+  if (isLoading) {
     return (
-      <div className="w-[400px]">
-        <form onSubmit={submit}>
-          <div className="grid grid-cols-2 gap-4 mb-6">
-            <div>
-              <FormTextField control={control} name={'title'} label='Title' rules={Validators.required} />
-            </div>
-            <div>
-              <FormTextField control={control} name={'description'} label='Description' rules={Validators.required} />
-            </div>
-            <div>
-              <FormDateField control={control} name={'startDate'} label='Start Date' rules={Validators.required} />
-            </div>
-            <div>
-              <FormDateField control={control} name={'endDate'} label='End Date' rules={Validators.required} />
-            </div>
-          </div>
-          <div className="flex justify-between gap-3">
-            <button 
-              type='submit'
-              className="px-6 py-2.5 text-white rounded-lg font-semibold text-sm border-none cursor-pointer transition-all duration-200"
-              style={{ backgroundColor: 'hsl(var(--button-create))' }}
-            >
-              OK
-            </button>
-            <button 
-              type='button' 
-              onClick={onCancel}
-              className="px-6 py-2.5 bg-white rounded-lg font-semibold text-sm cursor-pointer transition-all duration-200 border"
-              style={{ 
-                color: 'hsl(var(--sidebar-text))',
-                borderColor: 'hsl(var(--border))'
-              }}
-            >
-              Close
-            </button>
-          </div>
-        </form>
+      <div className="flex items-center justify-center py-8">
+        <p className="text-muted-foreground">Loading tasks...</p>
       </div>
     );
   }
 
-    const columns = React.useMemo(
-      () => [
-            {
-              Header: 'Title',
-              accessor: 'title',
-            },
-            {
-              Header: 'Description',
-              accessor: 'description',
-            },
-            {
-              Header: 'Start date',
-              accessor: 'startDate',
-            },
-            {
-              Header: 'End date',
-              accessor: 'endDate',
-            },
-          ],
-      []);
-
-
-  const onSelectRow = async (row: Row<object> | null) =>{
-    setSelectedRow(row);
+  if (isError) {
+    return (
+      <div className="flex items-center justify-center py-8">
+        <p className="text-destructive">Error loading tasks</p>
+      </div>
+    );
   }
 
   return (
-    <div className="flex flex-col gap-6">
-      {/* Action Buttons */}
-      <div className="flex gap-3 flex-wrap">
-        <button
-          onClick={handleCreateClick}
-          className="flex items-center gap-2 px-5 py-3 text-white rounded-[0.625rem] font-semibold text-sm border-none cursor-pointer transition-all duration-200 shadow-md hover:-translate-y-0.5 hover:shadow-lg"
-          style={{ backgroundColor: 'hsl(var(--button-create))' }}
-        >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <line x1="12" y1="5" x2="12" y2="19"></line>
-            <line x1="5" y1="12" x2="19" y2="12"></line>
-          </svg>
-          Create Task
-        </button>
-        <button
-          onClick={handleEditClick}
-          disabled={!selectedRow}
-          className={`flex items-center gap-2 px-5 py-3 text-white rounded-[0.625rem] font-semibold text-sm border-none transition-all duration-200 ${
-            selectedRow 
-              ? 'cursor-pointer shadow-md hover:-translate-y-0.5 hover:shadow-lg' 
-              : 'cursor-not-allowed opacity-50'
-          }`}
-          style={{ backgroundColor: selectedRow ? 'hsl(var(--button-edit))' : 'hsl(var(--button-disabled))' }}
-        >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-          </svg>
-          Edit Task
-        </button>
-        <button
-          onClick={handleDeleteClick}
-          disabled={!selectedRow}
-          className={`flex items-center gap-2 px-5 py-3 text-white rounded-[0.625rem] font-semibold text-sm border-none transition-all duration-200 ${
-            selectedRow 
-              ? 'cursor-pointer shadow-md hover:-translate-y-0.5 hover:shadow-lg' 
-              : 'cursor-not-allowed opacity-50'
-          }`}
-          style={{ backgroundColor: selectedRow ? 'hsl(var(--button-delete))' : 'hsl(var(--button-disabled))' }}
-        >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <polyline points="3 6 5 6 21 6"></polyline>
-            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-            <line x1="10" y1="11" x2="10" y2="17"></line>
-            <line x1="14" y1="11" x2="14" y2="17"></line>
-          </svg>
-          Delete Task
-        </button>
-      </div>
+    <div className="space-y-4">
+      <TopBarTable 
+        onCreateClick={handleCreate}
+        onEditClick={handleTopBarEdit}
+        onDeleteClick={handleDelete}
+        onSearchChange={setSearchValue}
+        searchValue={searchValue}
+        searchPlaceholder="Search tasks..."
+        hasSelection={!!selectedTask}
+        selectedItemTitle={selectedTask?.title}
+      />
+      
+      <Drawer open={open} onOpenChange={setOpen} direction="right">
+        <DrawerContent style={{ backgroundColor: 'hsl(var(--color-background))' }}>
+          <DrawerHeader style={{ borderBottom: '1px solid hsl(var(--color-border))' }}>
+            <DrawerTitle>{editingTask ? 'Edit Task' : 'Create New Task'}</DrawerTitle>
+            <DrawerDescription>
+              {editingTask ? 'Update task details below' : 'Fill in the details to create a new task'}
+            </DrawerDescription>
+          </DrawerHeader>
+          <div className="p-4">
+            <form id="task-form" onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+              <FormTextField 
+                control={control} 
+                name="title" 
+                label="Title" 
+                rules={Validators.required} 
+              />
+              <FormTextField 
+                control={control} 
+                name="description" 
+                label="Description" 
+                rules={Validators.required} 
+              />
+              <FormDateField 
+                control={control} 
+                name="startDate" 
+                label="Start Date" 
+                rules={Validators.required} 
+              />
+              <FormDateField 
+                control={control} 
+                name="endDate" 
+                label="End Date" 
+                rules={Validators.required} 
+              />
+            </form>
+          </div>
+          <DrawerFooter>
+            <Button type="submit" form="task-form">
+              {editingTask ? 'Update' : 'Create'}
+            </Button>
+            <DrawerClose asChild>
+              <Button variant="outline">Cancel</Button>
+            </DrawerClose>
+          </DrawerFooter>
+        </DrawerContent>
+      </Drawer>
 
-      {/* Tasks Table */}
-      <div className="bg-white rounded-xl overflow-hidden border shadow-sm" style={{ borderColor: 'hsl(var(--border))' }}>
-        <Loader visible={isLoading} />
-        <Popup 
-          open={openDialog} 
-          onClose={() => setOpenDialog(false)} 
-          title={'Delete Task'} 
-          content={getDeletePopupContent()} 
-          actionsButtons={getDeletePopupActionsButtons()} 
-        />
-        <ModalPopper 
-          placement={'bottom-start'} 
-          anchorEl={anchorEl} 
-          title={title} 
-          open={openPopper} 
-          component={component} 
-        />
-        <Table columns={columns} data={tasksList} onSelectRow={onSelectRow} />
+      <div className="rounded-lg border bg-card shadow-sm">
+      <Table.Table>
+        <Table.TableHeader>
+          {table.getHeaderGroups().map((headerGroup) => (
+            <Table.TableRow key={headerGroup.id}>
+              {headerGroup.headers.map((header) => (
+                <Table.TableHead key={header.id}>
+                  {flexRender(header.column.columnDef.header, header.getContext())}
+                </Table.TableHead>
+              ))}
+            </Table.TableRow>
+          ))}
+        </Table.TableHeader>
+        <Table.TableBody>
+          {table.getRowModel().rows.length > 0 ? (
+            table.getRowModel().rows.map((row) => (
+              <Table.TableRow 
+                key={row.id}
+                onClick={() => handleRowClick(row.original)}
+                className="cursor-pointer transition-colors hover:bg-muted/50"
+                style={{
+                  backgroundColor: selectedTask?.id === row.original.id 
+                    ? 'hsl(var(--color-accent))' 
+                    : undefined,
+                }}
+              >
+                {row.getVisibleCells().map((cell) => (
+                  <Table.TableCell key={cell.id}>
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </Table.TableCell>
+                ))}
+              </Table.TableRow>
+            ))
+          ) : (
+            <Table.TableRow>
+              <Table.TableCell colSpan={columns.length} className="text-center py-8 text-muted-foreground">
+                No tasks available
+              </Table.TableCell>
+            </Table.TableRow>
+          )}
+        </Table.TableBody>
+      </Table.Table>
       </div>
     </div>
   );
-}
+};
+
+export default TasksList;

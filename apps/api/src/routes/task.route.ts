@@ -22,20 +22,19 @@ taskRouter.post('/',async (req: Request, res: Response) => {
   }
 });
 
-taskRouter.patch('/:id', (req: Request, res: Response) => {
+taskRouter.patch('/:id', async (req: Request, res: Response) => {
   log.info(`Update task`);
-  const task: TaskModel = req.body;
-  const {id} = req.params;
-  log.info(id);
-  taskService.updateTask(task, id, (err, task) => {
-    if (err) {
-      res.send({ success: false, error: err});
-    }
-    else {
-      log.info(JSON.stringify(task));
-      res.send({ success: true, task});
-    }
-  });
+  try {
+    const task: TaskModel = req.body;
+    const {id} = req.params;
+    log.info(`patch: Updating task ${id} with data: ${JSON.stringify(task)}`);
+    const updatedTask = await taskService.updateTask(task, id);
+    log.info(`patch: Task updated successfully! ${JSON.stringify(updatedTask)}`);
+    res.send({ success: true, task: updatedTask });
+  } catch(e) {
+    log.error(`patch: Failed to update task - ${e}`);
+    res.status(500).send({ success: false, error: e });
+  }
 });
 
 taskRouter.get('/:id', (req: Request, res: Response) => {

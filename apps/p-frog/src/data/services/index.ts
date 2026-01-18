@@ -1,6 +1,16 @@
 import axios from 'axios';
 import { TasksAPI } from './tasks.service';
-const BASE_URL = `http://${import.meta.env.VITE_SERVER_HOST || 'localhost'}:${import.meta.env.VITE_SERVER_PORT || '3333'}/api/` 
+
+// Helper to safely access import.meta.env (works in both Vite and Jest)
+const getEnvVar = (key: string, defaultValue: string) => {
+  try {
+    return (import.meta.env as any)?.[key] || defaultValue;
+  } catch {
+    return defaultValue;
+  }
+};
+
+const BASE_URL = `http://${getEnvVar('VITE_SERVER_HOST', 'localhost')}:${getEnvVar('VITE_SERVER_PORT', '3333')}/api/`;
 
 export const request = axios.create({
     baseURL: BASE_URL,

@@ -22,9 +22,9 @@ export class TaskService {
     return Task.create(task);
   }
 
-  updateTask(task: TaskModel, id: string, callback: (err: CallbackError, task: ITask) => void) {
-    log.info(`taskService.updateTask: findOneAndUpdate task`);
-    return Task.findOneAndUpdate({ id },{...task},{new: true}, callback);
+  updateTask(task: TaskModel, id: string): Promise<ITask> {
+    log.info(`taskService.updateTask: findByIdAndUpdate task`);
+    return Task.findByIdAndUpdate(id, {...task}, {new: true});
   }
 
   deleteTask(id: string, callback: (err: CallbackError, task: ITask) => void) {
