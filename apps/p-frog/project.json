@@ -11,7 +11,7 @@
       "defaultConfiguration": "production",
       "options": {
         "outputPath": "dist/apps/p-frog",
-        "configFile": "apps/p-frog/vite.config.ts"
+        "configFile": "apps/p-frog/vite.config.mts"
       },
       "configurations": {
         "production": {

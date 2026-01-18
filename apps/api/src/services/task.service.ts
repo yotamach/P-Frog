@@ -24,7 +24,7 @@ export class TaskService {
 
   updateTask(task: TaskModel, id: string): Promise<ITask> {
     log.info(`taskService.updateTask: findByIdAndUpdate task`);
-    return Task.findByIdAndUpdate(id, {...task}, {new: true});
+    return Task.findByIdAndUpdate(id, {...task}, {new: true}).exec();
   }
 
   deleteTask(id: string, callback: (err: CallbackError, task: ITask) => void) {

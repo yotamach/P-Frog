@@ -3,6 +3,10 @@
   "version": "0.0.0",
   "license": "MIT",
   "type": "module",
+  "engines": {
+    "node": ">=20.19.0",
+    "yarn": ">=1.22.0"
+  },
   "scripts": {
     "start": "nx serve p-frog",
     "start:server-dev": "nx serve api",
@@ -123,7 +127,7 @@
     "react-test-renderer": "17.0.2",
     "supertest": "^7.1.4",
     "tailwindcss": "^4.0.0",
-    "ts-jest": "27.0.5",
+    "ts-jest": "^29.2.0",
     "typescript": "~5.9.2",
     "vite": "^7.0.0",
     "vite-plugin-dts": "~4.5.0",
