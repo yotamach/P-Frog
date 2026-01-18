@@ -16,8 +16,9 @@
       "@p-frog/data": ["../../libs/data/index.ts"]
     },
     "module": "ESNext",
-    "moduleResolution": "bundler",
+    "moduleResolution": "node",
     "jsx": "react-jsx",
+    "skipLibCheck": true,
     "allowJs": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
