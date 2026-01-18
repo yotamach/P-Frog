@@ -10,11 +10,12 @@
       "executor": "@nx/cypress:cypress",
       "options": {
         "cypressConfig": "apps/p-frog-e2e/cypress.config.ts",
-        "baseUrl": "http://localhost:4200"
+        "devServerTarget": "p-frog:serve",
+        "testingType": "e2e"
       },
       "configurations": {
         "production": {
-          "baseUrl": "http://localhost:4200"
+          "devServerTarget": "p-frog:serve:production"
         }
       }
     },
