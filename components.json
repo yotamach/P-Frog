@@ -1,0 +1,21 @@
+{
+  "$schema": "https://ui.shadcn.com/schema.json",
+  "style": "new-york",
+  "rsc": false,
+  "tsx": true,
+  "tailwind": {
+    "config": "apps/p-frog/tailwind.config.js",
+    "css": "apps/p-frog/src/globals.css",
+    "baseColor": "neutral",
+    "cssVariables": true,
+    "prefix": ""
+  },
+  "aliases": {
+    "components": "@components",
+    "utils": "apps/p-frog/src/lib/utils",
+    "ui": "@components/ui",
+    "lib": "apps/p-frog/src/lib",
+    "hooks": "@hooks"
+  },
+  "iconLibrary": "lucide"
+}

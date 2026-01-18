@@ -1,7 +1,9 @@
 {
-  "root": "apps/api",
+  "name": "api",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/api/src",
   "projectType": "application",
+  "tags": [],
   "targets": {
     "build": {
       "executor": "@nx/js:tsc",
@@ -55,6 +57,5 @@
         "passWithNoTests": true
       }
     }
-  },
-  "tags": []
+  }
 }

@@ -1,5 +1,4 @@
 import { Suspense } from 'react';
-import { SideNav } from '@components/index';
 import { tasksMenuItems } from '@data/constans/MenuItems';
 import { useTask } from '@hooks/index';
 import { useEffect } from 'react';
