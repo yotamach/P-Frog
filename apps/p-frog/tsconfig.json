@@ -13,7 +13,7 @@
       "@styles": ["./src/styles/base.scss"],
       "@utils/*": ["src/utils/*"],
       "@types": ["src/types/index.ts"],
-      "@p-frog/data": ["../../libs/data/src/index.ts"]
+      "@p-frog/data": ["../../libs/data/index.ts"]
     },
     "module": "ESNext",
     "moduleResolution": "bundler",

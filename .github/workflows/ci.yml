@@ -39,18 +39,42 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '20'
+          node-version: '22'
           cache: 'yarn'
 
       - name: Install dependencies
         run: yarn install --frozen-lockfile || yarn install
 
+      - name: Check for frontend changes
+        id: check-frontend
+        run: |
+          if [ "${{ github.event_name }}" == "push" ] && [ "${{ github.ref }}" == "refs/heads/master" ]; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          elif [ "${{ github.event_name }}" == "pull_request" ]; then
+            git fetch origin ${{ github.base_ref }}
+            CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD)
+            if echo "$CHANGED_FILES" | grep -qE '^apps/p-frog/|^libs/data/'; then
+              echo "changed=true" >> $GITHUB_OUTPUT
+            else
+              echo "changed=false" >> $GITHUB_OUTPUT
+            fi
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+
       - name: Build client
+        if: steps.check-frontend.outputs.changed == 'true'
         run: yarn build
+
+      - name: Skip client build
+        if: steps.check-frontend.outputs.changed == 'false'
+        run: echo "No frontend changes detected, skipping build"
 
   build-server:
     runs-on: ubuntu-latest
@@ -64,7 +88,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '20'
+          node-version: '22'
           cache: 'yarn'
 
       - name: Install dependencies
@@ -89,15 +113,14 @@ jobs:
 
       - name: Build server
         if: steps.check-backend.outputs.changed == 'true'
-        run: yarn tsc --project apps/api/tsconfig.app.json --noEmit
+        run: yarn build:server-dev
 
       - name: Skip server build
         if: steps.check-backend.outputs.changed == 'false'
         run: echo "No backend changes detected, skipping build"
 
-  # TEST JOBS (depend on builds)
+  # TEST JOBS
   server-unittests:
-    needs: [build-server]
     runs-on: ubuntu-latest
 
     steps:
@@ -109,7 +132,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '20'
+          node-version: '22'
           cache: 'yarn'
 
       - name: Install dependencies
@@ -141,7 +164,6 @@ jobs:
         run: echo "No server changes detected, skipping tests"
 
   e2e-tests:
-    needs: [build-client]
     runs-on: ubuntu-latest
 
     steps:
@@ -153,21 +175,21 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '20'
+          node-version: '22'
           cache: 'yarn'
 
       - name: Install dependencies
         run: yarn install --frozen-lockfile || yarn install
 
-      - name: Check for client changes
-        id: check-client
+      - name: Check for app changes
+        id: check-apps
         run: |
           if [ "${{ github.event_name }}" == "push" ] && [ "${{ github.ref }}" == "refs/heads/master" ]; then
             echo "changed=true" >> $GITHUB_OUTPUT
           elif [ "${{ github.event_name }}" == "pull_request" ]; then
             git fetch origin ${{ github.base_ref }}
             CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD)
-            if echo "$CHANGED_FILES" | grep -qE '^apps/p-frog/|^libs/'; then
+            if echo "$CHANGED_FILES" | grep -qE '^apps/p-frog/|^apps/api/|^libs/data/'; then
               echo "changed=true" >> $GITHUB_OUTPUT
             else
               echo "changed=false" >> $GITHUB_OUTPUT
@@ -177,27 +199,26 @@ jobs:
           fi
 
       - name: Start client in background
-        if: steps.check-client.outputs.changed == 'true'
+        if: steps.check-apps.outputs.changed == 'true'
         run: yarn start &
 
       - name: Wait for client to be ready
-        if: steps.check-client.outputs.changed == 'true'
+        if: steps.check-apps.outputs.changed == 'true'
         run: |
           echo "Waiting for client to start on http://localhost:4200..."
           timeout 120 bash -c 'until curl -s http://localhost:4200 > /dev/null; do sleep 2; done'
           echo "Client is ready!"
 
       - name: Run e2e tests
-        if: steps.check-client.outputs.changed == 'true'
+        if: steps.check-apps.outputs.changed == 'true'
         run: yarn nx run p-frog-e2e:e2e
 
       - name: Skip e2e tests
-        if: steps.check-client.outputs.changed == 'false'
-        run: echo "No client changes detected, skipping e2e tests"
+        if: steps.check-apps.outputs.changed == 'false'
+        run: echo "No app changes detected, skipping e2e tests"
 
-  # LINT JOBS (depend on builds)
+  # LINT JOBS
   lint-client:
-    needs: [build-client]
     runs-on: ubuntu-latest
 
     steps:
@@ -209,7 +230,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '20'
+          node-version: '22'
           cache: 'yarn'
 
       - name: Install dependencies
@@ -234,14 +255,13 @@ jobs:
 
       - name: Lint client
         if: steps.check-client.outputs.changed == 'true'
-        run: yarn nx lint p-frog
+        run: yarn nx run p-frog:lint
 
       - name: Skip client lint
         if: steps.check-client.outputs.changed == 'false'
         run: echo "No client changes detected, skipping lint"
 
   lint-server:
-    needs: [build-server]
     runs-on: ubuntu-latest
 
     steps:
@@ -253,7 +273,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '20'
+          node-version: '22'
           cache: 'yarn'
 
       - name: Install dependencies
@@ -278,51 +298,8 @@ jobs:
 
       - name: Lint server
         if: steps.check-server.outputs.changed == 'true'
-        run: yarn nx lint api
+        run: yarn nx run api:lint
 
       - name: Skip server lint
         if: steps.check-server.outputs.changed == 'false'
         run: echo "No server changes detected, skipping lint"
-
-  lint-libs:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '20'
-          cache: 'yarn'
-
-      - name: Install dependencies
-        run: yarn install --frozen-lockfile || yarn install
-
-      - name: Check for libs changes
-        id: check-libs
-        run: |
-          if [ "${{ github.event_name }}" == "push" ] && [ "${{ github.ref }}" == "refs/heads/master" ]; then
-            echo "changed=true" >> $GITHUB_OUTPUT
-          elif [ "${{ github.event_name }}" == "pull_request" ]; then
-            git fetch origin ${{ github.base_ref }}
-            CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD)
-            if echo "$CHANGED_FILES" | grep -qE '^libs/'; then
-              echo "changed=true" >> $GITHUB_OUTPUT
-            else
-              echo "changed=false" >> $GITHUB_OUTPUT
-            fi
-          else
-            echo "changed=false" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Lint libs
-        if: steps.check-libs.outputs.changed == 'true'
-        run: yarn nx lint data
-
-      - name: Skip libs lint
-        if: steps.check-libs.outputs.changed == 'false'
-        run: echo "No libs changes detected, skipping lint"
