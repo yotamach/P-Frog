@@ -8,6 +8,14 @@
 
 # dependencies
 /node_modules
+**/node_modules/.vite
+
+# environment files
+.env
+.env.local
+.env.development
+.env.production
+!.env.example
 
 # IDEs and editors
 /.idea
