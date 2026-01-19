@@ -7,25 +7,56 @@
 /* Tailwind v4 theme configuration placeholder (enable once build tooling supports the @theme directive) */
 
 :root {
-  /* Custom theme colors - White, Blue, Bordo scheme */
+  /* Custom theme colors - White, Gray, Bordo scheme */
   --color-header-bg: hsl(345 85% 35%); /* bordo */
   --color-header-bg-end: hsl(345 85% 25%); /* dark bordo */
   --color-sidebar-bg: hsl(0 0% 100%); /* white */
-  --color-sidebar-border: hsl(217 91% 85%); /* light blue */
-  --color-sidebar-text: hsl(217 91% 20%); /* dark blue */
-  --color-sidebar-hover: hsl(217 91% 95%); /* very light blue */
+  --color-sidebar-border: hsl(0 0% 90%); /* soft gray */
+  --color-sidebar-text: hsl(0 0% 15%); /* very dark gray */
+  --color-sidebar-hover: hsl(0 0% 96%); /* light gray */
   --color-sidebar-active: hsl(345 85% 35%); /* bordo */
   --color-footer-bg: hsl(345 85% 25%); /* dark bordo */
   --color-table-header-bg: hsl(0 0% 100%); /* white */
-  --color-table-border: hsl(217 91% 85%); /* light blue */
-  --color-table-text: hsl(217 91% 20%); /* dark blue */
-  --color-table-text-muted: hsl(217 91% 50%); /* medium blue */
-  --color-table-hover: hsl(217 91% 95%); /* very light blue */
+  --color-table-border: hsl(0 0% 90%); /* soft gray */
+  --color-table-text: hsl(0 0% 15%); /* very dark gray */
+  --color-table-text-muted: hsl(0 0% 45%); /* neutral gray */
+  --color-table-hover: hsl(0 0% 96%); /* light gray */
   --color-table-selected: hsl(345 85% 95%); /* light bordo */
-  --color-button-create: hsl(217 91% 60%); /* blue */
+  --color-button-create: hsl(345 85% 35%); /* bordo */
   --color-button-edit: hsl(345 85% 35%); /* bordo */
   --color-button-delete: hsl(0 84.2% 60.2%); /* red */
-  --color-button-disabled: rgb(209 213 219); /* gray-300 */
+  --color-button-disabled: hsl(0 0% 82%); /* medium light gray */
+
+  /* Button variants - comprehensive button styling */
+  --color-button-primary: hsl(345 85% 35%); /* bordo */
+  --color-button-primary-foreground: hsl(0 0% 100%); /* white */
+  --color-button-primary-hover: hsl(345 85% 30%); /* darker bordo */
+  --color-button-secondary: hsl(0 0% 96%); /* light gray */
+  --color-button-secondary-foreground: hsl(0 0% 15%); /* very dark gray */
+  --color-button-secondary-hover: hsl(0 0% 90%); /* soft gray */
+  --color-button-destructive: hsl(0 84.2% 60.2%); /* red */
+  --color-button-destructive-foreground: hsl(210 40% 98%); /* almost white */
+  --color-button-destructive-hover: hsl(0 84.2% 55%); /* darker red */
+  --color-button-outline: hsl(0 0% 100%); /* white */
+  --color-button-outline-foreground: hsl(0 0% 15%); /* very dark gray */
+  --color-button-outline-border: hsl(0 0% 90%); /* soft gray */
+  --color-button-outline-hover: hsl(0 0% 96%); /* light gray */
+  --color-button-ghost-foreground: hsl(0 0% 15%); /* very dark gray */
+  --color-button-ghost-hover: hsl(0 0% 96%); /* light gray */
+  --color-button-link: hsl(345 85% 35%); /* bordo */
+  --color-button-link-hover: hsl(345 85% 30%); /* darker bordo */
+
+  /* Gray scale colors for better visual hierarchy */
+  --color-gray-50: hsl(0 0% 98%); /* very light gray - subtle backgrounds */
+  --color-gray-100: hsl(0 0% 96%); /* light gray - hover states */
+  --color-gray-200: hsl(0 0% 90%); /* soft gray - borders, dividers */
+  --color-gray-300: hsl(0 0% 82%); /* medium light gray - disabled states */
+  --color-gray-400: hsl(0 0% 64%); /* medium gray - placeholder text */
+  --color-gray-500: hsl(0 0% 45%); /* neutral gray - secondary text */
+  --color-gray-600: hsl(0 0% 38%); /* dark gray - labels */
+  --color-gray-700: hsl(0 0% 26%); /* darker gray - headings */
+  --color-gray-800: hsl(0 0% 15%); /* very dark gray - primary text */
+  --color-gray-900: hsl(0 0% 9%); /* almost black - high contrast text */
 
   /* shadcn/ui color palette */
   --color-background: hsl(0 0% 100%);
@@ -36,17 +67,25 @@
   --color-popover-foreground: hsl(222.2 84% 4.9%);
   --color-primary: hsl(345 85% 35%); /* bordo */
   --color-primary-foreground: hsl(0 0% 100%);
-  --color-secondary: hsl(217 91% 95%); /* light blue */
-  --color-secondary-foreground: hsl(222.2 47.4% 11.2%);
-  --color-muted: hsl(217 91% 95%);
-  --color-muted-foreground: hsl(215.4 16.3% 46.9%);
+  --color-secondary: hsl(0 0% 96%); /* light gray */
+  --color-secondary-foreground: hsl(0 0% 15%); /* very dark gray */
+  --color-muted: hsl(0 0% 96%); /* light gray */
+  --color-muted-foreground: hsl(0 0% 45%); /* neutral gray */
   --color-accent: hsl(345 85% 35%); /* bordo */
   --color-accent-foreground: hsl(0 0% 100%);
   --color-destructive: hsl(0 84.2% 60.2%);
   --color-destructive-foreground: hsl(210 40% 98%);
-  --color-border: hsl(217 91% 85%);
-  --color-input: hsl(217 91% 85%);
+  --color-border: hsl(0 0% 90%); /* soft gray */
+  --color-input: hsl(0 0% 90%); /* soft gray */
   --color-ring: hsl(345 85% 35%); /* bordo */
+
+  /* Drawer/Dialog colors - aligned with gray theme */
+  --color-drawer-bg: hsl(0 0% 100%); /* white */
+  --color-drawer-border: hsl(0 0% 90%); /* soft gray */
+  --color-drawer-foreground: hsl(0 0% 15%); /* very dark gray */
+  --color-drawer-title: hsl(0 0% 15%); /* very dark gray */
+  --color-drawer-description: hsl(0 0% 45%); /* neutral gray */
+  --color-drawer-overlay: rgba(0, 0, 0, 0.5); /* semi-transparent overlay */
 
   --radius-lg: 0.5rem;
   --radius-md: calc(0.5rem - 2px);
@@ -78,14 +117,14 @@
   --chart-3: oklch(0.398 0.07 227.392);
   --chart-4: oklch(0.828 0.189 84.429);
   --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --sidebar: 0 0% 100%; /* white */
+  --sidebar-foreground: 217 91% 20%; /* dark blue */
+  --sidebar-primary: 345 85% 35%; /* bordo */
+  --sidebar-primary-foreground: 0 0% 100%; /* white */
+  --sidebar-accent: 217 91% 95%; /* light blue hover */
+  --sidebar-accent-foreground: 217 91% 20%; /* dark blue */
+  --sidebar-border: 217 91% 85%; /* light blue */
+  --sidebar-ring: 345 85% 35%; /* bordo */
 }
 
 /* Legacy CSS variables for backward compatibility */
@@ -244,7 +283,7 @@
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  @apply bg-gray-400;
+  background-color: hsl(0 0% 64%);
 }
 
 @theme inline {

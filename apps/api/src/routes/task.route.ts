@@ -1,17 +1,21 @@
-import { Request, Response, Router } from "express";
+import { Response, Router } from "express";
 import { Logger } from "tslog";
 import {AppRouter} from "@models";
 import { TaskService } from "src/services/task.service";
 import { TaskModel } from '@models';
+import { auth } from "../middleware/authentication";
 
 const log: Logger = new Logger();
 const taskRouter: Router = Router();
 const taskService: TaskService = new TaskService();
 
-taskRouter.post('/',async (req: Request, res: Response) => {
+taskRouter.post('/', auth, async (req: any, res: Response) => {
   log.info("/create task: post route");
   try {
-    const task: TaskModel = { ...req.body.data };
+    const task: TaskModel = { 
+      ...req.body.data,
+      created_by: req.user.user_id || req.user.id
+    };
     log.info(`post: Task to create ${JSON.stringify(task)}`);
     const taskDetails = await taskService.createTask(task);
     log.info(`post: Task created succsfully! ${taskDetails}`);
@@ -22,13 +26,18 @@ taskRouter.post('/',async (req: Request, res: Response) => {
   }
 });
 
-taskRouter.patch('/:id', async (req: Request, res: Response) => {
+taskRouter.patch('/:id', auth, async (req: any, res: Response) => {
   log.info(`Update task`);
   try {
     const task: TaskModel = req.body;
     const {id} = req.params;
-    log.info(`patch: Updating task ${id} with data: ${JSON.stringify(task)}`);
-    const updatedTask = await taskService.updateTask(task, id);
+    const userId = req.user.user_id || req.user.id;
+    log.info(`patch: Updating task ${id} for user ${userId} with data: ${JSON.stringify(task)}`);
+    const updatedTask = await taskService.updateTask(task, id, userId);
+    if (!updatedTask) {
+      log.warn(`patch: Task ${id} not found or user ${userId} is not the owner`);
+      return res.status(404).send({ success: false, error: 'Task not found or unauthorized' });
+    }
     log.info(`patch: Task updated successfully! ${JSON.stringify(updatedTask)}`);
     res.send({ success: true, task: updatedTask });
   } catch(e) {
@@ -37,10 +46,11 @@ taskRouter.patch('/:id', async (req: Request, res: Response) => {
   }
 });
 
-taskRouter.get('/:id', (req: Request, res: Response) => {
+taskRouter.get('/:id', auth, (req: any, res: Response) => {
   const {id} = req.params;
-  log.info(`GET /tasks/${id} - Fetching task by id`);
-  taskService.getTaskByParams({ id }, (err, task) => {
+  const userId = req.user.user_id || req.user.id;
+  log.info(`GET /tasks/${id} - Fetching task by id for user ${userId}`);
+  taskService.getTaskByParams({ _id: id, created_by: userId }, (err, task) => {
     if (err) {
       log.error(`GET /tasks/${id} - Error: ${err}`);
       res.send({ success: false, error: err});
@@ -52,28 +62,34 @@ taskRouter.get('/:id', (req: Request, res: Response) => {
   });
 });
 
-taskRouter.get('/', (req: Request, res: Response) => {
-  log.info('GET /tasks - Fetching all tasks');
-  taskService.getTasks((err, tasks) => {
+taskRouter.get('/', auth, (req: any, res: Response) => {
+  const userId = req.user.user_id || req.user.id;
+  log.info(`GET /tasks - Fetching tasks for user ${userId}`);
+  taskService.getTasks(userId, (err, tasks) => {
     if (err) {
       log.error(`GET /tasks - Error: ${err}`);
       res.send({ success: false, error: err});
     }
     else {
-      log.info(`GET /tasks - Tasks retrieved successfully`);
+      log.info(`GET /tasks - Tasks retrieved successfully for user ${userId}`);
       res.send({ success: true, tasks});
     }
   });
 });
 
-taskRouter.delete('/:id', (req: Request, res: Response) => {
+taskRouter.delete('/:id', auth, (req: any, res: Response) => {
   const {id} = req.params;
-  log.info(`DELETE /tasks/${id} - Deleting task`);
+  const userId = req.user.user_id || req.user.id;
+  log.info(`DELETE /tasks/${id} - Deleting task for user ${userId}`);
   try{
-    taskService.deleteTask(id, (err, task) => {
+    taskService.deleteTask(id, userId, (err, task) => {
       if (err) {
         log.error(`DELETE /tasks/${id} - Error: ${err}`);
         res.status(404).send({ success: false, error: err});
+      }
+      else if (!task) {
+        log.warn(`DELETE /tasks/${id} - Task not found or user ${userId} is not the owner`);
+        res.status(404).send({ success: false, error: 'Task not found or unauthorized' });
       }
       else {
         log.info(`DELETE /tasks/${id} - Task deleted successfully`);

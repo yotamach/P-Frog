@@ -1,13 +1,15 @@
 import { QueryClientProvider } from '@tanstack/react-query';
 import { queryClient } from '@data/store/queryClient';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom';
 import { SnackbarProvider } from '@components/notifications/snackbar-context';
 import { Home, Login, Registration, Welcome, NotFound } from '@pages/index';
+import { ProtectedRoute } from '../components/protected-route/protected-route';
 import { lazy, Suspense } from 'react';
 
 const Dashboard = lazy(() => import('@pages/dashboard/dashboard.component'));
 const Settings = lazy(() => import('@pages/settings/settings.component'));
 const Tasks = lazy(() => import('@pages/tasks/tasks.component'));
+const Projects = lazy(() => import('@pages/projects/projects.component'));
 
 const PageLoader = () => (
   <div className="flex h-screen w-screen items-center justify-center">
@@ -25,21 +27,36 @@ export const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <SnackbarProvider>
-        <BrowserRouter>
+        <BrowserRouter
+          future={{
+            v7_startTransition: true,
+            v7_relativeSplatPath: true,
+          }}
+        >
           <Suspense fallback={<PageLoader />}>
             <Routes>
+              {/* Redirect root to welcome */}
+              <Route path='/' element={<Navigate to="/welcome" replace />} />
+              
               {/* Public routes */}
               <Route path='/welcome' element={<Welcome />} />
               <Route path='/registration' element={<Registration />} />
               <Route path='/login' element={<Login />} />
               
-              {/* Authenticated routes with layout */}
-              <Route path='/' element={<Home />}>
-                <Route index element={<Dashboard />} />
-                <Route path='tasks/*' element={<Tasks />} />
-                <Route path='settings' element={<Settings />} />
-                <Route path='*' element={<NotFound />} />
+              {/* Protected routes with layout */}
+              <Route element={<ProtectedRoute />}>
+                <Route path='/home' element={<Home />}>
+                  <Route index element={<Dashboard />} />
+                  <Route path='tasks/*' element={<Tasks />} />
+                  <Route path='projects' element={<Projects />} />
+                  <Route path='settings' element={<Settings />} />
+                  {/* 404 for authenticated users - with layout */}
+                  <Route path='*' element={<NotFound />} />
+                </Route>
               </Route>
+
+              {/* 404 for unauthenticated users - without layout */}
+              <Route path='*' element={<NotFound />} />
             </Routes>
           </Suspense>
         </BrowserRouter>

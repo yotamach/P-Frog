@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Plus, Pencil, Trash2, Search } from 'lucide-react';
-import { Button } from '../button/button';
 import { Input } from '../input/input';
+import { Button } from '@components/ui/button';
 
 interface TopBarTableProps {
   onCreateClick?: () => void;

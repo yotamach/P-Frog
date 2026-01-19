@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Task } from '@types';
+import { Task } from '@p-frog/data';
 import { TasksAPI } from '../services';
 import { useSnackbar } from '@components/notifications/snackbar-context';
 

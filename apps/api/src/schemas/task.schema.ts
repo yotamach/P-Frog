@@ -5,11 +5,23 @@ import {
   Schema
 } from 'mongoose';
 
+export enum TaskStatus {
+  TODO = 'TODO',
+  IN_PROGRESS = 'IN_PROGRESS',
+  DONE = 'DONE',
+  CANCELLED = 'CANCELLED'
+}
+
 export interface ITask extends Document {
   title: string;
   description: string;
   startDate: Date;
   endDate: Date;
+  status: TaskStatus;
+  project?: Schema.Types.ObjectId;
+  created_by: Schema.Types.ObjectId;
+  created_at: Date;
+  updated_at: Date;
 }
 
 const TaskSchema: Schema = new Schema({
@@ -29,7 +41,25 @@ const TaskSchema: Schema = new Schema({
   endDate: {
     type: Date,
     required: true
+  },
+  status: {
+    type: String,
+    enum: Object.values(TaskStatus),
+    default: TaskStatus.TODO,
+    required: true
+  },
+  project: {
+    type: Schema.Types.ObjectId,
+    ref: 'Project',
+    required: false
+  },
+  created_by: {
+    type: Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
   }
+}, {
+  timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' }
 });
 
 TaskSchema.set('toJSON', {

@@ -2,13 +2,13 @@ import { AxiosResponse } from "axios";
 import { request } from './index';
 
 interface AuthCredentials {
-    email: string;
+    userName: string;
     password: string;
 }
 
 interface User {
     id?: string;
-    email: string;
+    userName: string;
     password: string;
     name?: string;
 }
@@ -28,5 +28,9 @@ export class AuthAPI {
 
     signOut(id: string): Promise<AxiosResponse> {
         return request.patch<AxiosResponse>(this.endPoint + 'signout/', id);
+    }
+
+    getProfile(): Promise<AxiosResponse> {
+        return request.get<AxiosResponse>(this.endPoint + 'profile');
     }
 }

@@ -1,4 +1,4 @@
-import { Task } from '@types';
+import { Task } from '@p-frog/data';
 import { useMemo } from 'react';
 import { useTasks, useCreateTask, useUpdateTask, useDeleteTask } from '@data/queries/tasks.queries';
 

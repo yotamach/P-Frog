@@ -1,6 +1,6 @@
 import { AxiosResponse } from "axios";
 import { request } from './index';
-import { Task } from '@types';
+import { Task } from '@p-frog/data';
 
 export class TasksAPI {
     endPoint = 'tasks/';

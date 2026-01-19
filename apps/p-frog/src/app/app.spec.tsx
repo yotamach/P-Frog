@@ -1,3 +1,17 @@
+jest.mock('@data/services/auth.service', () => ({
+  AuthAPI: jest.fn().mockImplementation(() => ({
+    login: jest.fn(),
+    register: jest.fn(),
+    getProfile: jest.fn(),
+  })),
+}));
+
+jest.mock('@data/queries/auth.queries', () => ({
+  useLogin: jest.fn(),
+  useRegister: jest.fn(),
+  useProfile: jest.fn(),
+}));
+
 import App from './app';
 
 describe('App', () => {

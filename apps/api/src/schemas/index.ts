@@ -1,6 +1,7 @@
 import { Task, ITask } from "./task.schema";
 import {User, IUser} from "./user.schema";
 import { ISettings, Settings } from './settings.schema';
+import { Project, IProject } from './project.schema';
 
 export {
   User,
@@ -8,5 +9,7 @@ export {
   Task,
   ITask,
   Settings,
-  ISettings
+  ISettings,
+  Project,
+  IProject
 }

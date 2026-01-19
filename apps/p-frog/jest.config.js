@@ -3,8 +3,18 @@ module.exports = {
   preset: '../../jest.preset.cjs',
   testEnvironment: 'jsdom',
   transform: {
-    '^.+\\.[tj]sx?$': 'babel-jest',
+    '^.+\\.[tj]sx?$': [
+      'babel-jest',
+      {
+        presets: [
+          ['@babel/preset-env', { targets: { node: 'current' } }],
+          '@babel/preset-typescript',
+          ['@babel/preset-react', { runtime: 'automatic' }],
+        ],
+      },
+    ],
   },
+  transformIgnorePatterns: [],
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   coverageDirectory: '../../coverage/apps/p-frog',
@@ -16,5 +26,6 @@ module.exports = {
     '^@hooks/(.*)$': '<rootDir>/src/hooks/$1',
     '^@pages/(.*)$': '<rootDir>/src/pages/$1',
     '^@types$': '<rootDir>/src/types/index.ts',
+    '^@p-frog/data$': '<rootDir>/../../libs/data/index.ts',
   },
 };

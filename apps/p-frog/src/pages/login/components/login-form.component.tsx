@@ -1,6 +1,9 @@
 import { FormTextField } from '@components/form/FormFields';
+import { Button } from '@components/ui/button';
 import React from 'react';
 import { useForm } from 'react-hook-form';
+import { useLogin } from '@data/queries/auth.queries';
+import { useNavigate } from 'react-router-dom';
 
 interface LoginFormValues {
     userName: string;
@@ -15,9 +18,15 @@ function LoginForm() {
         }
     });
 
+    const navigate = useNavigate();
+    const { mutate: login, isPending } = useLogin();
+
     const onSubmit = handleSubmit((values) => {
-        // TODO: wire up actual authentication mutation when API is ready
-        console.log('login attempt', values);
+        login(values, {
+            onSuccess: () => {
+                navigate('/home');
+            }
+        });
     });
 
     return (
@@ -42,12 +51,14 @@ function LoginForm() {
                 />
             </div>
 
-            <button
+            <Button
                 type="submit"
-                className="btn-primary mt-8 w-full shadow-lg transition-all duration-200 hover:-translate-y-0.5 hover:shadow-xl"
+                className="mt-8 w-full shadow-lg transition-all duration-200 hover:-translate-y-0.5 hover:shadow-xl"
+                size="lg"
+                disabled={isPending}
             >
-                Log In
-            </button>
+                {isPending ? 'Logging in...' : 'Log In'}
+            </Button>
         </form>
     );
 }

@@ -13,24 +13,11 @@ export function Home(props: HomeProps) {
 
       {/* Middle section with sidebar and main content */}
       <div className="flex flex-row flex-1 overflow-hidden">
-        {/* Sidebar - 1/4 width on left */}
-        <aside 
-          className="w-1/4 shrink-0 h-full border-r overflow-y-auto"
-          style={{
-            backgroundColor: 'hsl(var(--sidebar-bg))',
-            borderColor: 'hsl(var(--sidebar-border))'
-          }}
-        >
-          <SideNav menuItems={menuItems} />
-        </aside>
+        {/* Sidebar - positioned as aside */}
+        <SideNav menuItems={menuItems} />
 
-        {/* Main content - 3/4 width fills remaining space */}
-        <main 
-          className="w-3/4 shrink-0 h-full overflow-auto p-8 relative"
-          style={{
-            backgroundColor: 'hsl(var(--table-selected))'
-          }}
-        >
+        {/* Main content */}
+        <main className="flex-1 overflow-auto p-8 relative bg-[hsl(var(--table-selected))]">
           <PageTransition>
             <Outlet />
           </PageTransition>

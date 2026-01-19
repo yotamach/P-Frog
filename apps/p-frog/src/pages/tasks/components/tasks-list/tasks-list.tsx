@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useTasks, useCreateTask, useUpdateTask, useDeleteTask } from '@data/queries/tasks.queries';
+import { useProjects } from '@data/queries/projects.queries';
 import {
   Table,
   Button,
@@ -12,15 +13,25 @@ import {
   DrawerTitle,
   TopBarTable,
 } from '@components/index';
+import { Badge } from '@components/ui/badge';
+import { Circle, Clock, CheckCircle2, XCircle } from 'lucide-react';
 import { useReactTable, getCoreRowModel, flexRender, ColumnDef } from '@tanstack/react-table';
-import { Task } from '@types';
+import { Task, TaskStatus, Project } from '@p-frog/data';
 import { useForm } from 'react-hook-form';
-import { FormTextField, FormDateField } from '@components/form/FormFields';
+import { FormTextField, FormDateField, FormSelectField } from '@components/form/FormFields';
 import { Validators } from '@data/index';
+
+const statusOptions = [
+  { value: TaskStatus.TODO, label: 'To Do' },
+  { value: TaskStatus.IN_PROGRESS, label: 'In Progress' },
+  { value: TaskStatus.DONE, label: 'Done' },
+  { value: TaskStatus.CANCELLED, label: 'Cancelled' },
+];
 
 
 const TasksList: React.FC = () => {
   const { data: tasks, isLoading, isError } = useTasks();
+  const { data: projects } = useProjects();
   const createTask = useCreateTask();
   const updateTask = useUpdateTask();
   const deleteTask = useDeleteTask();
@@ -28,7 +39,13 @@ const TasksList: React.FC = () => {
   const [editingTask, setEditingTask] = React.useState<Task | null>(null);
   const [selectedTask, setSelectedTask] = React.useState<Task | null>(null);
   const [searchValue, setSearchValue] = React.useState('');
-  const { control, handleSubmit, reset } = useForm<Task>();
+  const { control, handleSubmit, reset, watch } = useForm<Task>();
+  
+  const selectedProjectId = watch('project');
+  const selectedProject = React.useMemo(() => {
+    if (!selectedProjectId || !projects) return null;
+    return projects.find(p => p.id === selectedProjectId);
+  }, [selectedProjectId, projects]);
 
   const handleEdit = (task: Task) => {
     reset(task);
@@ -91,6 +108,65 @@ const TasksList: React.FC = () => {
       cell: (info) => info.getValue(),
     },
     {
+      accessorKey: 'project',
+      header: 'Project',
+      cell: (info) => {
+        const project = info.getValue() as Project | undefined;
+        if (!project) return <span style={{ color: 'hsl(var(--muted-foreground))' }}>-</span>;
+        return (
+          <Badge variant="outline" style={{ backgroundColor: 'hsl(var(--muted))', color: 'hsl(var(--foreground))' }}>
+            {typeof project === 'object' ? project.title : project}
+          </Badge>
+        );
+      },
+    },
+    {
+      accessorKey: 'status',
+      header: 'Status',
+      cell: (info) => {
+        const status = info.getValue() as TaskStatus;
+        const statusConfig = {
+          [TaskStatus.TODO]: { 
+            label: 'To Do', 
+            variant: 'secondary' as const, 
+            icon: Circle,
+            style: { backgroundColor: 'hsl(220 13% 69% / 0.15)', color: 'hsl(220 13% 45%)', borderColor: 'hsl(220 13% 69% / 0.3)' }
+          },
+          [TaskStatus.IN_PROGRESS]: { 
+            label: 'In Progress', 
+            variant: 'info' as const, 
+            icon: Clock,
+            style: { backgroundColor: 'hsl(217 91% 60% / 0.15)', color: 'hsl(217 91% 50%)', borderColor: 'hsl(217 91% 60% / 0.3)' }
+          },
+          [TaskStatus.DONE]: { 
+            label: 'Done', 
+            variant: 'success' as const, 
+            icon: CheckCircle2,
+            style: { backgroundColor: 'hsl(142 71% 45% / 0.15)', color: 'hsl(142 71% 35%)', borderColor: 'hsl(142 71% 45% / 0.3)' }
+          },
+          [TaskStatus.CANCELLED]: { 
+            label: 'Cancelled', 
+            variant: 'destructive' as const, 
+            icon: XCircle,
+            style: { backgroundColor: 'hsl(0 84% 60% / 0.15)', color: 'hsl(0 84% 50%)', borderColor: 'hsl(0 84% 60% / 0.3)' }
+          },
+        };
+        const config = statusConfig[status] || { 
+          label: status, 
+          variant: 'outline' as const, 
+          icon: Circle,
+          style: {} 
+        };
+        const IconComponent = config.icon;
+        return (
+          <Badge variant={config.variant} style={config.style}>
+            <IconComponent className="w-3 h-3" />
+            {config.label}
+          </Badge>
+        );
+      },
+    },
+    {
       accessorKey: 'startDate',
       header: 'Start Date',
       cell: (info) => {
@@ -101,6 +177,14 @@ const TasksList: React.FC = () => {
     {
       accessorKey: 'endDate',
       header: 'End Date',
+      cell: (info) => {
+        const value = info.getValue() as string | undefined;
+        return value ? new Date(value).toLocaleDateString() : '-';
+      },
+    },
+    {
+      accessorKey: 'created_at',
+      header: 'Created',
       cell: (info) => {
         const value = info.getValue() as string | undefined;
         return value ? new Date(value).toLocaleDateString() : '-';
@@ -177,14 +261,14 @@ const TasksList: React.FC = () => {
       />
       
       <Drawer open={open} onOpenChange={setOpen} direction="right">
-        <DrawerContent style={{ backgroundColor: 'hsl(var(--color-background))' }}>
-          <DrawerHeader style={{ borderBottom: '1px solid hsl(var(--color-border))' }}>
+        <DrawerContent>
+          <DrawerHeader style={{ borderBottom: '1px solid var(--color-drawer-border)' }}>
             <DrawerTitle>{editingTask ? 'Edit Task' : 'Create New Task'}</DrawerTitle>
             <DrawerDescription>
               {editingTask ? 'Update task details below' : 'Fill in the details to create a new task'}
             </DrawerDescription>
           </DrawerHeader>
-          <div className="p-4">
+          <div className="p-4 flex-1" style={{ backgroundColor: 'var(--color-drawer-bg)' }}>
             <form id="task-form" onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               <FormTextField 
                 control={control} 
@@ -198,6 +282,22 @@ const TasksList: React.FC = () => {
                 label="Description" 
                 rules={Validators.required} 
               />
+              <FormSelectField 
+                control={control} 
+                name="project" 
+                label="Project (Optional)" 
+                options={[
+                  { value: '', label: 'No Project' },
+                  ...(projects || []).map(p => ({ value: String(p.id || ''), label: p.title }))
+                ]}
+              />
+              <FormSelectField 
+                control={control} 
+                name="status" 
+                label="Status" 
+                options={statusOptions}
+                rules={Validators.required} 
+              />
               <FormDateField 
                 control={control} 
                 name="startDate" 
@@ -208,8 +308,24 @@ const TasksList: React.FC = () => {
                 control={control} 
                 name="endDate" 
                 label="End Date" 
-                rules={Validators.required} 
+                rules={{
+                  required: 'End date is required',
+                  validate: (value: string | Date) => {
+                    if (!selectedProject) return true;
+                    const taskEndDate = new Date(value);
+                    const projectDueDate = new Date(selectedProject.dueDate);
+                    if (taskEndDate > projectDueDate) {
+                      return `Task end date must be before project due date (${new Date(selectedProject.dueDate).toLocaleDateString()})`;
+                    }
+                    return true;
+                  }
+                }}
               />
+              {selectedProject && (
+                <div className="text-xs p-2 rounded" style={{ backgroundColor: 'hsl(var(--muted))', color: 'hsl(var(--muted-foreground))' }}>
+                  Project due date: {new Date(selectedProject.dueDate).toLocaleDateString()}
+                </div>
+              )}
             </form>
           </div>
           <DrawerFooter>
@@ -245,7 +361,7 @@ const TasksList: React.FC = () => {
                 className="cursor-pointer transition-colors hover:bg-muted/50"
                 style={{
                   backgroundColor: selectedTask?.id === row.original.id 
-                    ? 'hsl(var(--color-accent))' 
+                    ? 'var(--color-table-selected)' 
                     : undefined,
                 }}
               >

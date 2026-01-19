@@ -1,4 +1,5 @@
 import { Task } from '../task.schema';
+import { Types } from 'mongoose';
 
 describe('Task Schema', () => {
   describe('Schema Definition', () => {
@@ -34,6 +35,7 @@ describe('Task Schema', () => {
         description: 'Test Description',
         startDate: new Date('2024-01-01'),
         endDate: new Date('2024-01-31'),
+        created_by: new Types.ObjectId(),
       };
 
       const task = new Task(taskData);
@@ -49,6 +51,7 @@ describe('Task Schema', () => {
         title: 'Test Task',
         startDate: new Date('2024-01-01'),
         endDate: new Date('2024-01-31'),
+        created_by: new Types.ObjectId(),
       };
 
       const task = new Task(taskData);
@@ -74,6 +77,7 @@ describe('Task Schema', () => {
         description: 'Test Description',
         startDate: new Date('2024-01-01'),
         endDate: new Date('2024-01-31'),
+        created_by: new Types.ObjectId(),
       };
 
       const task = new Task(taskData);
@@ -88,6 +92,7 @@ describe('Task Schema', () => {
         description: 'Test Description',
         startDate: 'invalid-date' as any,
         endDate: new Date('2024-01-31'),
+        created_by: new Types.ObjectId(),
       };
 
       const task = new Task(taskData);

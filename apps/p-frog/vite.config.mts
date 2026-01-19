@@ -29,7 +29,7 @@ export default defineConfig({
       '@styles': path.resolve(__dirname, 'src/styles'),
       '@utils': path.resolve(__dirname, 'src/utils'),
       '@state': path.resolve(__dirname, 'src/state'),
-      '@types': path.resolve(__dirname, 'src/types'),
+      '@types': path.resolve(__dirname, 'src/types/index.ts'),
       '@pages': path.resolve(__dirname, 'src/pages'),
       '@p-frog/data': path.resolve(__dirname, '../../libs/data/index.ts'),
     },
