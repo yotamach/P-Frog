@@ -25,6 +25,7 @@ request.interceptors.request.use(
   (config) => {
     const state = authStore.state;
     if (state.token) {
+      config.headers = config.headers || {};
       config.headers['x-access-token'] = `Bearer ${state.token}`;
     }
     return config;

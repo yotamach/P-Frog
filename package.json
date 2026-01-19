@@ -4,7 +4,7 @@
   "license": "MIT",
   "type": "module",
   "engines": {
-    "node": ">=20.19.0",
+    "node": ">=20.18.0",
     "yarn": ">=1.22.0"
   },
   "scripts": {
@@ -20,6 +20,9 @@
     "lint:fix": "nx run-many -t lint --fix",
     "client:test": "nx test",
     "test:server": "nx test api",
+    "e2e": "nx e2e p-frog-e2e",
+    "e2e:watch": "nx e2e p-frog-e2e --watch",
+    "e2e:headless": "nx e2e p-frog-e2e --headless",
     "preview": "vite preview --config apps/p-frog/vite.config.ts",
     "postinstall": "bash tools/install-hooks.sh"
   },

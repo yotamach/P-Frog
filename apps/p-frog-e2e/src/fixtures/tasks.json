@@ -1,0 +1,42 @@
+[
+  {
+    "id": "1",
+    "title": "Complete project documentation",
+    "description": "Write comprehensive documentation for the P-Frog project",
+    "status": "In Progress",
+    "endDate": "2026-02-15",
+    "project": null
+  },
+  {
+    "id": "2",
+    "title": "Implement dark mode",
+    "description": "Add dark mode theme support across the application",
+    "status": "To Do",
+    "endDate": "2026-03-01",
+    "project": null
+  },
+  {
+    "id": "3",
+    "title": "Fix navigation bugs",
+    "description": "Resolve issues with sidebar navigation on mobile devices",
+    "status": "Done",
+    "endDate": "2026-01-20",
+    "project": null
+  },
+  {
+    "id": "4",
+    "title": "Add unit tests",
+    "description": "Write unit tests for all components",
+    "status": "In Progress",
+    "endDate": "2026-02-28",
+    "project": null
+  },
+  {
+    "id": "5",
+    "title": "Optimize performance",
+    "description": "Improve application load time and responsiveness",
+    "status": "To Do",
+    "endDate": "2026-03-15",
+    "project": null
+  }
+]

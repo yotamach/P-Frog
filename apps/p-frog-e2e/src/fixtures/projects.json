@@ -1,0 +1,37 @@
+[
+  {
+    "id": "1",
+    "title": "Website Redesign",
+    "description": "Complete redesign of the company website with modern UI/UX",
+    "dueDate": "2026-06-30",
+    "status": "In Progress"
+  },
+  {
+    "id": "2",
+    "title": "Mobile App Development",
+    "description": "Develop native mobile applications for iOS and Android",
+    "dueDate": "2026-09-30",
+    "status": "To Do"
+  },
+  {
+    "id": "3",
+    "title": "API Integration",
+    "description": "Integrate third-party APIs for enhanced functionality",
+    "dueDate": "2026-04-15",
+    "status": "In Progress"
+  },
+  {
+    "id": "4",
+    "title": "Database Migration",
+    "description": "Migrate from MongoDB to PostgreSQL for better relational data support",
+    "dueDate": "2026-05-31",
+    "status": "To Do"
+  },
+  {
+    "id": "5",
+    "title": "Security Audit",
+    "description": "Conduct comprehensive security audit and implement recommendations",
+    "dueDate": "2026-03-31",
+    "status": "Done"
+  }
+]
