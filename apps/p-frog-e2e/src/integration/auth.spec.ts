@@ -33,11 +33,16 @@ describe('Authentication Flow - Basic Navigation', () => {
     });
 
     it('should display registration page', () => {
-      cy.contains('Create your account').should('be.visible');
+      cy.contains('Create Account').should('be.visible');
     });
 
-    it('should show account details section', () => {
-      cy.contains('Account details').should('be.visible');
+    it('should show registration form fields', () => {
+      cy.contains('label', 'First Name').should('be.visible');
+      cy.contains('label', 'Last Name').should('be.visible');
+      cy.contains('label', 'Username').should('be.visible');
+      cy.contains('label', 'Email').should('be.visible');
+      cy.contains('label', 'Password').should('be.visible');
+      cy.contains('label', 'Confirm Password').should('be.visible');
     });
   });
 
