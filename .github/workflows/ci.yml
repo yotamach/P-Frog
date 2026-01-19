@@ -222,7 +222,7 @@ jobs:
 
       - name: Start MongoDB in Docker
         if: steps.check-apps.outputs.changed == 'true'
-        run: docker-compose up -d
+        run: docker compose up -d
 
       - name: Wait for MongoDB to be ready
         if: steps.check-apps.outputs.changed == 'true'
@@ -259,7 +259,7 @@ jobs:
 
       - name: Cleanup
         if: always() && steps.check-apps.outputs.changed == 'true'
-        run: docker-compose down
+        run: docker compose down
 
       - name: Skip e2e tests
         if: steps.check-apps.outputs.changed == 'false'
