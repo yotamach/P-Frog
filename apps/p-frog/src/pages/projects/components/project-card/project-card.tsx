@@ -48,7 +48,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, onEdit, onDel
     });
   };
 
-  const isOverdue = new Date(project.dueDate) < new Date();
+  const isOverdue = project.dueDate ? new Date(project.dueDate) < new Date() : false;
 
   // Calculate task counts by status
   const taskCounts = React.useMemo(() => {
@@ -82,7 +82,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, onEdit, onDel
             {project.title}
           </h3>
           {project.priority && (
-            <Badge className={`${priorityColors[project.priority]} text-xs font-medium`}>
+            <Badge className={`${priorityColors[project.priority as keyof typeof priorityColors]} text-xs font-medium`}>
               <AlertCircle className="w-3 h-3 mr-1" />
               {project.priority}
             </Badge>
@@ -123,7 +123,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, onEdit, onDel
           <div className="flex items-center gap-1" style={{ color: 'hsl(var(--muted-foreground))' }}>
             <Calendar className="w-4 h-4" />
             <span className={isOverdue ? 'text-red-600 font-medium' : ''}>
-              {formatDate(project.dueDate)}
+              {project.dueDate && formatDate(project.dueDate)}
             </span>
           </div>
           

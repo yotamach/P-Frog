@@ -28,6 +28,17 @@ export enum TaskStatus {
     CANCELLED = 'CANCELLED'
 }
 
+export interface Project {
+    id?: string;
+    title: string;
+    description: string;
+    startDate: Date | string;
+    endDate: Date | string;
+    dueDate?: Date | string;
+    priority?: string;
+    tasks?: Task[];
+}
+
 export interface Task {
     id?: string;
     title: string;
