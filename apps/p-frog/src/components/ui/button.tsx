@@ -81,8 +81,8 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     return (
       <Comp
         className={cn(buttonVariants({ variant, size, className }))}
-        style={{ ...getVariantStyles(), ...style, cursor: 'pointer' }}
-        ref={ref}
+        style={{ ...getVariantStyles(), ...style }}
+        ref={ref as any}
         {...props}
       />
     )

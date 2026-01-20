@@ -2,16 +2,40 @@
  * Frontend Unit Tests for Auth Queries
  */
 
-import { renderHook, waitFor } from '@testing-library/react-hooks';
+import { renderHook } from '@testing-library/react-hooks';
+import { waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { BrowserRouter } from 'react-router-dom';
 import { useLogin, useSignUp, useLogout, initializeAuth } from './auth.queries';
-import { AuthAPI } from '@data/services';
 import { authStore } from '@data/store/authStore';
 import React from 'react';
+import { AuthAPI } from '@data/services';
 
-// Mock dependencies
-jest.mock('@data/services');
+// Create mock functions inside the mock factory to avoid hoisting issues
+jest.mock('@data/services', () => {
+  const mockLoginFn = jest.fn();
+  const mockSignUpFn = jest.fn();
+  const mockSignOutFn = jest.fn();
+  const mockGetProfileFn = jest.fn();
+  
+  return {
+    AuthAPI: jest.fn().mockImplementation(() => ({
+      login: mockLoginFn,
+      signUp: mockSignUpFn,
+      signOut: mockSignOutFn,
+      getProfile: mockGetProfileFn,
+    })),
+  };
+});
+
+// Get the mocked AuthAPI instance to access mock functions
+const MockedAuthAPI = AuthAPI as jest.MockedClass<typeof AuthAPI>;
+const mockAuthInstance = new MockedAuthAPI();
+const mockLogin = mockAuthInstance.login as jest.Mock;
+const mockSignUp = mockAuthInstance.signUp as jest.Mock;
+const mockSignOut = mockAuthInstance.signOut as jest.Mock;
+const mockGetProfile = mockAuthInstance.getProfile as jest.Mock;
+
 jest.mock('@components/notifications/snackbar-context', () => ({
   useSnackbar: () => ({
     enqueueSnackbar: jest.fn(),
@@ -28,7 +52,7 @@ jest.mock('react-router-dom', () => ({
 describe('Auth Queries', () => {
   let queryClient: QueryClient;
 
-  const wrapper = ({ children }: { children: React.ReactNode }) => (
+  const wrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>{children}</BrowserRouter>
     </QueryClientProvider>
@@ -65,7 +89,7 @@ describe('Auth Queries', () => {
         token: 'jwt-token',
       };
 
-      (AuthAPI.prototype.login as jest.Mock).mockResolvedValue({
+      mockLogin.mockResolvedValue({
         data: {
           success: true,
           data: mockUser,
@@ -84,12 +108,12 @@ describe('Auth Queries', () => {
       expect(localStorage.getItem('token')).toBe('jwt-token');
       expect(localStorage.getItem('user')).toBe(JSON.stringify(mockUser));
       expect(authStore.state.isAuth).toBe(true);
-      expect(mockNavigate).toHaveBeenCalledWith('/', { replace: true });
+      expect(mockNavigate).toHaveBeenCalledWith('/home', { replace: true });
     });
 
     it('should handle login failure', async () => {
       // Arrange
-      (AuthAPI.prototype.login as jest.Mock).mockResolvedValue({
+      mockLogin.mockResolvedValue({
         data: {
           success: false,
           data: 'Invalid Credentials!',
@@ -111,7 +135,7 @@ describe('Auth Queries', () => {
 
     it('should handle network errors', async () => {
       // Arrange
-      (AuthAPI.prototype.login as jest.Mock).mockRejectedValue({
+      mockLogin.mockRejectedValue({
         response: {
           data: { message: 'Network error' },
         },
@@ -133,7 +157,7 @@ describe('Auth Queries', () => {
   describe('useSignUp', () => {
     it('should register successfully and navigate to login', async () => {
       // Arrange
-      (AuthAPI.prototype.signUp as jest.Mock).mockResolvedValue({
+      mockSignUp.mockResolvedValue({
         data: {
           success: true,
         },
@@ -159,7 +183,7 @@ describe('Auth Queries', () => {
 
     it('should handle registration failure', async () => {
       // Arrange
-      (AuthAPI.prototype.signUp as jest.Mock).mockResolvedValue({
+      mockSignUp.mockResolvedValue({
         data: {
           success: false,
           message: 'User already exists',
@@ -254,3 +278,4 @@ describe('Auth Queries', () => {
     });
   });
 });
+

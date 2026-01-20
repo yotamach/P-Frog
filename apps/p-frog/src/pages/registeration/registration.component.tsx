@@ -13,7 +13,7 @@ export function Registration(props: RegistrationProps) {
   // Redirect to home if already authenticated
   useEffect(() => {
     if (isAuth) {
-      navigate('/', { replace: true });
+      navigate('/home', { replace: true });
     }
   }, [isAuth, navigate]);
 

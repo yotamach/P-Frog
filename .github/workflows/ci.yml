@@ -181,6 +181,23 @@ jobs:
       - name: Install dependencies
         run: yarn install --frozen-lockfile || yarn install
 
+      - name: Check for app changes
+        id: check-apps
+        run: |
+          if [ "${{ github.event_name }}" == "push" ] && [ "${{ github.ref }}" == "refs/heads/master" ]; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          elif [ "${{ github.event_name }}" == "pull_request" ]; then
+            git fetch origin ${{ github.base_ref }}
+            CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD)
+            if echo "$CHANGED_FILES" | grep -qE '^apps/p-frog/|^apps/api/|^libs/data/'; then
+              echo "changed=true" >> $GITHUB_OUTPUT
+            else
+              echo "changed=false" >> $GITHUB_OUTPUT
+            fi
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+
       - name: Create backend environment file
         if: steps.check-apps.outputs.changed == 'true'
         run: |
@@ -202,23 +219,6 @@ jobs:
           VITE_SERVER_HOST=localhost
           VITE_SERVER_PORT=3333
           EOF
-
-      - name: Check for app changes
-        id: check-apps
-        run: |
-          if [ "${{ github.event_name }}" == "push" ] && [ "${{ github.ref }}" == "refs/heads/master" ]; then
-            echo "changed=true" >> $GITHUB_OUTPUT
-          elif [ "${{ github.event_name }}" == "pull_request" ]; then
-            git fetch origin ${{ github.base_ref }}
-            CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD)
-            if echo "$CHANGED_FILES" | grep -qE '^apps/p-frog/|^apps/api/|^libs/data/'; then
-              echo "changed=true" >> $GITHUB_OUTPUT
-            else
-              echo "changed=false" >> $GITHUB_OUTPUT
-            fi
-          else
-            echo "changed=false" >> $GITHUB_OUTPUT
-          fi
 
       - name: Start MongoDB in Docker
         if: steps.check-apps.outputs.changed == 'true'
