@@ -311,7 +311,7 @@ const TasksList: React.FC = () => {
                 rules={{
                   required: 'End date is required',
                   validate: (value: string | Date) => {
-                    if (!selectedProject) return true;
+                    if (!selectedProject || !selectedProject.dueDate) return true;
                     const taskEndDate = new Date(value);
                     const projectDueDate = new Date(selectedProject.dueDate);
                     if (taskEndDate > projectDueDate) {
@@ -321,7 +321,7 @@ const TasksList: React.FC = () => {
                   }
                 }}
               />
-              {selectedProject && (
+              {selectedProject && selectedProject.dueDate && (
                 <div className="text-xs p-2 rounded" style={{ backgroundColor: 'hsl(var(--muted))', color: 'hsl(var(--muted-foreground))' }}>
                   Project due date: {new Date(selectedProject.dueDate).toLocaleDateString()}
                 </div>

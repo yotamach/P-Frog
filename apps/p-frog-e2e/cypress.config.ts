@@ -12,4 +12,6 @@ export default defineConfig({
     chromeWebSecurity: false,
     baseUrl: 'http://localhost:4200',
   },
+  // Use spec reporter which shows errors immediately after each failed test
+  reporter: 'spec',
 });

@@ -34,7 +34,7 @@ export const ProjectTasks: React.FC<ProjectTasksProps> = ({ project }) => {
   const deleteTask = useDeleteTaskMutation();
 
   const handleCreate = () => {
-    const projectDueDate = new Date(project.dueDate);
+    const projectDueDate = project.dueDate ? new Date(project.dueDate) : new Date();
     projectDueDate.setDate(projectDueDate.getDate() - 1); // Default to one day before project due
     
     reset({
@@ -147,7 +147,7 @@ export const ProjectTasks: React.FC<ProjectTasksProps> = ({ project }) => {
           <DrawerHeader>
             <DrawerTitle>Add Task to {project.title}</DrawerTitle>
             <DrawerDescription>
-              Create a new task for this project. Task end date must be before {new Date(project.dueDate).toLocaleDateString()}.
+              Create a new task for this project. {project.dueDate && `Task end date must be before ${new Date(project.dueDate).toLocaleDateString()}.`}
             </DrawerDescription>
           </DrawerHeader>
 
@@ -189,6 +189,7 @@ export const ProjectTasks: React.FC<ProjectTasksProps> = ({ project }) => {
                 rules={{
                   required: 'End date is required',
                   validate: (value: string | Date) => {
+                    if (!project.dueDate) return true;
                     const taskEndDate = new Date(value);
                     const projectDueDate = new Date(project.dueDate);
                     if (taskEndDate > projectDueDate) {
@@ -201,7 +202,7 @@ export const ProjectTasks: React.FC<ProjectTasksProps> = ({ project }) => {
 
               <div className="text-xs p-2 rounded" style={{ backgroundColor: 'hsl(var(--muted))', color: 'hsl(var(--muted-foreground))' }}>
                 <Clock className="w-3 h-3 inline mr-1" />
-                Project due date: {new Date(project.dueDate).toLocaleDateString()}
+                Project due date: {project.dueDate && new Date(project.dueDate).toLocaleDateString()}
               </div>
             </div>
 

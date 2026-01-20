@@ -1,3 +1,5 @@
+import App from './app';
+
 jest.mock('@data/services/auth.service', () => ({
   AuthAPI: jest.fn().mockImplementation(() => ({
     login: jest.fn(),
@@ -11,8 +13,6 @@ jest.mock('@data/queries/auth.queries', () => ({
   useRegister: jest.fn(),
   useProfile: jest.fn(),
 }));
-
-import App from './app';
 
 describe('App', () => {
   it('should export App component', () => {

@@ -25,16 +25,13 @@ describe('Footer', () => {
 
   it('should update year dynamically', () => {
     // Mock the current year
-    const originalDate = Date;
-    const mockDate = new originalDate('2025-01-01');
-    
-    global.Date = jest.fn(() => mockDate) as any;
-    global.Date.prototype = originalDate.prototype;
+    jest.useFakeTimers();
+    jest.setSystemTime(new Date('2025-01-01'));
     
     render(<Footer />);
     expect(screen.getByText(/© 2025/)).toBeTruthy();
     
-    // Restore original Date
-    global.Date = originalDate;
+    // Restore real timers
+    jest.useRealTimers();
   });
 });

@@ -67,12 +67,16 @@ export function Welcome(props: WelcomeProps) {
                   </p>
                 </div>
                 <div className="flex gap-3">
-                  <Button asChild size="lg" variant="outline">
-                    <Link to="/registration">Sign Up</Link>
-                  </Button>
-                  <Button asChild size="lg">
-                    <Link to="/login">Sign In</Link>
-                  </Button>
+                  <Link to="/registration">
+                    <Button size="lg" variant="outline">
+                      Sign Up
+                    </Button>
+                  </Link>
+                  <Link to="/login">
+                    <Button size="lg">
+                      Sign In
+                    </Button>
+                  </Link>
                 </div>
               </div>
             </CardContent>

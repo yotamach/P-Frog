@@ -1,25 +1,32 @@
-import BasicDetails from './components/basic-details/basic-details.component';
-import MoreDetails from './components/more-details/more-details.component';
+import RegistrationForm from './components/registration-form.component';
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@hooks/use-auth/use-auth';
 
 /* eslint-disable-next-line */
-export interface TasksProps {}
+export interface RegistrationProps {}
 
-export function Registration(props: TasksProps) {
+export function Registration(props: RegistrationProps) {
+  const { isAuth } = useAuth();
+  const navigate = useNavigate();
+
+  // Redirect to home if already authenticated
+  useEffect(() => {
+    if (isAuth) {
+      navigate('/home', { replace: true });
+    }
+  }, [isAuth, navigate]);
+
   return (
-    <div className="mx-auto w-full max-w-3xl space-y-10 p-6">
-      <header className="space-y-2 text-center">
-        <h1 className="text-4xl font-extrabold tracking-tight" style={{ color: 'hsl(var(--sidebar-text))' }}>
-          Create your account
-        </h1>
-        <p className="text-sm" style={{ color: 'hsl(var(--table-text-muted))' }}>
-          Provide a few details so we can tailor the workspace to your team.
-        </p>
-      </header>
-
-      <form className="space-y-8">
-        <BasicDetails />
-        <MoreDetails />
-      </form>
+    <div 
+      className="flex min-h-screen w-screen items-center justify-center px-4"
+      style={{
+        background: 'linear-gradient(135deg, hsl(var(--header-bg)), hsl(var(--header-bg-end)))'
+      }}
+    >
+      <div className="w-full max-w-md">
+        <RegistrationForm />
+      </div>
     </div>
   );
 }

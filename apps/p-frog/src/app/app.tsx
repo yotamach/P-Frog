@@ -4,7 +4,8 @@ import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom';
 import { SnackbarProvider } from '@components/notifications/snackbar-context';
 import { Home, Login, Registration, Welcome, NotFound } from '@pages/index';
 import { ProtectedRoute } from '../components/protected-route/protected-route';
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
+import { initializeAuth } from '@data/queries/auth.queries';
 
 const Dashboard = lazy(() => import('@pages/dashboard/dashboard.component'));
 const Settings = lazy(() => import('@pages/settings/settings.component'));
@@ -24,6 +25,11 @@ const PageLoader = () => (
 );
 
 export const App = () => {
+  // Initialize auth from localStorage on app load
+  useEffect(() => {
+    initializeAuth();
+  }, []);
+
   return (
     <QueryClientProvider client={queryClient}>
       <SnackbarProvider>

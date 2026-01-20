@@ -7,6 +7,7 @@ import SideNav from './side-nav/side-nav';
 import PageTransition from './page-transition/page-transition';
 import Dropdown from './dropdown/dropdown';
 import TopBarTable from './top-bar-table/top-bar-table';
+import { ProtectedRoute } from './auth/ProtectedRoute';
 
 // Export UI components (shadcn)
 export * from './ui/sidebar';
@@ -26,4 +27,5 @@ export {
   PageTransition,
   Dropdown,
   TopBarTable,
+  ProtectedRoute,
 }

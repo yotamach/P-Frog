@@ -1,6 +1,9 @@
 import { render, screen } from '@testing-library/react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
+// Import component AFTER mocks are set up
+import { ProtectedRoute } from './protected-route';
+
 // Mock dependencies BEFORE importing component
 const mockUseStore = jest.fn();
 const mockUseProfile = jest.fn();
@@ -25,9 +28,6 @@ jest.mock('@data/services/auth.service', () => ({
     profile: jest.fn(),
   })),
 }));
-
-// Import component AFTER mocks are set up
-import { ProtectedRoute } from './protected-route';
 
 describe('ProtectedRoute', () => {
   beforeEach(() => {
