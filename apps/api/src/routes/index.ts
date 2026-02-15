@@ -3,11 +3,13 @@ import taskRoutes from './task.route';
 import settingsRoutes from "./settings.route";
 import authRoutes from './auth.route';
 import projectRoutes from './project.route';
+import projectMemberRoutes from './project-member.route';
 
 export {
   userRoutes,
   taskRoutes,
   settingsRoutes,
   authRoutes,
-  projectRoutes
+  projectRoutes,
+  projectMemberRoutes
 }

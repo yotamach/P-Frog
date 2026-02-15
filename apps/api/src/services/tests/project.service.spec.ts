@@ -1,8 +1,13 @@
 import { ProjectService } from '../project.service';
 import { Project, ProjectPriority } from '../../schemas/project.schema';
+import { ProjectMember, ProjectRole } from '../../schemas/project-member.schema';
 import { Types } from 'mongoose';
+import * as PermissionService from '../permission.service';
 
+// Mock schemas
 jest.mock('../../schemas/project.schema');
+jest.mock('../../schemas/project-member.schema');
+jest.mock('../permission.service');
 
 describe('ProjectService', () => {
   let projectService: ProjectService;
@@ -17,17 +22,41 @@ describe('ProjectService', () => {
   });
 
   describe('getProjects', () => {
-    it('should call Project.find with correct parameters', () => {
-      const mockCallback = jest.fn();
-      const mockExec = jest.fn().mockReturnValue(Promise.resolve([]));
+    it('should return all projects for superuser', async () => {
+      const mockProjects = [{ _id: mockProjectId, title: 'Test Project' }];
+      
+      // Mock isSuperuser to return true
+      (PermissionService.isSuperuser as jest.Mock).mockResolvedValue(true);
+      
+      const mockExec = jest.fn().mockResolvedValue(mockProjects);
       const mockPopulate = jest.fn().mockReturnValue({ exec: mockExec });
       (Project.find as jest.Mock) = jest.fn().mockReturnValue({ populate: mockPopulate });
 
-      projectService.getProjects(mockUserId, mockCallback);
+      const result = await projectService.getProjects(mockUserId);
 
-      expect(Project.find).toHaveBeenCalledWith({ created_by: mockUserId });
-      expect(mockPopulate).toHaveBeenCalledWith('tasks');
-      expect(mockExec).toHaveBeenCalledWith(mockCallback);
+      expect(PermissionService.isSuperuser).toHaveBeenCalledWith(mockUserId);
+      expect(Project.find).toHaveBeenCalledWith({});
+      expect(result).toEqual(mockProjects);
+    });
+
+    it('should return only member projects for non-superuser', async () => {
+      const mockProjects = [{ _id: mockProjectId, title: 'Test Project' }];
+      const mockMemberships = [{ project: mockProjectId }];
+      
+      // Mock isSuperuser to return false
+      (PermissionService.isSuperuser as jest.Mock).mockResolvedValue(false);
+      (ProjectMember.find as jest.Mock) = jest.fn().mockResolvedValue(mockMemberships);
+      
+      const mockExec = jest.fn().mockResolvedValue(mockProjects);
+      const mockPopulate = jest.fn().mockReturnValue({ exec: mockExec });
+      (Project.find as jest.Mock) = jest.fn().mockReturnValue({ populate: mockPopulate });
+
+      const result = await projectService.getProjects(mockUserId);
+
+      expect(PermissionService.isSuperuser).toHaveBeenCalledWith(mockUserId);
+      expect(ProjectMember.find).toHaveBeenCalledWith({ user: mockUserId });
+      expect(Project.find).toHaveBeenCalledWith({ _id: { $in: [mockProjectId] } });
+      expect(result).toEqual(mockProjects);
     });
   });
 
@@ -47,100 +76,84 @@ describe('ProjectService', () => {
     });
   });
 
+  describe('getProjectById', () => {
+    it('should find project by ID', async () => {
+      const mockProject = { _id: mockProjectId, title: 'Test Project' };
+      const mockExec = jest.fn().mockResolvedValue(mockProject);
+      const mockPopulate = jest.fn().mockReturnValue({ exec: mockExec });
+      (Project.findById as jest.Mock) = jest.fn().mockReturnValue({ populate: mockPopulate });
+
+      const result = await projectService.getProjectById(mockProjectId);
+
+      expect(Project.findById).toHaveBeenCalledWith(mockProjectId);
+      expect(result).toEqual(mockProject);
+    });
+  });
+
   describe('createProject', () => {
-    it('should create a project with owner set to created_by', async () => {
+    it('should create a project and add creator as admin member', async () => {
       const mockProjectData = {
         title: 'Test Project',
         description: 'Test Description',
         dueDate: new Date('2024-12-31'),
         priority: ProjectPriority.HIGH,
-        created_by: mockUserId,
       };
 
-      const mockCreatedProject = { ...mockProjectData, _id: mockProjectId };
+      const mockCreatedProject = { ...mockProjectData, _id: mockProjectId, created_by: mockUserId };
       (Project.create as jest.Mock) = jest.fn().mockResolvedValue(mockCreatedProject);
+      (ProjectMember.create as jest.Mock) = jest.fn().mockResolvedValue({});
 
-      await projectService.createProject(mockProjectData);
+      const result = await projectService.createProject(mockProjectData, mockUserId);
 
       expect(Project.create).toHaveBeenCalledWith({
         ...mockProjectData,
-        owner: mockProjectData.created_by,
-      });
-    });
-
-    it('should return created project', async () => {
-      const mockProjectData = {
-        title: 'Test Project',
-        description: 'Test Description',
-        dueDate: new Date('2024-12-31'),
-        priority: ProjectPriority.HIGH,
         created_by: mockUserId,
-      };
-
-      const mockCreatedProject = { ...mockProjectData, _id: mockProjectId };
-      (Project.create as jest.Mock) = jest.fn().mockResolvedValue(mockCreatedProject);
-
-      const result = await projectService.createProject(mockProjectData);
-
+      });
+      expect(ProjectMember.create).toHaveBeenCalledWith({
+        project: mockProjectId,
+        user: mockUserId,
+        role: ProjectRole.ADMIN,
+      });
       expect(result).toEqual(mockCreatedProject);
     });
   });
 
   describe('updateProject', () => {
-    it('should call findOneAndUpdate with correct parameters', async () => {
+    it('should call findByIdAndUpdate with correct parameters', async () => {
       const mockProjectData = {
         title: 'Updated Project',
         description: 'Updated Description',
         dueDate: new Date('2024-12-31'),
         priority: ProjectPriority.CRITICAL,
-        created_by: mockUserId,
-      };
-
-      const mockExec = jest.fn().mockResolvedValue(mockProjectData);
-      const mockPopulate = jest.fn().mockReturnValue({ exec: mockExec });
-      (Project.findOneAndUpdate as jest.Mock) = jest.fn().mockReturnValue({ populate: mockPopulate });
-
-      await projectService.updateProject(mockProjectData, mockProjectId, mockUserId);
-
-      expect(Project.findOneAndUpdate).toHaveBeenCalledWith(
-        { _id: mockProjectId, created_by: mockUserId },
-        { ...mockProjectData },
-        { new: true }
-      );
-      expect(mockPopulate).toHaveBeenCalledWith('tasks');
-    });
-
-    it('should return updated project', async () => {
-      const mockProjectData = {
-        title: 'Updated Project',
-        description: 'Updated Description',
-        dueDate: new Date('2024-12-31'),
-        priority: ProjectPriority.CRITICAL,
-        created_by: mockUserId,
       };
 
       const mockUpdatedProject = { ...mockProjectData, _id: mockProjectId };
       const mockExec = jest.fn().mockResolvedValue(mockUpdatedProject);
       const mockPopulate = jest.fn().mockReturnValue({ exec: mockExec });
-      (Project.findOneAndUpdate as jest.Mock) = jest.fn().mockReturnValue({ populate: mockPopulate });
+      (Project.findByIdAndUpdate as jest.Mock) = jest.fn().mockReturnValue({ populate: mockPopulate });
 
-      const result = await projectService.updateProject(mockProjectData, mockProjectId, mockUserId);
+      const result = await projectService.updateProject(mockProjectData, mockProjectId);
 
+      expect(Project.findByIdAndUpdate).toHaveBeenCalledWith(
+        mockProjectId,
+        { ...mockProjectData },
+        { new: true }
+      );
       expect(result).toEqual(mockUpdatedProject);
     });
   });
 
   describe('deleteProject', () => {
-    it('should call findOneAndDelete with correct parameters', () => {
-      const mockCallback = jest.fn();
-      (Project.findOneAndDelete as jest.Mock) = jest.fn();
+    it('should delete project and all memberships', async () => {
+      const mockDeletedProject = { _id: mockProjectId, title: 'Deleted Project' };
+      (ProjectMember.deleteMany as jest.Mock) = jest.fn().mockResolvedValue({ deletedCount: 2 });
+      (Project.findByIdAndDelete as jest.Mock) = jest.fn().mockResolvedValue(mockDeletedProject);
 
-      projectService.deleteProject(mockProjectId, mockUserId, mockCallback);
+      const result = await projectService.deleteProject(mockProjectId);
 
-      expect(Project.findOneAndDelete).toHaveBeenCalledWith(
-        { _id: mockProjectId, created_by: mockUserId },
-        mockCallback
-      );
+      expect(ProjectMember.deleteMany).toHaveBeenCalledWith({ project: mockProjectId });
+      expect(Project.findByIdAndDelete).toHaveBeenCalledWith(mockProjectId);
+      expect(result).toEqual(mockDeletedProject);
     });
   });
 
@@ -155,32 +168,39 @@ describe('ProjectService', () => {
 
       const mockExec = jest.fn().mockResolvedValue(mockUpdatedProject);
       const mockPopulate = jest.fn().mockReturnValue({ exec: mockExec });
-      (Project.findOneAndUpdate as jest.Mock) = jest.fn().mockReturnValue({ populate: mockPopulate });
+      (Project.findByIdAndUpdate as jest.Mock) = jest.fn().mockReturnValue({ populate: mockPopulate });
 
-      await projectService.addTaskToProject(mockProjectId, mockTaskId, mockUserId);
+      const result = await projectService.addTaskToProject(mockProjectId, mockTaskId);
 
-      expect(Project.findOneAndUpdate).toHaveBeenCalledWith(
-        { _id: mockProjectId, created_by: mockUserId },
+      expect(Project.findByIdAndUpdate).toHaveBeenCalledWith(
+        mockProjectId,
         { $addToSet: { tasks: mockTaskId } },
         { new: true }
       );
-      expect(mockPopulate).toHaveBeenCalledWith('tasks');
+      expect(result).toEqual(mockUpdatedProject);
     });
+  });
 
-    it('should return updated project with tasks populated', async () => {
+  describe('removeTaskFromProject', () => {
+    it('should remove task from project tasks array', async () => {
       const mockTaskId = new Types.ObjectId().toString();
       const mockUpdatedProject = {
         _id: mockProjectId,
         title: 'Test Project',
-        tasks: [{ _id: mockTaskId, title: 'Task 1' }],
+        tasks: [],
       };
 
       const mockExec = jest.fn().mockResolvedValue(mockUpdatedProject);
       const mockPopulate = jest.fn().mockReturnValue({ exec: mockExec });
-      (Project.findOneAndUpdate as jest.Mock) = jest.fn().mockReturnValue({ populate: mockPopulate });
+      (Project.findByIdAndUpdate as jest.Mock) = jest.fn().mockReturnValue({ populate: mockPopulate });
 
-      const result = await projectService.addTaskToProject(mockProjectId, mockTaskId, mockUserId);
+      const result = await projectService.removeTaskFromProject(mockProjectId, mockTaskId);
 
+      expect(Project.findByIdAndUpdate).toHaveBeenCalledWith(
+        mockProjectId,
+        { $pull: { tasks: mockTaskId } },
+        { new: true }
+      );
       expect(result).toEqual(mockUpdatedProject);
     });
   });

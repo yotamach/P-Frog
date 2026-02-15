@@ -11,7 +11,6 @@ export interface Project {
   description: string;
   dueDate: Date | string;
   priority?: ProjectPriority;
-  owner?: string;
   tasks?: string[]; // Array of task IDs
   created_by?: string;
   created_at?: Date;

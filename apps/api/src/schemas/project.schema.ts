@@ -17,7 +17,6 @@ export interface IProject extends Document {
   description: string;
   dueDate: Date;
   priority: ProjectPriority;
-  owner: Schema.Types.ObjectId;
   tasks: Schema.Types.ObjectId[];
   created_by: Schema.Types.ObjectId;
   created_at: Date;
@@ -42,11 +41,6 @@ const ProjectSchema: Schema = new Schema({
     type: String,
     enum: Object.values(ProjectPriority),
     default: ProjectPriority.MEDIUM,
-    required: true
-  },
-  owner: {
-    type: Schema.Types.ObjectId,
-    ref: 'User',
     required: true
   },
   tasks: [{

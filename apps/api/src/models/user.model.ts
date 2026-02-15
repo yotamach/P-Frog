@@ -4,5 +4,6 @@ export interface UserModel {
     userName: string;
     email?: string;
     password: string;
-    role?: string;
+    token?: string;
+    isSuperuser?: boolean;
 }

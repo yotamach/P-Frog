@@ -30,6 +30,20 @@ const UserSchema: Schema = new Schema({
     required: true
   },
   token: { type: String },
+  isSuperuser: {
+    type: Boolean,
+    default: false
+  }
 });
 
-export const User: Model<any, any, any, any> = model('User', UserSchema);
+UserSchema.set('toJSON', {
+  transform: function (doc, ret) {
+    ret.id = ret._id;
+    delete ret._id;
+    delete ret.__v;
+    delete ret.password;
+    delete ret.token;
+  }
+});
+
+export const User: Model<IUser> = model<IUser>('User', UserSchema);

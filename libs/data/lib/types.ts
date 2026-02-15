@@ -6,7 +6,22 @@ export interface User {
     userName: string;
     email?: string;
     password: string;
-    role?: string;
+    isSuperuser?: boolean;
+}
+
+// Project Role types
+export enum ProjectRole {
+    ADMIN = 'admin',
+    MEMBER = 'member'
+}
+
+export interface ProjectMember {
+    id?: string;
+    project: string;
+    user: string | User;
+    role: ProjectRole;
+    created_at?: Date;
+    updated_at?: Date;
 }
 
 // Authentication types
@@ -37,6 +52,7 @@ export interface Project {
     dueDate?: Date | string;
     priority?: string;
     tasks?: Task[];
+    members?: ProjectMember[];
 }
 
 export interface Task {
@@ -47,6 +63,7 @@ export interface Task {
     endDate: Date | string;
     status?: TaskStatus;
     project?: string | Project;
+    assignee?: string | User;
 }
 
 // Common utility types

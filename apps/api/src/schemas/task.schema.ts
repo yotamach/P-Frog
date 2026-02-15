@@ -19,6 +19,7 @@ export interface ITask extends Document {
   endDate: Date;
   status: TaskStatus;
   project?: Schema.Types.ObjectId;
+  assignee?: Schema.Types.ObjectId;
   created_by: Schema.Types.ObjectId;
   created_at: Date;
   updated_at: Date;
@@ -51,6 +52,11 @@ const TaskSchema: Schema = new Schema({
   project: {
     type: Schema.Types.ObjectId,
     ref: 'Project',
+    required: false
+  },
+  assignee: {
+    type: Schema.Types.ObjectId,
+    ref: 'User',
     required: false
   },
   created_by: {

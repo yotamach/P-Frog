@@ -5,7 +5,7 @@ describe('Project Schema', () => {
   describe('Schema Definition', () => {
     it('should have required fields', () => {
       const projectSchema = Project.schema;
-      const requiredFields = ['title', 'description', 'dueDate', 'priority', 'owner', 'created_by'];
+      const requiredFields = ['title', 'description', 'dueDate', 'priority', 'created_by'];
 
       requiredFields.forEach((field) => {
         expect(projectSchema.path(field).isRequired).toBe(true);
@@ -53,7 +53,6 @@ describe('Project Schema', () => {
         description: 'Test Description',
         dueDate: new Date('2024-12-31'),
         priority: ProjectPriority.HIGH,
-        owner: userId,
         created_by: userId,
       };
 
@@ -63,7 +62,6 @@ describe('Project Schema', () => {
       expect(project.description).toBe(projectData.description);
       expect(project.dueDate).toEqual(projectData.dueDate);
       expect(project.priority).toBe(projectData.priority);
-      expect(project.owner).toEqual(userId);
       expect(project.created_by).toEqual(userId);
     });
 
@@ -72,7 +70,6 @@ describe('Project Schema', () => {
       const projectData = {
         title: 'Test Project',
         dueDate: new Date('2024-12-31'),
-        owner: userId,
         created_by: userId,
       };
 
@@ -87,7 +84,6 @@ describe('Project Schema', () => {
         title: 'Test Project',
         description: 'Test Description',
         dueDate: new Date('2024-12-31'),
-        owner: userId,
         created_by: userId,
       };
 
@@ -102,7 +98,6 @@ describe('Project Schema', () => {
         title: 'Test Project',
         description: 'Test Description',
         dueDate: new Date('2024-12-31'),
-        owner: userId,
         created_by: userId,
       };
 
@@ -122,7 +117,6 @@ describe('Project Schema', () => {
       expect(validationError).toBeDefined();
       expect(validationError?.errors.title).toBeDefined();
       expect(validationError?.errors.dueDate).toBeDefined();
-      expect(validationError?.errors.owner).toBeDefined();
       expect(validationError?.errors.created_by).toBeDefined();
     });
 
@@ -133,7 +127,6 @@ describe('Project Schema', () => {
         description: 'Test Description',
         dueDate: new Date('2024-12-31'),
         priority: ProjectPriority.HIGH,
-        owner: userId,
         created_by: userId,
       };
 
@@ -150,7 +143,6 @@ describe('Project Schema', () => {
         description: 'Test Description',
         dueDate: new Date('2024-12-31'),
         priority: 'INVALID_PRIORITY' as any,
-        owner: userId,
         created_by: userId,
       };
 
@@ -167,7 +159,6 @@ describe('Project Schema', () => {
         title: 'Test Project',
         description: 'Test Description',
         dueDate: 'invalid-date' as any,
-        owner: userId,
         created_by: userId,
       };
 
@@ -185,7 +176,6 @@ describe('Project Schema', () => {
         title: 'Test Project',
         description: 'Test Description',
         dueDate: new Date('2024-12-31'),
-        owner: userId,
         created_by: userId,
       };
 
