@@ -1,40 +1,118 @@
 import {Logger} from "tslog";
 import {TaskModel } from "@models";
-import { CallbackError } from "mongoose";
-import { ITask, Task } from "@schemas";
+import { CallbackError, Types } from "mongoose";
+import { ITask, Task, ProjectMember } from "@schemas";
+import { isSuperuser } from "./permission.service";
 
 const log: Logger = new Logger();
 
 export class TaskService {
 
-  getTasks(userId: string, callback: (err: CallbackError, tasks: ITask[]) => void) {
+  /**
+   * Get all tasks the user has access to:
+   * - Tasks created by the user
+   * - Tasks assigned to the user
+   * - Tasks in projects the user is a member of
+   * - All tasks if superuser
+   */
+  async getTasks(userId: string): Promise<ITask[]> {
     log.info(`taskService.getTasks: find tasks for user ${userId}`);
-    return Task.find({ created_by: userId }).populate('project').exec(callback);
+    
+    // Check if superuser - they can see all tasks
+    const superuser = await isSuperuser(userId);
+    if (superuser) {
+      log.info(`taskService.getTasks: user ${userId} is superuser, returning all tasks`);
+      return Task.find({}).populate('project').populate('assignee', 'id userName firstName lastName').exec();
+    }
+    
+    // Get project IDs where user is a member
+    const memberships = await ProjectMember.find({ user: userId });
+    const projectIds = memberships.map(m => m.project);
+    
+    // Find tasks where:
+    // - user is the creator, OR
+    // - user is the assignee, OR
+    // - task belongs to a project the user is a member of
+    return Task.find({
+      $or: [
+        { created_by: userId },
+        { assignee: userId },
+        { project: { $in: projectIds } }
+      ]
+    }).populate('project').populate('assignee', 'id userName firstName lastName').exec();
+  }
+
+  /**
+   * Get a single task by ID
+   */
+  async getTaskById(taskId: string): Promise<ITask | null> {
+    log.info(`taskService.getTaskById: find task ${taskId}`);
+    return Task.findById(taskId)
+      .populate('project')
+      .populate('assignee', 'id userName firstName lastName')
+      .exec();
   }
 
   getTaskByParams(params: any, callback: (err: CallbackError, tasks: ITask[]) => void) {
     log.info(`taskService.getTaskByParams: find task with params ${JSON.stringify(params)}`);
-    return Task.find(params, callback)
+    return Task.find(params)
+      .populate('project')
+      .populate('assignee', 'id userName firstName lastName')
+      .exec(callback);
   }
 
-  createTask(task: TaskModel): Promise<ITask> {
-    log.info(`taskService.createTask: create task`);
-    return Task.create(task).then(createdTask => 
-      Task.findById(createdTask._id).populate('project').exec()
+  createTask(task: TaskModel, creatorId: string): Promise<ITask> {
+    log.info(`taskService.createTask: create task for user ${creatorId}`);
+    return Task.create({
+      ...task,
+      created_by: creatorId
+    }).then(createdTask => 
+      Task.findById(createdTask._id)
+        .populate('project')
+        .populate('assignee', 'id userName firstName lastName')
+        .exec()
     );
   }
 
-  updateTask(task: TaskModel, id: string, userId: string): Promise<ITask> {
-    log.info(`taskService.updateTask: findByIdAndUpdate task ${id} for user ${userId}`);
-    return Task.findOneAndUpdate(
-      { _id: id, created_by: userId },
+  /**
+   * Update a task (authorization should be checked before calling this)
+   */
+  async updateTask(task: TaskModel, id: string): Promise<ITask | null> {
+    log.info(`taskService.updateTask: findByIdAndUpdate task ${id}`);
+    return Task.findByIdAndUpdate(
+      id,
       {...task},
       {new: true}
-    ).populate('project').exec();
+    ).populate('project').populate('assignee', 'id userName firstName lastName').exec();
   }
 
-  deleteTask(id: string, userId: string, callback: (err: CallbackError, task: ITask) => void) {
-    log.info(`taskService.deleteTask: findOneAndDelete task ${id} for user ${userId}`);
-    return Task.findOneAndDelete({ _id: id, created_by: userId }, callback);
+  /**
+   * Delete a task (authorization should be checked before calling this)
+   */
+  async deleteTask(id: string): Promise<ITask | null> {
+    log.info(`taskService.deleteTask: findByIdAndDelete task ${id}`);
+    return Task.findByIdAndDelete(id);
+  }
+
+  /**
+   * Assign a task to a user
+   */
+  async assignTask(taskId: string, assigneeId: string | null): Promise<ITask | null> {
+    log.info(`taskService.assignTask: assigning task ${taskId} to user ${assigneeId}`);
+    return Task.findByIdAndUpdate(
+      taskId,
+      { assignee: assigneeId },
+      { new: true }
+    ).populate('project').populate('assignee', 'id userName firstName lastName').exec();
+  }
+
+  /**
+   * Get tasks by project ID
+   */
+  async getTasksByProject(projectId: string): Promise<ITask[]> {
+    log.info(`taskService.getTasksByProject: find tasks for project ${projectId}`);
+    return Task.find({ project: projectId })
+      .populate('assignee', 'id userName firstName lastName')
+      .exec();
   }
 }

@@ -1,94 +1,181 @@
+# P-Frog 🐸
 
+A full-stack task management application built with React and Express in an Nx monorepo.
 
-# PFrog
+## Tech Stack
 
-This project was generated using [Nx](https://nx.dev).
+### Frontend (`apps/p-frog`)
+- **React 17** with TypeScript
+- **Tailwind CSS v4** for styling
+- **TanStack Query** for server state management
+- **TanStack Store** for client state
+- **React Router v6** for navigation
+- **React Hook Form** for form handling
+- **Vite** for fast development builds
 
-<p style="text-align: center;"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-logo.png" width="450"></p>
+### Backend (`apps/api`)
+- **Express.js** REST API
+- **MongoDB 7.0** with Mongoose ODM
+- **JWT** authentication
+- **TypeScript**
 
-🔎 **Smart, Fast and Extensible Build System**
+### Shared
+- **libs/data** - Shared TypeScript interfaces
 
-## Adding capabilities to your workspace
+## Prerequisites
 
-Nx supports many plugins which add capabilities for developing different types of applications and different tools.
+- Node.js >= 20.18.0
+- Yarn >= 1.22.0
+- Docker & Docker Compose
 
-These capabilities include generating applications, libraries, etc as well as the devtools to test, and build projects as well.
+## Getting Started
 
-Below are our core plugins:
+### 1. Install Dependencies
 
-- [React](https://reactjs.org)
-  - `npm install --save-dev @nrwl/react`
-- Web (no framework frontends)
-  - `npm install --save-dev @nrwl/web`
-- [Angular](https://angular.io)
-  - `npm install --save-dev @nrwl/angular`
-- [Nest](https://nestjs.com)
-  - `npm install --save-dev @nrwl/nest`
-- [Express](https://expressjs.com)
-  - `npm install --save-dev @nrwl/express`
-- [Node](https://nodejs.org)
-  - `npm install --save-dev @nrwl/node`
+```bash
+yarn install
+```
 
-There are also many [community plugins](https://nx.dev/community) you could add.
+### 2. Set Up Environment Files
 
-## Generate an application
+Create the following environment files:
 
-Run `nx g @nrwl/react:app my-app` to generate an application.
+**`apps/api/.env.development`**
+```env
+DB_HOST=localhost
+DB_PORT=27017
+DB_USERNAME=admin
+DB_PASSWORD=pfrogpswrd
+DB_SCHEMA=p-frog
+JWT_SECRET=your-secret-key
+```
 
-> You can use any of the plugins above to generate applications as well.
+**`apps/p-frog/.env.development`**
+```env
+VITE_API_URL=http://localhost:3333/api
+```
 
-When using Nx, you can create multiple applications and libraries in the same workspace.
+### 3. Start MongoDB
 
-## Generate a library
+```bash
+docker-compose up -d
+```
 
-Run `nx g @nrwl/react:lib my-lib` to generate a library.
+This starts MongoDB on port 27017 with the default credentials.
 
-> You can also use any of the plugins above to generate libraries as well.
+### 4. Start Development Servers
 
-Libraries are shareable across libraries and applications. They can be imported from `@p-frog/mylib`.
+**Backend** (runs on http://localhost:3333):
+```bash
+yarn start:server-dev
+```
 
-## Development server
+**Frontend** (runs on http://localhost:4200):
+```bash
+yarn start
+```
 
-Run `nx serve my-app` for a dev server. Navigate to http://localhost:4200/. The app will automatically reload if you change any of the source files.
+## Available Scripts
 
-## Code scaffolding
+| Command | Description |
+|---------|-------------|
+| `yarn start` | Start frontend dev server |
+| `yarn start:server-dev` | Start backend dev server |
+| `yarn build` | Build frontend for production |
+| `yarn build:server` | Build backend for production |
+| `yarn build:all` | Build all projects |
+| `yarn lint` | Lint all projects |
+| `yarn lint:fix` | Auto-fix lint issues |
+| `yarn client:test` | Run frontend tests |
+| `yarn test:server` | Run backend tests |
+| `yarn e2e` | Run E2E tests |
+| `yarn e2e:headless` | Run E2E tests headlessly |
 
-Run `nx g @nrwl/react:component my-component --project=my-app` to generate a new component.
+## Project Structure
 
-## Build
+```
+P-Frog/
+├── apps/
+│   ├── p-frog/              # React frontend
+│   │   ├── src/
+│   │   │   ├── app/         # App entry & routes
+│   │   │   ├── components/  # Reusable UI components
+│   │   │   ├── data/        # TanStack Query hooks & store
+│   │   │   ├── hooks/       # Custom React hooks
+│   │   │   └── pages/       # Route page components
+│   │   └── ...
+│   ├── api/                 # Express backend
+│   │   ├── src/
+│   │   │   ├── models/      # TypeScript interfaces
+│   │   │   ├── schemas/     # Mongoose schemas
+│   │   │   ├── services/    # Business logic
+│   │   │   └── routes/      # API route handlers
+│   │   └── ...
+│   └── p-frog-e2e/          # Cypress E2E tests
+├── libs/
+│   └── data/                # Shared TypeScript interfaces
+├── db/                      # MongoDB data (Docker volume)
+└── docker-compose.yml       # MongoDB container config
+```
 
-Run `nx build my-app` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
+## API Documentation
 
-## Running unit tests
+Interactive API documentation is available via Swagger UI when running the backend:
 
-Run `nx test my-app` to execute the unit tests via [Jest](https://jestjs.io).
+```
+http://localhost:3333/api/docs
+```
 
-Run `nx affected:test` to execute the unit tests affected by a change.
+## API Endpoints
 
-## Running end-to-end tests
+All API routes are prefixed with `/api`.
 
-Run `ng e2e my-app` to execute the end-to-end tests via [Cypress](https://www.cypress.io).
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/auth/login` | User login |
+| POST | `/api/auth/signup` | User registration |
+| GET | `/api/auth/profile` | Get current user |
+| GET | `/api/tasks` | Get all tasks |
+| POST | `/api/tasks` | Create a task |
+| PUT | `/api/tasks/:id` | Update a task |
+| DELETE | `/api/tasks/:id` | Delete a task |
 
-Run `nx affected:e2e` to execute the end-to-end tests affected by a change.
+## Testing
 
-## Understand your workspace
+### Unit Tests
+```bash
+# Frontend tests
+yarn client:test
 
-Run `nx dep-graph` to see a diagram of the dependencies of your projects.
+# Backend tests
+yarn test:server
 
-## Further help
+# Run affected tests only
+nx affected:test
+```
 
-Visit the [Nx Documentation](https://nx.dev) to learn more.
+### E2E Tests
+```bash
+# Interactive mode
+yarn e2e
 
+# Headless mode
+yarn e2e:headless
+```
 
+## Nx Commands
 
-## ☁ Nx Cloud
+```bash
+# View project dependency graph
+nx dep-graph
 
-### Distributed Computation Caching & Distributed Task Execution
+# Run affected tests
+nx affected:test
 
-<p style="text-align: center;"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-cloud-card.png"></p>
+# Run affected builds
+nx affected:build
+```
 
-Nx Cloud pairs with Nx in order to enable you to build and test code more rapidly, by up to 10 times. Even teams that are new to Nx can connect to Nx Cloud and start saving time instantly.
+## License
 
-Teams using Nx gain the advantage of building full-stack applications with their preferred framework alongside Nx’s advanced code generation and project dependency graph, plus a unified experience for both frontend and backend developers.
-
-Visit [Nx Cloud](https://nx.app/) to learn more.
+MIT

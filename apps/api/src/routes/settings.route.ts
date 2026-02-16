@@ -7,6 +7,29 @@ const log: Logger = new Logger();
 const settingsRouter: Router = Router();
 const settingsService: SettingsService = new SettingsService();
 
+/**
+ * @swagger
+ * tags:
+ *   name: Settings
+ *   description: User settings endpoints
+ */
+
+/**
+ * @swagger
+ * /settings/{id}:
+ *   get:
+ *     summary: Get settings by ID
+ *     tags: [Settings]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Settings retrieved
+ */
 settingsRouter.get('/:id', (req: Request, res: Response) => {
   const {id} = req.params;
   log.info(`GET /settings/${id} - Fetching settings by id`);
@@ -22,6 +45,28 @@ settingsRouter.get('/:id', (req: Request, res: Response) => {
   });
 });
 
+/**
+ * @swagger
+ * /settings/{id}:
+ *   post:
+ *     summary: Create settings
+ *     tags: [Settings]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *     responses:
+ *       200:
+ *         description: Settings created
+ */
 settingsRouter.post('/:id',async (req: Request, res: Response) => {
   const {id} = req.params;
   log.info(`POST /settings/${id} - Creating settings`);
@@ -36,6 +81,28 @@ settingsRouter.post('/:id',async (req: Request, res: Response) => {
   }
 });
 
+/**
+ * @swagger
+ * /settings/{id}:
+ *   patch:
+ *     summary: Update settings
+ *     tags: [Settings]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *     responses:
+ *       200:
+ *         description: Settings updated
+ */
 settingsRouter.patch('/:id', (req: Request, res: Response) => {
   const {id} = req.params;
   log.info(`PATCH /settings/${id} - Updating settings`);
@@ -52,6 +119,22 @@ settingsRouter.patch('/:id', (req: Request, res: Response) => {
   });
 });
 
+/**
+ * @swagger
+ * /settings/{id}:
+ *   delete:
+ *     summary: Delete settings
+ *     tags: [Settings]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Settings deleted
+ */
 settingsRouter.delete('/:id', (req: Request, res: Response) => {
   const {id} = req.params;
   log.info(`DELETE /settings/${id} - Deleting settings`);

@@ -11,6 +11,8 @@ export interface TaskModel {
     startDate: Date;
     endDate: Date;
     status?: TaskStatus;
+    project?: string;
+    assignee?: string;
     created_by?: string;
     created_at?: Date;
     updated_at?: Date;

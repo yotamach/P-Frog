@@ -74,6 +74,8 @@
     "react-router-dom": "^6.2.1",
     "react-table": "^7.7.0",
     "regenerator-runtime": "0.13.7",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1",
     "tslib": "^2.3.0",
     "tslog": "^3.3.1"
   },
@@ -104,6 +106,8 @@
     "@types/react-dom": "17.0.9",
     "@types/react-router-dom": "5.3.1",
     "@types/supertest": "^6.0.3",
+    "@types/swagger-jsdoc": "^6.0.4",
+    "@types/swagger-ui-express": "^4.1.8",
     "@typescript-eslint/eslint-plugin": "^8.0.0",
     "@typescript-eslint/parser": "^8.0.0",
     "@vitejs/plugin-react": "^4.3.0",

@@ -7,6 +7,30 @@ const log: Logger = new Logger();
 const authRouter: Router = Router();
 const authService: AuthService = new AuthService();
 
+/**
+ * @swagger
+ * /auth/login:
+ *   post:
+ *     summary: User login
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/LoginRequest'
+ *     responses:
+ *       200:
+ *         description: Login successful
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/AuthResponse'
+ *       401:
+ *         description: Invalid credentials
+ *       500:
+ *         description: Internal server error
+ */
 authRouter.post(
   '/login',
   async (req, res) => {
@@ -21,6 +45,30 @@ authRouter.post(
   }
 });
 
+/**
+ * @swagger
+ * /auth/signup:
+ *   post:
+ *     summary: User registration
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/SignupRequest'
+ *     responses:
+ *       201:
+ *         description: Registration successful
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/AuthResponse'
+ *       400:
+ *         description: Validation error or user exists
+ *       500:
+ *         description: Internal server error
+ */
 authRouter.post(
   '/signup',
   async (req: Request, res: Response) => {
@@ -36,6 +84,29 @@ authRouter.post(
   }
 );
 
+/**
+ * @swagger
+ * /auth/profile:
+ *   get:
+ *     summary: Get current user profile
+ *     tags: [Auth]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Profile data retrieved
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 token:
+ *                   type: string
+ *       401:
+ *         description: Unauthorized
+ */
 authRouter.get(
   '/profile',
   (req: Request, res: Response) => {
