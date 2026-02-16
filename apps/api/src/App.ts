@@ -5,7 +5,9 @@ import { Logger } from "tslog";
 import cors from 'cors';
 import cookieParser  from 'cookie-parser'
 import expressSession from 'express-session'
+import swaggerUi from 'swagger-ui-express';
 import { BASE_API } from "./config/config";
+import { swaggerSpec } from "./config/swagger";
 
 const log: Logger = new Logger({
   name: 'P-Frog API',
@@ -47,6 +49,11 @@ export class App {
         saveUninitialized: false,
       }) as any
     );
+  }
+
+  setupSwagger(): void {
+    this.app.use(`${BASE_API}/docs`, swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+    log.info(`Swagger docs available at ${BASE_API}/docs`);
   }
 
   addRouter(appRouter: AppRouter): void {

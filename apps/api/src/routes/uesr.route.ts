@@ -11,6 +11,31 @@ const log: Logger = new Logger();
 const userRouter: Router = Router();
 const userService: UserService = new UserService();
 
+/**
+ * @swagger
+ * tags:
+ *   name: Users
+ *   description: User management endpoints
+ */
+
+/**
+ * @swagger
+ * /users:
+ *   post:
+ *     summary: Create a new user
+ *     tags: [Users]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/User'
+ *     responses:
+ *       200:
+ *         description: User created
+ *       500:
+ *         description: Internal server error
+ */
 userRouter.post('/',async (req: Request, res: Response) => {
   log.info('POST /users - Creating user');
   try {
@@ -24,6 +49,28 @@ userRouter.post('/',async (req: Request, res: Response) => {
   }
 });
 
+/**
+ * @swagger
+ * /users/{id}:
+ *   patch:
+ *     summary: Update a user
+ *     tags: [Users]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/User'
+ *     responses:
+ *       200:
+ *         description: User updated
+ */
 userRouter.patch('/:id', (req: Request, res: Response) => {
   const {id} = req.params;
   log.info(`PATCH /users/${id} - Updating user`);
@@ -39,6 +86,36 @@ userRouter.patch('/:id', (req: Request, res: Response) => {
     }
   });
 });
+
+/**
+ * @swagger
+ * /users/{id}/superuser:
+ *   patch:
+ *     summary: Set superuser status
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               isSuperuser:
+ *                 type: boolean
+ *     responses:
+ *       200:
+ *         description: Superuser status updated
+ *       403:
+ *         description: Forbidden
+ */
 
 /**
  * PATCH /users/:id/superuser
@@ -75,6 +152,31 @@ userRouter.patch('/:id/superuser', auth, requireSuperuser(), async (req: any, re
   }
 });
 
+/**
+ * @swagger
+ * /users/{id}:
+ *   get:
+ *     summary: Get user by ID
+ *     tags: [Users]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: User retrieved
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 user:
+ *                   $ref: '#/components/schemas/User'
+ */
 userRouter.get('/:id', (req: Request, res: Response) => {
   const {id} = req.params;
   log.info(`GET /users/${id} - Fetching user by id`);
@@ -89,6 +191,30 @@ userRouter.get('/:id', (req: Request, res: Response) => {
     }
   });
 });
+
+/**
+ * @swagger
+ * /users:
+ *   get:
+ *     summary: Get all users
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: List of users
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 users:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/User'
+ */
 
 /**
  * GET /users
@@ -122,6 +248,28 @@ userRouter.get('/', auth, async (req: any, res: Response) => {
     res.send({ success: false, error: e.message });
   }
 });
+
+/**
+ * @swagger
+ * /users/search:
+ *   get:
+ *     summary: Search users
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: q
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Search query (min 2 chars)
+ *     responses:
+ *       200:
+ *         description: Search results
+ *       400:
+ *         description: Invalid query
+ */
 
 /**
  * GET /users/search?q=query

@@ -12,6 +12,37 @@ const projectRouter: Router = Router();
 const projectService: ProjectService = new ProjectService();
 
 /**
+ * @swagger
+ * tags:
+ *   name: Projects
+ *   description: Project management endpoints
+ */
+
+/**
+ * @swagger
+ * /projects:
+ *   post:
+ *     summary: Create a new project
+ *     tags: [Projects]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               data:
+ *                 $ref: '#/components/schemas/Project'
+ *     responses:
+ *       200:
+ *         description: Project created successfully
+ *       500:
+ *         description: Internal server error
+ */
+
+/**
  * POST /projects
  * Create a new project (any authenticated user can create)
  * Creator automatically becomes admin member
@@ -30,6 +61,33 @@ projectRouter.post('/', auth, async (req: any, res: Response) => {
     res.status(500).send(e);
   }
 });
+
+/**
+ * @swagger
+ * /projects/{id}:
+ *   patch:
+ *     summary: Update a project
+ *     tags: [Projects]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Project'
+ *     responses:
+ *       200:
+ *         description: Project updated
+ *       404:
+ *         description: Project not found
+ */
 
 /**
  * PATCH /projects/:id
@@ -56,6 +114,36 @@ projectRouter.patch('/:id', auth, requireProjectAdmin(), async (req: any, res: R
 });
 
 /**
+ * @swagger
+ * /projects/{id}:
+ *   get:
+ *     summary: Get a project by ID
+ *     tags: [Projects]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Project retrieved
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 project:
+ *                   $ref: '#/components/schemas/Project'
+ *       404:
+ *         description: Project not found
+ */
+
+/**
  * GET /projects/:id
  * Get a single project
  * Requires: project member or superuser
@@ -76,6 +164,30 @@ projectRouter.get('/:id', auth, requireProjectMember(), (req: any, res: Response
 });
 
 /**
+ * @swagger
+ * /projects:
+ *   get:
+ *     summary: Get all projects for current user
+ *     tags: [Projects]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: List of projects
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 projects:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Project'
+ */
+
+/**
  * GET /projects
  * List all projects the user has access to
  */
@@ -91,6 +203,27 @@ projectRouter.get('/', auth, async (req: any, res: Response) => {
     res.send({ success: false, error: err});
   }
 });
+
+/**
+ * @swagger
+ * /projects/{id}:
+ *   delete:
+ *     summary: Delete a project
+ *     tags: [Projects]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Project deleted
+ *       404:
+ *         description: Project not found
+ */
 
 /**
  * DELETE /projects/:id

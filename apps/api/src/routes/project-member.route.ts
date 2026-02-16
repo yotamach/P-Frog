@@ -12,6 +12,32 @@ const projectMemberRouter: Router = Router({ mergeParams: true }); // mergeParam
 const projectMemberService: ProjectMemberService = new ProjectMemberService();
 
 /**
+ * @swagger
+ * tags:
+ *   name: Project Members
+ *   description: Project membership endpoints
+ */
+
+/**
+ * @swagger
+ * /projects/{projectId}/members:
+ *   get:
+ *     summary: List project members
+ *     tags: [Project Members]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: projectId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: List of members
+ */
+
+/**
  * GET /projects/:projectId/members
  * List all members of a project
  * Requires: project member or superuser
@@ -28,6 +54,39 @@ projectMemberRouter.get('/', auth, requireProjectMember(), async (req: any, res:
     res.status(500).send({ success: false, error: e.message });
   }
 });
+
+/**
+ * @swagger
+ * /projects/{projectId}/members:
+ *   post:
+ *     summary: Add member to project
+ *     tags: [Project Members]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: projectId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               userId:
+ *                 type: string
+ *               role:
+ *                 type: string
+ *                 enum: [admin, member]
+ *     responses:
+ *       201:
+ *         description: Member added
+ *       409:
+ *         description: User already member
+ */
 
 /**
  * POST /projects/:projectId/members
@@ -74,6 +133,42 @@ projectMemberRouter.post('/', auth, requireProjectAdmin(), async (req: any, res:
 });
 
 /**
+ * @swagger
+ * /projects/{projectId}/members/{userId}:
+ *   patch:
+ *     summary: Update member role
+ *     tags: [Project Members]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: projectId
+ *         required: true
+ *         schema:
+ *           type: string
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               role:
+ *                 type: string
+ *                 enum: [admin, member]
+ *     responses:
+ *       200:
+ *         description: Role updated
+ *       404:
+ *         description: Membership not found
+ */
+
+/**
  * PATCH /projects/:projectId/members/:userId
  * Update a member's role
  * Requires: project admin or superuser
@@ -117,6 +212,34 @@ projectMemberRouter.patch('/:userId', auth, requireProjectAdmin(), async (req: a
     res.status(500).send({ success: false, error: e.message });
   }
 });
+
+/**
+ * @swagger
+ * /projects/{projectId}/members/{userId}:
+ *   delete:
+ *     summary: Remove member from project
+ *     tags: [Project Members]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: projectId
+ *         required: true
+ *         schema:
+ *           type: string
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Member removed
+ *       403:
+ *         description: Forbidden
+ *       404:
+ *         description: Membership not found
+ */
 
 /**
  * DELETE /projects/:projectId/members/:userId

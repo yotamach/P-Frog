@@ -12,6 +12,43 @@ const taskRouter: Router = Router();
 const taskService: TaskService = new TaskService();
 
 /**
+ * @swagger
+ * tags:
+ *   name: Tasks
+ *   description: Task management endpoints
+ */
+
+/**
+ * @swagger
+ * /tasks:
+ *   post:
+ *     summary: Create a new task
+ *     tags: [Tasks]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               data:
+ *                 $ref: '#/components/schemas/Task'
+ *     responses:
+ *       200:
+ *         description: Task created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Task'
+ *       403:
+ *         description: Not authorized to create task in project
+ *       500:
+ *         description: Internal server error
+ */
+
+/**
  * POST /tasks
  * Create a new task
  * - Anyone can create standalone tasks (no project)
@@ -39,6 +76,38 @@ taskRouter.post('/', auth, async (req: any, res: Response) => {
     res.status(500).send(e);
   }
 });
+
+/**
+ * @swagger
+ * /tasks/{id}:
+ *   patch:
+ *     summary: Update a task
+ *     tags: [Tasks]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Task ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Task'
+ *     responses:
+ *       200:
+ *         description: Task updated successfully
+ *       403:
+ *         description: Not authorized to modify task
+ *       404:
+ *         description: Task not found
+ *       500:
+ *         description: Internal server error
+ */
 
 /**
  * PATCH /tasks/:id
@@ -140,6 +209,39 @@ taskRouter.patch('/:id/assign', auth, async (req: any, res: Response) => {
 });
 
 /**
+ * @swagger
+ * /tasks/{id}:
+ *   get:
+ *     summary: Get a single task
+ *     tags: [Tasks]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Task ID
+ *     responses:
+ *       200:
+ *         description: Task retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 task:
+ *                   $ref: '#/components/schemas/Task'
+ *       403:
+ *         description: Not authorized to view task
+ *       404:
+ *         description: Task not found
+ */
+
+/**
  * GET /tasks/:id
  * Get a single task
  * Allowed for users who have access (via ownership, assignment, or project membership)
@@ -175,6 +277,30 @@ taskRouter.get('/:id', auth, async (req: any, res: Response) => {
 });
 
 /**
+ * @swagger
+ * /tasks:
+ *   get:
+ *     summary: Get all tasks for current user
+ *     tags: [Tasks]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: List of tasks
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 tasks:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Task'
+ */
+
+/**
  * GET /tasks
  * List all tasks the user has access to
  */
@@ -190,6 +316,32 @@ taskRouter.get('/', auth, async (req: any, res: Response) => {
     res.send({ success: false, error: e.message });
   }
 });
+
+/**
+ * @swagger
+ * /tasks/{id}:
+ *   delete:
+ *     summary: Delete a task
+ *     tags: [Tasks]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Task ID
+ *     responses:
+ *       200:
+ *         description: Task deleted successfully
+ *       403:
+ *         description: Not authorized to delete task
+ *       404:
+ *         description: Task not found
+ *       500:
+ *         description: Internal server error
+ */
 
 /**
  * DELETE /tasks/:id
