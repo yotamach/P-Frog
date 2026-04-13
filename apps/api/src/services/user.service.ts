@@ -5,13 +5,13 @@ import { MongooseError } from "mongoose";
 
 type UserQueryParams = Record<string, unknown>;
 
-const log: Logger = new Logger();
+const log = new Logger({});
 
 export class UserService {
 
-  getUsers(callback: (err: MongooseError, user: IUser) => void) {
+  async getUsers(): Promise<IUser[]> {
     log.info(`UserService.getUsers: users fetched!`);
-    return User.find(callback);
+    return User.find({}).exec();
   }
 
   /**
@@ -22,9 +22,9 @@ export class UserService {
     return User.find({}).exec();
   }
 
-  getUserByParams(params: UserQueryParams, callback: (err: MongooseError, user: IUser) => void) {
+  async getUserByParams(params: UserQueryParams): Promise<IUser[]> {
     log.info(`UserService.getUserByParams: user fetched! params:${params}`);
-    return User.find(params, callback)
+    return User.find(params).exec();
   }
 
   /**
@@ -40,14 +40,14 @@ export class UserService {
     return User.create(user);
   }
 
-  updateUser(user: UserModel, id: string, callback: (err: MongooseError, user: IUser) => void) {
+  async updateUser(user: UserModel, id: string): Promise<IUser | null> {
     log.info(`UserService.updateUser: user updated! ${user}`);
-    User.findOneAndUpdate({ id },{...user},{new: true}, callback);
+    return User.findOneAndUpdate({ id }, {...user}, {new: true}).exec();
   }
 
-  deleteUser(id: string, callback: (err: MongooseError, user: IUser) => void) {
+  async deleteUser(id: string): Promise<IUser | null> {
     log.info(`taskService.deleteUser: findOneAndUpdate user`);
-    return User.findByIdAndDelete(id, callback);
+    return User.findByIdAndDelete(id).exec();
   }
 
   /**

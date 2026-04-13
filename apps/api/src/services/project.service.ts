@@ -4,7 +4,7 @@ import { CallbackError } from "mongoose";
 import { IProject, Project, ProjectMember, ProjectRole } from "@schemas";
 import { isSuperuser } from "./permission.service";
 
-const log: Logger = new Logger();
+const log = new Logger({});
 
 export class ProjectService {
 
@@ -28,9 +28,9 @@ export class ProjectService {
     return Project.find({ _id: { $in: projectIds } }).populate('tasks').exec();
   }
 
-  getProjectByParams(params: any, callback: (err: CallbackError, projects: IProject[]) => void) {
+  async getProjectByParams(params: any): Promise<IProject[]> {
     log.info(`projectService.getProjectByParams: find project with params ${JSON.stringify(params)}`);
-    return Project.find(params).populate('tasks').exec(callback);
+    return Project.find(params).populate('tasks').exec();
   }
 
   /**

@@ -9,7 +9,7 @@ import swaggerUi from 'swagger-ui-express';
 import { BASE_API } from "./config/config";
 import { swaggerSpec } from "./config/swagger";
 
-const log: Logger = new Logger({
+const log = new Logger({
   name: 'P-Frog API',
   displayDateTime: true,
   displayFunctionName: true,

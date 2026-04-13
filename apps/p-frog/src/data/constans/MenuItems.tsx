@@ -1,7 +1,7 @@
 import { lazy } from 'react';
 import {NavMenuItem} from "../../types";
-import fontawesome from '@fortawesome/fontawesome'
-import { faCheckSquare, faChartArea } from '@fortawesome/fontawesome-free-solid'
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { faCheckSquare, faChartArea } from '@fortawesome/free-solid-svg-icons'
 import { TasksList } from "@pages/tasks/components";
 import { ProjectsGrid } from "@pages/projects/components";
 
@@ -10,7 +10,7 @@ const Settings = lazy(() => import('@pages/settings/settings.component'));
 const Tasks = lazy(() => import('@pages/tasks/tasks.component'));
 const Projects = lazy(() => import('@pages/projects/projects.component'));
 
-fontawesome.library.add(faCheckSquare, faChartArea);
+library.add(faCheckSquare, faChartArea);
 
 export const menuItems: NavMenuItem[] = [
   {

@@ -1,7 +1,7 @@
 import { Logger } from "tslog";
 import { User, ProjectMember, ProjectRole } from '@schemas';
 
-const log: Logger = new Logger();
+const log = new Logger({});
 
 /**
  * Check if a user is a superuser

@@ -3,7 +3,7 @@ import { Logger } from "tslog";
 import * as PermissionService from '@controllers';
 import { ProjectRole } from '@schemas';
 
-const log: Logger = new Logger();
+const log = new Logger({});
 
 /**
  * Extract user ID from request (set by auth middleware)

@@ -1,25 +1,24 @@
-import { AxiosResponse } from "axios";
-import { request } from './index';
+import { request, ApiResponse } from './index';
 import { Task } from '@p-frog/data';
 
 export class TasksAPI {
     endPoint = 'tasks/';
 
-    fetchAll(): Promise<AxiosResponse> {
-        return request.get<AxiosResponse>(this.endPoint);
+    fetchAll(): ApiResponse {
+        return request.get(this.endPoint);
     }
 
-    create(task: Task): Promise<AxiosResponse> {
-        return request.post<AxiosResponse>(this.endPoint, {
+    create(task: Task): ApiResponse {
+        return request.post(this.endPoint, {
             data: task
         });
     }
 
-    update(id: string, task: Task): Promise<AxiosResponse> {
-        return request.patch<AxiosResponse>(this.endPoint + id, task);
+    update(id: string, task: Task): ApiResponse {
+        return request.patch(this.endPoint + id, task);
     }
 
-    delete(id: string): Promise<AxiosResponse> {
-        return request.delete<AxiosResponse>(this.endPoint + id, {});
+    delete(id: string): ApiResponse {
+        return request.delete(this.endPoint + id);
     }
 }

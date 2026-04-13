@@ -16,7 +16,7 @@ import { Logger } from 'tslog';
 // Import schemas
 import { User, Project, ProjectMember, ProjectRole } from '../schemas';
 
-const log: Logger = new Logger();
+const log = new Logger({});
 
 async function runMigration() {
   const { DB_HOST, DB_PORT, DB_SCHEMA, DB_USERNAME, DB_PASSWORD } = process.env;

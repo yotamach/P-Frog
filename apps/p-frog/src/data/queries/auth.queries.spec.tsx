@@ -2,8 +2,7 @@
  * Frontend Unit Tests for Auth Queries
  */
 
-import { renderHook } from '@testing-library/react-hooks';
-import { waitFor } from '@testing-library/react';
+import { renderHook, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { BrowserRouter } from 'react-router-dom';
 import { useLogin, useSignUp, useLogout, initializeAuth } from './auth.queries';

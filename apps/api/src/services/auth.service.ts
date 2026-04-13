@@ -5,7 +5,7 @@ import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 
 
-const log: Logger = new Logger();
+const log = new Logger({});
 
 export class AuthService {
 

@@ -7,7 +7,7 @@ import { auth } from "../middleware/authentication";
 import { requireProjectAdmin, requireProjectMember, getUserId } from "../middleware/authorization";
 import { isSuperuser } from "@controllers";
 
-const log: Logger = new Logger();
+const log = new Logger({});
 const projectMemberRouter: Router = Router({ mergeParams: true }); // mergeParams to access :projectId from parent
 const projectMemberService: ProjectMemberService = new ProjectMemberService();
 

@@ -3,7 +3,7 @@ import { Logger } from "tslog";
 import {AppRouter} from "@models";
 import { AuthService } from "@controllers";
 
-const log: Logger = new Logger();
+const log = new Logger({});
 const authRouter: Router = Router();
 const authService: AuthService = new AuthService();
 

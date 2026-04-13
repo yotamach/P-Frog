@@ -4,7 +4,7 @@ import { CallbackError, Types } from "mongoose";
 import { ITask, Task, ProjectMember } from "@schemas";
 import { isSuperuser } from "./permission.service";
 
-const log: Logger = new Logger();
+const log = new Logger({});
 
 export class TaskService {
 
@@ -53,12 +53,12 @@ export class TaskService {
       .exec();
   }
 
-  getTaskByParams(params: any, callback: (err: CallbackError, tasks: ITask[]) => void) {
+  async getTaskByParams(params: any): Promise<ITask[]> {
     log.info(`taskService.getTaskByParams: find task with params ${JSON.stringify(params)}`);
     return Task.find(params)
       .populate('project')
       .populate('assignee', 'id userName firstName lastName')
-      .exec(callback);
+      .exec();
   }
 
   createTask(task: TaskModel, creatorId: string): Promise<ITask> {

@@ -1,5 +1,4 @@
-import { AxiosResponse } from "axios";
-import { request } from './index';
+import { request, ApiResponse } from './index';
 
 interface AuthCredentials {
     userName: string;
@@ -17,19 +16,19 @@ interface User {
 export class AuthAPI {
     endPoint = 'auth/'
 
-    login(credentials: AuthCredentials): Promise<AxiosResponse> {
-        return request.post<AxiosResponse>(this.endPoint + `login`, credentials);
+    login(credentials: AuthCredentials): ApiResponse {
+        return request.post(this.endPoint + `login`, credentials);
     }
 
-    signUp(user: User): Promise<AxiosResponse> {
-        return request.post<AxiosResponse>(this.endPoint + 'signup', user);
+    signUp(user: User): ApiResponse {
+        return request.post(this.endPoint + 'signup', user);
     }
 
-    signOut(id: string): Promise<AxiosResponse> {
-        return request.patch<AxiosResponse>(this.endPoint + 'signout/', id);
+    signOut(id: string): ApiResponse {
+        return request.patch(this.endPoint + 'signout/', id);
     }
 
-    getProfile(): Promise<AxiosResponse> {
-        return request.get<AxiosResponse>(this.endPoint + 'profile');
+    getProfile(): ApiResponse {
+        return request.get(this.endPoint + 'profile');
     }
 }

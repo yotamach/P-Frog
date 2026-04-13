@@ -7,7 +7,7 @@ import { auth } from "../middleware/authentication";
 import { requireSuperuser, getUserId } from "../middleware/authorization";
 import { isSuperuser } from "@controllers";
 
-const log: Logger = new Logger();
+const log = new Logger({});
 const userRouter: Router = Router();
 const userService: UserService = new UserService();
 

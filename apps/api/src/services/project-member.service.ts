@@ -1,7 +1,7 @@
 import { Logger } from "tslog";
 import { ProjectMember, IProjectMember, ProjectRole, User } from "@schemas";
 
-const log: Logger = new Logger();
+const log = new Logger({});
 
 export class ProjectMemberService {
   

@@ -17,7 +17,7 @@
     {
       "files": ["*.ts", "*.tsx"],
       "rules": {
-        "eslintreact-hooks/exhaustive-deps": ["off"]
+        "react-hooks/exhaustive-deps": ["off"]
       }
     },
     {

@@ -7,7 +7,7 @@ import { auth } from "../middleware/authentication";
 import { requireProjectAdmin, requireProjectMember, getUserId } from "../middleware/authorization";
 import { canAccessProject, canManageProject } from "@controllers";
 
-const log: Logger = new Logger();
+const log = new Logger({});
 const projectRouter: Router = Router();
 const projectService: ProjectService = new ProjectService();
 

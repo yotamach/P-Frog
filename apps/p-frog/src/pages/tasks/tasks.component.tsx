@@ -2,7 +2,7 @@ import { Suspense } from 'react';
 import { tasksMenuItems } from '@data/constans/MenuItems';
 import { useTask } from '@hooks/index';
 import { useEffect } from 'react';
-import { Route, Routes } from 'react-router';
+import { Route, Routes } from 'react-router-dom';
 
 /* eslint-disable-next-line */
 export interface TasksProps {}

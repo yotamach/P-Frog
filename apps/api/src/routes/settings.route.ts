@@ -3,7 +3,7 @@ import { Logger } from "tslog";
 import {AppRouter, SettingsModel} from "@models";
 import {SettingsService } from "src/services";
 
-const log: Logger = new Logger();
+const log = new Logger({});
 const settingsRouter: Router = Router();
 const settingsService: SettingsService = new SettingsService();
 

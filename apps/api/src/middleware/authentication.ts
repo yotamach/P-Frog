@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 import HttpStatus from 'http-status-codes';
 import { Logger } from "tslog";
 
-const log: Logger = new Logger();
+const log = new Logger({});
 
 export const auth = (req: any, res: any, next: any) => {
   const token =

@@ -7,7 +7,7 @@ import { auth } from "../middleware/authentication";
 import { getUserId } from "../middleware/authorization";
 import { canModifyTask, canCreateTaskInProject, canAssignTask, canAccessProject, isProjectMember } from "@controllers";
 
-const log: Logger = new Logger();
+const log = new Logger({});
 const taskRouter: Router = Router();
 const taskService: TaskService = new TaskService();
 

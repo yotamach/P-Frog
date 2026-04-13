@@ -3,13 +3,13 @@ import {SettingsModel } from "@models";
 import { CallbackError } from "mongoose";
 import { ISettings, Settings } from "@schemas";
 
-const log: Logger = new Logger();
+const log = new Logger({});
 
 export class SettingsService {
 
-  getSettingsByParams(params: any, callback: (err: CallbackError, settings: ISettings) => void) {
+  getSettingsByParams(params: any): Promise<ISettings[]> {
     log.info(`SettingsService.getSettingsByParams: find settings`);
-    return Settings.find(params, callback)
+    return Settings.find(params).exec();
   }
 
   createSettings(settings: SettingsModel): Promise<ISettings> {
@@ -17,13 +17,13 @@ export class SettingsService {
     return Settings.create(settings);
   }
 
-  updateSettings(settings: SettingsModel, id: string, callback: (err: CallbackError, settings: ISettings) => void) {
+  updateSettings(settings: SettingsModel, id: string): Promise<ISettings | null> {
     log.info(`SettingsService.updateSettings: findOneAndUpdate settings`);
-    return Settings.findOneAndUpdate({ id },{...settings},{new: true}, callback);
+    return Settings.findOneAndUpdate({ id }, {...settings}, {new: true}).exec();
   }
 
-  deleteSettings(id: string, callback: (err: CallbackError, settings: ISettings) => void) {
+  deleteSettings(id: string): Promise<ISettings | null> {
     log.info(`SettingsService.deleteSettings: findOneAndUpdate task`);
-    return Settings.findByIdAndDelete(id, callback);
+    return Settings.findByIdAndDelete(id).exec();
   }
 }
