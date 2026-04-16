@@ -152,7 +152,7 @@ A custom fetch-based `request` object (not axios) in `src/data/services/`:
 ### Routing
 React Router v6 with Suspense boundaries:
 - `/` → redirect to `/welcome`
-- Public: `/welcome`, `/login`, `/registration`
+- Public: `/welcome`, `/login`, `/registration` (page dir: `src/pages/registration/`)
 - Protected (require auth): `/home` layout wrapper
   - `/home` — dashboard (default)
   - `/home/tasks/*`
