@@ -1,6 +1,5 @@
 import {Logger} from "tslog";
 import {ProjectModel } from "@models";
-import { CallbackError } from "mongoose";
 import { IProject, Project, ProjectMember, ProjectRole } from "@schemas";
 import { isSuperuser } from "./permission.service";
 

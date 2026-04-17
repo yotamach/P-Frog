@@ -3,6 +3,11 @@ import { useTasks, useCreateTask, useUpdateTask, useDeleteTask } from '@data/que
 import { useProjects } from '@data/queries/projects.queries';
 import {
   Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableHead,
+  TableCell,
   Button,
   Drawer,
   DrawerClose,
@@ -340,47 +345,43 @@ const TasksList: React.FC = () => {
       </Drawer>
 
       <div className="rounded-lg border bg-card shadow-sm">
-      <Table.Table>
-        <Table.TableHeader>
+      <Table>
+        <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
-            <Table.TableRow key={headerGroup.id}>
+            <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => (
-                <Table.TableHead key={header.id}>
+                <TableHead key={header.id}>
                   {flexRender(header.column.columnDef.header, header.getContext())}
-                </Table.TableHead>
+                </TableHead>
               ))}
-            </Table.TableRow>
+            </TableRow>
           ))}
-        </Table.TableHeader>
-        <Table.TableBody>
+        </TableHeader>
+        <TableBody>
           {table.getRowModel().rows.length > 0 ? (
             table.getRowModel().rows.map((row) => (
-              <Table.TableRow 
+              <TableRow
                 key={row.id}
                 onClick={() => handleRowClick(row.original)}
-                className="cursor-pointer transition-colors hover:bg-muted/50"
-                style={{
-                  backgroundColor: selectedTask?.id === row.original.id 
-                    ? 'var(--color-table-selected)' 
-                    : undefined,
-                }}
+                className="cursor-pointer"
+                data-state={selectedTask?.id === row.original.id ? 'selected' : undefined}
               >
                 {row.getVisibleCells().map((cell) => (
-                  <Table.TableCell key={cell.id}>
+                  <TableCell key={cell.id}>
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </Table.TableCell>
+                  </TableCell>
                 ))}
-              </Table.TableRow>
+              </TableRow>
             ))
           ) : (
-            <Table.TableRow>
-              <Table.TableCell colSpan={columns.length} className="text-center py-8 text-muted-foreground">
+            <TableRow>
+              <TableCell colSpan={columns.length} className="text-center py-8 text-muted-foreground">
                 No tasks available
-              </Table.TableCell>
-            </Table.TableRow>
+              </TableCell>
+            </TableRow>
           )}
-        </Table.TableBody>
-      </Table.Table>
+        </TableBody>
+      </Table>
       </div>
     </div>
   );

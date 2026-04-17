@@ -1,14 +1,9 @@
 module.exports = {
   displayName: 'api',
   preset: '../../jest.preset.cjs',
-  globals: {
-    'ts-jest': {
-      tsconfig: '<rootDir>/tsconfig.spec.json',
-    },
-  },
   testEnvironment: 'node',
   transform: {
-    '^.+\\.[tj]s$': 'ts-jest',
+    '^.+\\.[tj]s$': ['@swc/jest', { jsc: { parser: { syntax: 'typescript' } } }],
   },
   moduleFileExtensions: ['ts', 'js', 'html'],
   coverageDirectory: '../../coverage/apps/api',

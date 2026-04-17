@@ -25,7 +25,7 @@ describe('Settings Schema', () => {
       expect(settingsSchema.path('city').instance).toBe('String');
       expect(settingsSchema.path('country').instance).toBe('String');
       expect(settingsSchema.path('sendTasksEmail').instance).toBe('Boolean');
-      expect(settingsSchema.path('user').instance).toBe('ObjectID');
+      expect(settingsSchema.path('user').instance).toBe('ObjectId');
     });
 
     it('should have default value for sendTasksEmail', () => {

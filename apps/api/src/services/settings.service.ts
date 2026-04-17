@@ -1,6 +1,5 @@
 import { Logger} from "tslog";
 import {SettingsModel } from "@models";
-import { CallbackError } from "mongoose";
 import { ISettings, Settings } from "@schemas";
 
 const log = new Logger({});

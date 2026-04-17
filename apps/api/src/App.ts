@@ -9,13 +9,7 @@ import swaggerUi from 'swagger-ui-express';
 import { BASE_API } from "./config/config";
 import { swaggerSpec } from "./config/swagger";
 
-const log = new Logger({
-  name: 'P-Frog API',
-  displayDateTime: true,
-  displayFunctionName: true,
-  displayFilePath: 'displayAll',
-  dateTimePattern: 'year-month-day hour:minute:second.millisecond',
-});
+const log = new Logger({ name: 'P-Frog API' });
 
 // Suppress Mongoose strictQuery deprecation warning
 set('strictQuery', false);

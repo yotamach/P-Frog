@@ -61,18 +61,18 @@ describe('ProjectService', () => {
   });
 
   describe('getProjectByParams', () => {
-    it('should call Project.find with provided params', () => {
+    it('should call Project.find with provided params', async () => {
       const mockParams = { title: 'Test Project' };
-      const mockCallback = jest.fn();
-      const mockExec = jest.fn().mockReturnValue(Promise.resolve([]));
+      const mockProjects = [{ _id: mockProjectId, title: 'Test Project' }];
+      const mockExec = jest.fn().mockResolvedValue(mockProjects);
       const mockPopulate = jest.fn().mockReturnValue({ exec: mockExec });
       (Project.find as jest.Mock) = jest.fn().mockReturnValue({ populate: mockPopulate });
 
-      projectService.getProjectByParams(mockParams, mockCallback);
+      const result = await projectService.getProjectByParams(mockParams);
 
       expect(Project.find).toHaveBeenCalledWith(mockParams);
       expect(mockPopulate).toHaveBeenCalledWith('tasks');
-      expect(mockExec).toHaveBeenCalledWith(mockCallback);
+      expect(result).toEqual(mockProjects);
     });
   });
 

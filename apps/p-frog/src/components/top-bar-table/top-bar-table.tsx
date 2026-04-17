@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Plus, Pencil, Trash2, Search } from 'lucide-react';
-import { Input } from '../input/input';
+import { Input } from '../ui/input';
 import { Button } from '@components/ui/button';
 
 interface TopBarTableProps {

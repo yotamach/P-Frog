@@ -17,14 +17,16 @@ describe('SettingsService', () => {
   });
 
   describe('getSettingsByParams', () => {
-    it('should call Settings.find with params and callback', () => {
+    it('should call Settings.find with params and return results', async () => {
       const mockParams = { user_id: mockUserId };
-      const mockCallback = jest.fn();
-      (Settings.find as jest.Mock) = jest.fn();
+      const mockResults = [{ email: 'test@example.com' }];
+      const mockExec = jest.fn().mockResolvedValue(mockResults);
+      (Settings.find as jest.Mock) = jest.fn().mockReturnValue({ exec: mockExec });
 
-      settingsService.getSettingsByParams(mockParams, mockCallback);
+      const result = await settingsService.getSettingsByParams(mockParams);
 
-      expect(Settings.find).toHaveBeenCalledWith(mockParams, mockCallback);
+      expect(Settings.find).toHaveBeenCalledWith(mockParams);
+      expect(result).toEqual(mockResults);
     });
   });
 
@@ -50,7 +52,7 @@ describe('SettingsService', () => {
   });
 
   describe('updateSettings', () => {
-    it('should call findOneAndUpdate with correct parameters', () => {
+    it('should call findOneAndUpdate with correct parameters', async () => {
       const mockSettingsData = {
         email: 'updated@example.com',
         phone: '+9876543210',
@@ -59,28 +61,31 @@ describe('SettingsService', () => {
         country: 'USA',
         sendTasksEmail: false,
       };
-      const mockCallback = jest.fn();
-      (Settings.findOneAndUpdate as jest.Mock) = jest.fn();
+      const mockUpdated = { ...mockSettingsData, _id: mockSettingsId };
+      const mockExec = jest.fn().mockResolvedValue(mockUpdated);
+      (Settings.findOneAndUpdate as jest.Mock) = jest.fn().mockReturnValue({ exec: mockExec });
 
-      settingsService.updateSettings(mockSettingsData, mockSettingsId, mockCallback);
+      const result = await settingsService.updateSettings(mockSettingsData, mockSettingsId);
 
       expect(Settings.findOneAndUpdate).toHaveBeenCalledWith(
         { id: mockSettingsId },
         { ...mockSettingsData },
-        { new: true },
-        mockCallback
+        { new: true }
       );
+      expect(result).toEqual(mockUpdated);
     });
   });
 
   describe('deleteSettings', () => {
-    it('should call findByIdAndDelete with settings id', () => {
-      const mockCallback = jest.fn();
-      (Settings.findByIdAndDelete as jest.Mock) = jest.fn();
+    it('should call findByIdAndDelete with settings id', async () => {
+      const mockDeleted = { _id: mockSettingsId };
+      const mockExec = jest.fn().mockResolvedValue(mockDeleted);
+      (Settings.findByIdAndDelete as jest.Mock) = jest.fn().mockReturnValue({ exec: mockExec });
 
-      settingsService.deleteSettings(mockSettingsId, mockCallback);
+      const result = await settingsService.deleteSettings(mockSettingsId);
 
-      expect(Settings.findByIdAndDelete).toHaveBeenCalledWith(mockSettingsId, mockCallback);
+      expect(Settings.findByIdAndDelete).toHaveBeenCalledWith(mockSettingsId);
+      expect(result).toEqual(mockDeleted);
     });
   });
 });

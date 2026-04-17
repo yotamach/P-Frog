@@ -7,12 +7,17 @@ function Calendar({
   className,
   classNames,
   showOutsideDays = true,
+  style,
   ...props
 }: CalendarProps) {
   return (
     <DayPicker
       showOutsideDays={showOutsideDays}
       className={`p-3 ${className || ''}`}
+      style={{
+        color: 'var(--color-foreground)',
+        ...style,
+      }}
       classNames={{
         months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
         month: "space-y-4",
@@ -20,27 +25,40 @@ function Calendar({
         caption_label: "text-sm font-medium",
         nav: "space-x-1 flex items-center",
         nav_button:
-          "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100 inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground disabled:pointer-events-none disabled:opacity-50",
+          "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100 inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors disabled:pointer-events-none disabled:opacity-50",
         nav_button_previous: "absolute left-1",
         nav_button_next: "absolute right-1",
         table: "w-full border-collapse space-y-1",
         head_row: "flex",
         head_cell:
-          "text-muted-foreground rounded-md w-8 font-normal text-[0.8rem]",
+          "rounded-md w-8 font-normal text-[0.8rem]",
         row: "flex w-full mt-2",
-        cell: "relative p-0 text-center text-sm focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-accent [&:has([aria-selected].day-range-end)]:rounded-r-md [&:has([aria-selected].day-outside)]:bg-accent/50",
-        day: "h-8 w-8 p-0 font-normal aria-selected:opacity-100 hover:bg-accent hover:text-accent-foreground rounded-md inline-flex items-center justify-center text-sm transition-colors",
+        cell: "relative p-0 text-center text-sm focus-within:relative focus-within:z-20",
+        day: "h-8 w-8 p-0 font-normal aria-selected:opacity-100 rounded-md inline-flex items-center justify-center text-sm transition-colors",
         day_range_end: "day-range-end",
-        day_selected:
-          "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground",
-        day_today: "bg-accent text-accent-foreground",
-        day_outside:
-          "day-outside text-muted-foreground opacity-50 aria-selected:bg-accent/50 aria-selected:text-muted-foreground aria-selected:opacity-30",
-        day_disabled: "text-muted-foreground opacity-50",
-        day_range_middle:
-          "aria-selected:bg-accent aria-selected:text-accent-foreground",
+        day_selected: "",
+        day_today: "",
+        day_outside: "day-outside opacity-50 aria-selected:opacity-30",
+        day_disabled: "opacity-50",
+        day_range_middle: "",
         day_hidden: "invisible",
         ...classNames,
+      }}
+      modifiersStyles={{
+        selected: {
+          backgroundColor: 'var(--color-primary)',
+          color: 'var(--color-primary-foreground)',
+        },
+        today: {
+          backgroundColor: 'var(--color-accent)',
+          color: 'var(--color-accent-foreground)',
+        },
+        outside: {
+          color: 'var(--color-muted-foreground)',
+        },
+        disabled: {
+          color: 'var(--color-muted-foreground)',
+        },
       }}
       {...props}
     />

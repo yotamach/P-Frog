@@ -1,5 +1,7 @@
 import { menuItems } from "@data/constans/MenuItems";
-import { Footer, Header, SideNav, PageTransition } from "@components/index";
+import { Footer, PageTransition } from "@components/index";
+import { IconRail } from "@components/icon-rail/icon-rail";
+import { ContentHeader } from "@components/content-header/content-header";
 import { Outlet } from 'react-router-dom';
 
 /* eslint-disable-next-line */
@@ -7,33 +9,37 @@ export interface HomeProps {}
 
 export function Home(props: HomeProps) {
   return (
-    <div className="flex flex-col h-screen w-screen overflow-hidden">
-      {/* Header - fixed at top */}
-      <Header />
+    <div className="flex flex-row h-screen w-screen overflow-hidden">
+      {/* Icon Rail - fixed left */}
+      <IconRail menuItems={menuItems} />
 
-      {/* Middle section with sidebar and main content */}
-      <div className="flex flex-row flex-1 overflow-hidden">
-        {/* Sidebar - positioned as aside */}
-        <SideNav menuItems={menuItems} />
+      {/* Content Area */}
+      <div className="flex flex-col flex-1 overflow-hidden min-w-0">
+        {/* Content Header */}
+        <ContentHeader />
 
         {/* Main content */}
-        <main className="flex-1 overflow-auto p-8 relative bg-[hsl(var(--table-selected))]">
+        <main
+          className="flex-1 overflow-auto p-8 relative"
+          style={{ backgroundColor: 'var(--color-background)' }}
+        >
           <PageTransition>
             <Outlet />
           </PageTransition>
         </main>
-      </div>
 
-      {/* Footer - fixed at bottom */}
-      <footer 
-        className="flex items-center justify-center shrink-0 text-white text-sm"
-        style={{
-          height: 'var(--footer-height)',
-          backgroundColor: 'hsl(var(--footer-bg))'
-        }}
-      >
-        <Footer />
-      </footer>
+        {/* Footer */}
+        <footer
+          className="flex items-center justify-center shrink-0 text-sm"
+          style={{
+            height: 'var(--footer-height)',
+            borderTop: '1px solid var(--color-border)',
+            backgroundColor: 'var(--color-surface)',
+          }}
+        >
+          <Footer />
+        </footer>
+      </div>
     </div>
   );
 }

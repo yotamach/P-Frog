@@ -4,13 +4,12 @@ module.exports = {
   testEnvironment: 'jsdom',
   transform: {
     '^.+\\.[tj]sx?$': [
-      'babel-jest',
+      '@swc/jest',
       {
-        presets: [
-          ['@babel/preset-env', { targets: { node: 'current' } }],
-          '@babel/preset-typescript',
-          ['@babel/preset-react', { runtime: 'automatic' }],
-        ],
+        jsc: {
+          parser: { syntax: 'typescript', tsx: true },
+          transform: { react: { runtime: 'automatic' } },
+        },
       },
     ],
   },

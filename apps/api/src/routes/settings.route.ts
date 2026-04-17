@@ -30,19 +30,17 @@ const settingsService: SettingsService = new SettingsService();
  *       200:
  *         description: Settings retrieved
  */
-settingsRouter.get('/:id', (req: Request, res: Response) => {
+settingsRouter.get('/:id', async (req: Request, res: Response) => {
   const {id} = req.params;
   log.info(`GET /settings/${id} - Fetching settings by id`);
-  settingsService.getSettingsByParams({ id }, (err, settings) => {
-    if (err) {
-      log.error(`GET /settings/${id} - Error: ${err}`);
-      res.send({ success: false, error: err});
-    }
-    else {
-      log.info(`GET /settings/${id} - Settings retrieved successfully`);
-      res.send({ success: true, settings});
-    }
-  });
+  try {
+    const settings = await settingsService.getSettingsByParams({ id });
+    log.info(`GET /settings/${id} - Settings retrieved successfully`);
+    res.send({ success: true, settings});
+  } catch (err) {
+    log.error(`GET /settings/${id} - Error: ${err}`);
+    res.send({ success: false, error: err});
+  }
 });
 
 /**
@@ -103,20 +101,18 @@ settingsRouter.post('/:id',async (req: Request, res: Response) => {
  *       200:
  *         description: Settings updated
  */
-settingsRouter.patch('/:id', (req: Request, res: Response) => {
+settingsRouter.patch('/:id', async (req: Request, res: Response) => {
   const {id} = req.params;
   log.info(`PATCH /settings/${id} - Updating settings`);
-  const settings: SettingsModel = req.body;
-  settingsService.updateSettings(settings, id, (err, settings) => {
-    if (err) {
-      log.error(`PATCH /settings/${id} - Error: ${err}`);
-      res.send({ success: false, error: err});
-    }
-    else {
-      log.info(`PATCH /settings/${id} - Settings updated successfully`);
-      res.send({ success: true, settings});
-    }
-  });
+  try {
+    const settingsData: SettingsModel = req.body;
+    const settings = await settingsService.updateSettings(settingsData, id);
+    log.info(`PATCH /settings/${id} - Settings updated successfully`);
+    res.send({ success: true, settings});
+  } catch (err) {
+    log.error(`PATCH /settings/${id} - Error: ${err}`);
+    res.send({ success: false, error: err});
+  }
 });
 
 /**
@@ -135,19 +131,17 @@ settingsRouter.patch('/:id', (req: Request, res: Response) => {
  *       200:
  *         description: Settings deleted
  */
-settingsRouter.delete('/:id', (req: Request, res: Response) => {
+settingsRouter.delete('/:id', async (req: Request, res: Response) => {
   const {id} = req.params;
   log.info(`DELETE /settings/${id} - Deleting settings`);
-  settingsService.deleteSettings(id,(err, settings) => {
-    if (err) {
-      log.error(`DELETE /settings/${id} - Error: ${err}`);
-      res.send({ success: false, error: err});
-    }
-    else {
-      log.info(`DELETE /settings/${id} - Settings deleted successfully`);
-      res.send({ success: true, settings});
-    }
-  });
+  try {
+    const settings = await settingsService.deleteSettings(id);
+    log.info(`DELETE /settings/${id} - Settings deleted successfully`);
+    res.send({ success: true, settings});
+  } catch (err) {
+    log.error(`DELETE /settings/${id} - Error: ${err}`);
+    res.send({ success: false, error: err});
+  }
 });
 
 const settingsRoutes : AppRouter = { url: '/settings', router: settingsRouter};

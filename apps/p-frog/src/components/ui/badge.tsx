@@ -38,21 +38,21 @@ function Badge({ className, variant, style, ...props }: BadgeProps) {
     switch (variant) {
       case 'success':
         return {
-          backgroundColor: 'hsl(142 71% 45% / 0.15)',
-          color: 'hsl(142 71% 35%)',
-          borderColor: 'hsl(142 71% 45% / 0.3)',
+          backgroundColor: 'var(--color-success-bg)',
+          color: 'var(--color-success)',
+          borderColor: 'var(--color-success)',
         };
       case 'warning':
         return {
-          backgroundColor: 'hsl(38 92% 50% / 0.15)',
-          color: 'hsl(38 92% 40%)',
-          borderColor: 'hsl(38 92% 50% / 0.3)',
+          backgroundColor: 'var(--color-warning-bg)',
+          color: 'var(--color-warning)',
+          borderColor: 'var(--color-warning)',
         };
       case 'info':
         return {
-          backgroundColor: 'hsl(217 91% 60% / 0.15)',
-          color: 'hsl(217 91% 50%)',
-          borderColor: 'hsl(217 91% 60% / 0.3)',
+          backgroundColor: 'var(--color-info-bg)',
+          color: 'var(--color-info)',
+          borderColor: 'var(--color-info)',
         };
       case 'destructive':
         return {

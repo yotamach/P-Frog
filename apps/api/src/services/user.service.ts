@@ -1,7 +1,6 @@
 import {Logger} from "tslog";
 import {UserModel} from "@models";
 import { IUser, User } from "@schemas";
-import { MongooseError } from "mongoose";
 
 type UserQueryParams = Record<string, unknown>;
 

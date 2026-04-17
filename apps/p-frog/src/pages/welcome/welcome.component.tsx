@@ -23,31 +23,31 @@ export function Welcome(props: WelcomeProps) {
 
           {/* Features Cards */}
           <div className="grid gap-6 md:grid-cols-3">
-            <Card className="border-blue-200 bg-white/95 transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+            <Card className="transition-all duration-300 hover:shadow-xl hover:-translate-y-1" style={{ backgroundColor: 'var(--color-card)', borderColor: 'var(--color-border)' }}>
               <CardHeader>
-                <div className="mb-2 h-3 w-3 rounded-full" style={{ backgroundColor: 'hsl(var(--color-button-create))' }} />
-                <CardTitle className="text-xl" style={{ color: 'hsl(var(--sidebar-text))' }}>Task Management</CardTitle>
-                <CardDescription style={{ color: 'hsl(var(--table-text-muted))' }}>
+                <div className="mb-2 h-3 w-3 rounded-full" style={{ backgroundColor: 'var(--color-primary)' }} />
+                <CardTitle className="text-xl" style={{ color: 'var(--color-text-primary)' }}>Task Management</CardTitle>
+                <CardDescription style={{ color: 'var(--color-text-muted)' }}>
                   Organize tasks into intuitive boards and monitor progress in real time.
                 </CardDescription>
               </CardHeader>
             </Card>
 
-            <Card className="border-bordo-200 bg-white/95 transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+            <Card className="transition-all duration-300 hover:shadow-xl hover:-translate-y-1" style={{ backgroundColor: 'var(--color-card)', borderColor: 'var(--color-border)' }}>
               <CardHeader>
-                <div className="mb-2 h-3 w-3 rounded-full" style={{ backgroundColor: 'hsl(var(--color-button-edit))' }} />
-                <CardTitle className="text-xl" style={{ color: 'hsl(var(--sidebar-text))' }}>Dashboards</CardTitle>
-                <CardDescription style={{ color: 'hsl(var(--table-text-muted))' }}>
+                <div className="mb-2 h-3 w-3 rounded-full" style={{ backgroundColor: 'var(--color-secondary)' }} />
+                <CardTitle className="text-xl" style={{ color: 'var(--color-text-primary)' }}>Dashboards</CardTitle>
+                <CardDescription style={{ color: 'var(--color-text-muted)' }}>
                   Visualize project health with dashboards tailored for your team.
                 </CardDescription>
               </CardHeader>
             </Card>
 
-            <Card className="border-red-200 bg-white/95 transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+            <Card className="transition-all duration-300 hover:shadow-xl hover:-translate-y-1" style={{ backgroundColor: 'var(--color-card)', borderColor: 'var(--color-border)' }}>
               <CardHeader>
-                <div className="mb-2 h-3 w-3 rounded-full" style={{ backgroundColor: 'hsl(var(--color-button-delete))' }} />
-                <CardTitle className="text-xl" style={{ color: 'hsl(var(--sidebar-text))' }}>Collaboration</CardTitle>
-                <CardDescription style={{ color: 'hsl(var(--table-text-muted))' }}>
+                <div className="mb-2 h-3 w-3 rounded-full" style={{ backgroundColor: 'var(--color-accent)' }} />
+                <CardTitle className="text-xl" style={{ color: 'var(--color-text-primary)' }}>Collaboration</CardTitle>
+                <CardDescription style={{ color: 'var(--color-text-muted)' }}>
                   Collaborate securely with role-based access and instant notifications.
                 </CardDescription>
               </CardHeader>
@@ -55,7 +55,7 @@ export function Welcome(props: WelcomeProps) {
           </div>
 
           {/* CTA Card */}
-          <Card className="border-blue-200 bg-white/95 shadow-xl">
+          <Card className="shadow-xl" style={{ backgroundColor: 'var(--color-card)', borderColor: 'var(--color-border)' }}>
             <CardContent className="pt-6">
               <div className="flex flex-col items-center gap-6 text-center md:flex-row md:justify-between md:text-left">
                 <div>

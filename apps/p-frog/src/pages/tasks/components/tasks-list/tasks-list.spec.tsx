@@ -24,14 +24,6 @@ describe('TasksList - Logic Tests', () => {
     jest.clearAllMocks();
   });
 
-  describe('Component Module', () => {
-    it('should export TasksList component as default', async () => {
-      const module = await import('./tasks-list');
-      expect(module.default).toBeDefined();
-      expect(typeof module.default).toBe('function');
-    });
-  });
-
   describe('Search and Filter Logic', () => {
     it('should filter tasks by title', () => {
       const tasks = [

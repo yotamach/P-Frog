@@ -22,7 +22,7 @@ describe('Table Components', () => {
           </tbody>
         </Table>
       );
-      
+
       expect(container.querySelector('table')).toBeTruthy();
     });
 
@@ -36,7 +36,7 @@ describe('Table Components', () => {
           </tbody>
         </Table>
       );
-      
+
       const table = container.querySelector('table');
       expect(table).toHaveClass('custom-class');
     });
@@ -44,7 +44,7 @@ describe('Table Components', () => {
     it('should have wrapper div with overflow-auto', () => {
       const { container } = render(<Table><tbody /></Table>);
       const wrapper = container.firstChild as HTMLElement;
-      
+
       expect(wrapper.tagName).toBe('DIV');
       expect(wrapper).toHaveClass('overflow-auto');
     });
@@ -61,7 +61,7 @@ describe('Table Components', () => {
           </TableHeader>
         </table>
       );
-      
+
       expect(container.querySelector('thead')).toBeTruthy();
     });
 
@@ -75,7 +75,7 @@ describe('Table Components', () => {
           </TableHeader>
         </table>
       );
-      
+
       const thead = container.querySelector('thead');
       expect(thead).toHaveClass('custom-header');
     });
@@ -92,7 +92,7 @@ describe('Table Components', () => {
           </TableBody>
         </table>
       );
-      
+
       expect(container.querySelector('tbody')).toBeTruthy();
     });
 
@@ -106,7 +106,7 @@ describe('Table Components', () => {
           </TableBody>
         </table>
       );
-      
+
       const tbody = container.querySelector('tbody');
       expect(tbody).toHaveClass('custom-body');
     });
@@ -123,7 +123,7 @@ describe('Table Components', () => {
           </TableFooter>
         </table>
       );
-      
+
       expect(container.querySelector('tfoot')).toBeTruthy();
     });
 
@@ -137,7 +137,7 @@ describe('Table Components', () => {
           </TableFooter>
         </table>
       );
-      
+
       const tfoot = container.querySelector('tfoot');
       expect(tfoot).toHaveClass('border-t');
     });
@@ -154,7 +154,7 @@ describe('Table Components', () => {
           </tbody>
         </table>
       );
-      
+
       expect(container.querySelector('tr')).toBeTruthy();
     });
 
@@ -168,7 +168,7 @@ describe('Table Components', () => {
           </tbody>
         </table>
       );
-      
+
       const tr = container.querySelector('tr');
       expect(tr).toHaveClass('border-b');
       expect(tr).toHaveClass('transition-colors');
@@ -186,7 +186,7 @@ describe('Table Components', () => {
           </thead>
         </table>
       );
-      
+
       expect(container.querySelector('th')).toBeTruthy();
       expect(screen.getByText('Header Cell')).toBeTruthy();
     });
@@ -201,7 +201,7 @@ describe('Table Components', () => {
           </thead>
         </table>
       );
-      
+
       const th = container.querySelector('th');
       expect(th).toHaveClass('text-left');
       expect(th).toHaveClass('px-2');
@@ -219,7 +219,7 @@ describe('Table Components', () => {
           </tbody>
         </table>
       );
-      
+
       expect(container.querySelector('td')).toBeTruthy();
       expect(screen.getByText('Cell Content')).toBeTruthy();
     });
@@ -234,7 +234,7 @@ describe('Table Components', () => {
           </tbody>
         </table>
       );
-      
+
       const td = container.querySelector('td');
       expect(td).toHaveClass('p-2');
     });
@@ -252,7 +252,7 @@ describe('Table Components', () => {
           </tbody>
         </table>
       );
-      
+
       expect(container.querySelector('caption')).toBeTruthy();
       expect(screen.getByText('Table Caption')).toBeTruthy();
     });
@@ -286,7 +286,7 @@ describe('Table Components', () => {
           </TableFooter>
         </Table>
       );
-      
+
       expect(screen.getByText('Test Table')).toBeTruthy();
       expect(screen.getByText('Name')).toBeTruthy();
       expect(screen.getByText('Age')).toBeTruthy();
