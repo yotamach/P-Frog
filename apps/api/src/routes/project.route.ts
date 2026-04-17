@@ -5,7 +5,6 @@ import { ProjectService } from "src/services/project.service";
 import { ProjectModel } from '@models';
 import { auth } from "../middleware/authentication";
 import { requireProjectAdmin, requireProjectMember, getUserId } from "../middleware/authorization";
-import { canAccessProject, canManageProject } from "@controllers";
 
 const log = new Logger({});
 const projectRouter: Router = Router();
@@ -148,19 +147,17 @@ projectRouter.patch('/:id', auth, requireProjectAdmin(), async (req: any, res: R
  * Get a single project
  * Requires: project member or superuser
  */
-projectRouter.get('/:id', auth, requireProjectMember(), (req: any, res: Response) => {
+projectRouter.get('/:id', auth, requireProjectMember(), async (req: any, res: Response) => {
   const {id} = req.params;
   log.info(`GET /projects/${id} - Fetching project by id`);
-  projectService.getProjectByParams({ _id: id }, (err, project) => {
-    if (err) {
-      log.error(`GET /projects/${id} - Error: ${err}`);
-      res.send({ success: false, error: err});
-    }
-    else {
-      log.info(`GET /projects/${id} - Project retrieved successfully`);
-      res.send({ success: true, project: project[0] || null});
-    }
-  });
+  try {
+    const projects = await projectService.getProjectByParams({ _id: id });
+    log.info(`GET /projects/${id} - Project retrieved successfully`);
+    res.send({ success: true, project: projects[0] || null});
+  } catch (err) {
+    log.error(`GET /projects/${id} - Error: ${err}`);
+    res.send({ success: false, error: err});
+  }
 });
 
 /**

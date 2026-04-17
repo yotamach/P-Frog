@@ -72,8 +72,8 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, onEdit, onDel
 
   return (
     <div 
-      className="rounded-lg border p-6 hover:shadow-lg transition-all duration-300 bg-white group"
-      style={{ borderColor: 'hsl(var(--border))' }}
+      className="rounded-lg border p-6 hover:shadow-lg transition-all duration-300 group"
+      style={{ borderColor: 'hsl(var(--border))', backgroundColor: 'var(--color-surface)' }}
     >
       {/* Header */}
       <div className="flex items-start justify-between mb-4">

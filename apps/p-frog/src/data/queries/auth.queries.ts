@@ -53,7 +53,8 @@ export function useLogin() {
       }
     },
     onError: (error: any) => {
-      const errorMessage = error?.response?.data?.data || error?.response?.data?.message || error?.message || 'Login failed';
+      const rawError = error?.response?.data?.data || error?.response?.data?.message || error?.message || 'Login failed';
+      const errorMessage = typeof rawError === 'string' ? rawError : 'Login failed';
       setAuthError(errorMessage);
       enqueueSnackbar(errorMessage, { variant: 'error' });
     },
@@ -115,16 +116,18 @@ export function useProfile(enabled = false) {
   return useQuery({
     queryKey: [AUTH_QUERY_KEY, 'profile'],
     queryFn: async () => {
-      const response = await authAPI.getProfile();
-      return response.data;
+      try {
+        const response = await authAPI.getProfile();
+        return response.data;
+      } catch (error) {
+        // If profile fetch fails, token is invalid - clear auth
+        clearAuth();
+        throw error;
+      }
     },
     enabled,
     retry: false,
     staleTime: Infinity,
-    onError: () => {
-      // If profile fetch fails, token is invalid - clear auth
-      clearAuth();
-    },
   });
 }
 

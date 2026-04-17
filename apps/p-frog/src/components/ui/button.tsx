@@ -48,32 +48,32 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       switch (variant) {
         case 'destructive':
           return {
-            backgroundColor: 'var(--color-destructive)',
-            color: 'var(--color-destructive-foreground)',
+            backgroundColor: 'var(--color-button-destructive)',
+            color: 'var(--color-button-destructive-foreground)',
           };
         case 'outline':
           return {
-            borderColor: 'var(--color-border)',
-            backgroundColor: 'var(--color-background)',
-            color: 'var(--color-foreground)',
+            borderColor: 'var(--color-button-outline-border)',
+            backgroundColor: 'var(--color-button-outline)',
+            color: 'var(--color-button-outline-foreground)',
           };
         case 'secondary':
           return {
-            backgroundColor: 'var(--color-secondary)',
-            color: 'var(--color-secondary-foreground)',
+            backgroundColor: 'var(--color-button-secondary)',
+            color: 'var(--color-button-secondary-foreground)',
           };
         case 'ghost':
           return {
-            color: 'var(--color-foreground)',
+            color: 'var(--color-button-ghost-foreground)',
           };
         case 'link':
           return {
-            color: 'var(--color-primary)',
+            color: 'var(--color-button-link)',
           };
         default:
           return {
-            backgroundColor: 'var(--color-primary)',
-            color: 'var(--color-primary-foreground)',
+            backgroundColor: 'var(--color-button-primary)',
+            color: 'var(--color-button-primary-foreground)',
           };
       }
     };

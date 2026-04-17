@@ -1,6 +1,6 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-import svgr from '@svgr/rollup';
+import svgr from 'vite-plugin-svgr';
 import tailwindcss from '@tailwindcss/vite';
 import path from 'path';
 
@@ -8,7 +8,10 @@ import path from 'path';
 export default defineConfig({
   plugins: [
     tailwindcss(),
-    svgr({ exportType: 'named', namedExport: 'ReactComponent', icon: true }),
+    svgr({
+      include: '**/*.svg',
+      svgrOptions: { icon: true, exportType: 'named', namedExport: 'ReactComponent' },
+    }),
     react(),
   ],
   root: __dirname,

@@ -1,7 +1,7 @@
 import { lazy } from 'react';
 import {NavMenuItem} from "../../types";
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faCheckSquare, faChartArea } from '@fortawesome/free-solid-svg-icons'
+import { faChartBar, faListCheck, faFolder, faGear, faSun, faMoon, faMagnifyingGlass, faChevronRight } from '@fortawesome/free-solid-svg-icons'
 import { TasksList } from "@pages/tasks/components";
 import { ProjectsGrid } from "@pages/projects/components";
 
@@ -10,19 +10,19 @@ const Settings = lazy(() => import('@pages/settings/settings.component'));
 const Tasks = lazy(() => import('@pages/tasks/tasks.component'));
 const Projects = lazy(() => import('@pages/projects/projects.component'));
 
-library.add(faCheckSquare, faChartArea);
+library.add(faChartBar, faListCheck, faFolder, faGear, faSun, faMoon, faMagnifyingGlass, faChevronRight);
 
 export const menuItems: NavMenuItem[] = [
   {
     title: 'Dashboard',
-    icon: 'chart-area',
+    icon: 'chart-bar',
     link: '/home',
     path: '/',
     component: <Dashboard />
   },
   {
     title: 'Tasks',
-    icon: 'chart-area',
+    icon: 'list-check',
     link: '/home/tasks',
     path: 'tasks/*',
     component: <Tasks />
@@ -36,7 +36,7 @@ export const menuItems: NavMenuItem[] = [
   },
   {
     title: 'Settings',
-    icon: 'wrench',
+    icon: 'gear',
     link: '/home/settings',
     path: 'settings',
     component: <Settings />

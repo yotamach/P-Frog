@@ -209,7 +209,6 @@ describe('Authentication E2E Tests - Comprehensive', () => {
       cy.get('button[type="submit"]').click();
 
       // Should remain on login page
-      cy.wait(1000);
       cy.url().should('include', '/login');
     });
 

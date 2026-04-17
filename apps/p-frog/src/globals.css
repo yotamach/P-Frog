@@ -4,88 +4,112 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* Tailwind v4 theme configuration placeholder (enable once build tooling supports the @theme directive) */
+/* Terracotta Theme — Warm earth tones with icon rail layout */
 
 :root {
-  /* Custom theme colors - White, Gray, Bordo scheme */
-  --color-header-bg: hsl(345 85% 35%); /* bordo */
-  --color-header-bg-end: hsl(345 85% 25%); /* dark bordo */
+  /* Custom theme colors - Terracotta, Sage, Warm Cream scheme */
+  --color-header-bg: hsl(14 65% 48%); /* terracotta */
+  --color-header-bg-end: hsl(14 65% 38%); /* dark terracotta */
   --color-sidebar-bg: hsl(0 0% 100%); /* white */
-  --color-sidebar-border: hsl(0 0% 90%); /* soft gray */
-  --color-sidebar-text: hsl(0 0% 15%); /* very dark gray */
-  --color-sidebar-hover: hsl(0 0% 96%); /* light gray */
-  --color-sidebar-active: hsl(345 85% 35%); /* bordo */
-  --color-footer-bg: hsl(345 85% 25%); /* dark bordo */
+  --color-sidebar-border: hsl(30 15% 88%); /* warm border */
+  --color-sidebar-text: hsl(20 20% 15%); /* warm dark */
+  --color-sidebar-hover: hsl(30 25% 95%); /* warm hover */
+  --color-sidebar-active: hsl(14 65% 48%); /* terracotta */
+  --color-footer-bg: hsl(0 0% 100%); /* surface white */
   --color-table-header-bg: hsl(0 0% 100%); /* white */
-  --color-table-border: hsl(0 0% 90%); /* soft gray */
-  --color-table-text: hsl(0 0% 15%); /* very dark gray */
-  --color-table-text-muted: hsl(0 0% 45%); /* neutral gray */
-  --color-table-hover: hsl(0 0% 96%); /* light gray */
-  --color-table-selected: hsl(345 85% 95%); /* light bordo */
-  --color-button-create: hsl(345 85% 35%); /* bordo */
-  --color-button-edit: hsl(345 85% 35%); /* bordo */
-  --color-button-delete: hsl(0 84.2% 60.2%); /* red */
+  --color-table-border: hsl(30 15% 88%); /* warm border */
+  --color-table-text: hsl(20 20% 15%); /* warm dark */
+  --color-table-text-muted: hsl(20 8% 58%); /* warm muted */
+  --color-table-hover: hsl(30 25% 95%); /* warm hover */
+  --color-table-selected: hsl(14 50% 94%); /* light terracotta */
+  --color-button-create: hsl(14 65% 48%); /* terracotta */
+  --color-button-edit: hsl(14 65% 48%); /* terracotta */
+  --color-button-delete: hsl(0 60% 50%); /* red */
   --color-button-disabled: hsl(0 0% 82%); /* medium light gray */
 
-  /* Button variants - comprehensive button styling */
-  --color-button-primary: hsl(345 85% 35%); /* bordo */
+  /* Button variants */
+  --color-button-primary: hsl(14 65% 48%); /* terracotta */
   --color-button-primary-foreground: hsl(0 0% 100%); /* white */
-  --color-button-primary-hover: hsl(345 85% 30%); /* darker bordo */
-  --color-button-secondary: hsl(0 0% 96%); /* light gray */
-  --color-button-secondary-foreground: hsl(0 0% 15%); /* very dark gray */
-  --color-button-secondary-hover: hsl(0 0% 90%); /* soft gray */
-  --color-button-destructive: hsl(0 84.2% 60.2%); /* red */
-  --color-button-destructive-foreground: hsl(210 40% 98%); /* almost white */
-  --color-button-destructive-hover: hsl(0 84.2% 55%); /* darker red */
+  --color-button-primary-hover: hsl(14 65% 42%); /* darker terracotta */
+  --color-button-secondary: hsl(30 25% 95%); /* warm cream */
+  --color-button-secondary-foreground: hsl(20 20% 15%); /* warm dark */
+  --color-button-secondary-hover: hsl(30 15% 88%); /* warm border */
+  --color-button-destructive: hsl(0 60% 50%); /* red */
+  --color-button-destructive-foreground: hsl(0 0% 100%); /* white */
+  --color-button-destructive-hover: hsl(0 60% 45%); /* darker red */
   --color-button-outline: hsl(0 0% 100%); /* white */
-  --color-button-outline-foreground: hsl(0 0% 15%); /* very dark gray */
-  --color-button-outline-border: hsl(0 0% 90%); /* soft gray */
-  --color-button-outline-hover: hsl(0 0% 96%); /* light gray */
-  --color-button-ghost-foreground: hsl(0 0% 15%); /* very dark gray */
-  --color-button-ghost-hover: hsl(0 0% 96%); /* light gray */
-  --color-button-link: hsl(345 85% 35%); /* bordo */
-  --color-button-link-hover: hsl(345 85% 30%); /* darker bordo */
+  --color-button-outline-foreground: hsl(20 20% 15%); /* warm dark */
+  --color-button-outline-border: hsl(30 15% 88%); /* warm border */
+  --color-button-outline-hover: hsl(30 25% 95%); /* warm hover */
+  --color-button-ghost-foreground: hsl(20 20% 15%); /* warm dark */
+  --color-button-ghost-hover: hsl(30 25% 95%); /* warm hover */
+  --color-button-link: hsl(14 65% 48%); /* terracotta */
+  --color-button-link-hover: hsl(14 65% 42%); /* darker terracotta */
 
-  /* Gray scale colors for better visual hierarchy */
-  --color-gray-50: hsl(0 0% 98%); /* very light gray - subtle backgrounds */
-  --color-gray-100: hsl(0 0% 96%); /* light gray - hover states */
-  --color-gray-200: hsl(0 0% 90%); /* soft gray - borders, dividers */
-  --color-gray-300: hsl(0 0% 82%); /* medium light gray - disabled states */
-  --color-gray-400: hsl(0 0% 64%); /* medium gray - placeholder text */
-  --color-gray-500: hsl(0 0% 45%); /* neutral gray - secondary text */
-  --color-gray-600: hsl(0 0% 38%); /* dark gray - labels */
-  --color-gray-700: hsl(0 0% 26%); /* darker gray - headings */
-  --color-gray-800: hsl(0 0% 15%); /* very dark gray - primary text */
-  --color-gray-900: hsl(0 0% 9%); /* almost black - high contrast text */
+  /* Gray scale colors for visual hierarchy */
+  --color-gray-50: hsl(35 30% 98%); /* warm very light */
+  --color-gray-100: hsl(30 25% 95%); /* warm light */
+  --color-gray-200: hsl(30 15% 88%); /* warm border */
+  --color-gray-300: hsl(30 10% 78%); /* warm medium light */
+  --color-gray-400: hsl(20 8% 58%); /* warm muted */
+  --color-gray-500: hsl(20 10% 42%); /* warm secondary */
+  --color-gray-600: hsl(20 12% 35%); /* warm dark label */
+  --color-gray-700: hsl(20 15% 26%); /* warm darker */
+  --color-gray-800: hsl(20 20% 15%); /* warm primary text */
+  --color-gray-900: hsl(20 25% 9%); /* warm near-black */
 
-  /* shadcn/ui color palette */
-  --color-background: hsl(0 0% 100%);
-  --color-foreground: hsl(222.2 84% 4.9%);
-  --color-card: hsl(0 0% 100%);
-  --color-card-foreground: hsl(222.2 84% 4.9%);
+  /* shadcn/ui color palette — terracotta theme */
+  --color-background: hsl(35 30% 96%); /* warm cream */
+  --color-foreground: hsl(20 20% 15%); /* warm dark text */
+  --color-card: hsl(0 0% 100%); /* white surface */
+  --color-card-foreground: hsl(20 20% 15%);
   --color-popover: hsl(0 0% 100%);
-  --color-popover-foreground: hsl(222.2 84% 4.9%);
-  --color-primary: hsl(345 85% 35%); /* bordo */
+  --color-popover-foreground: hsl(20 20% 15%);
+  --color-primary: hsl(14 65% 48%); /* terracotta */
   --color-primary-foreground: hsl(0 0% 100%);
-  --color-secondary: hsl(0 0% 96%); /* light gray */
-  --color-secondary-foreground: hsl(0 0% 15%); /* very dark gray */
-  --color-muted: hsl(0 0% 96%); /* light gray */
-  --color-muted-foreground: hsl(0 0% 45%); /* neutral gray */
-  --color-accent: hsl(345 85% 35%); /* bordo */
-  --color-accent-foreground: hsl(0 0% 100%);
-  --color-destructive: hsl(0 84.2% 60.2%);
-  --color-destructive-foreground: hsl(210 40% 98%);
-  --color-border: hsl(0 0% 90%); /* soft gray */
-  --color-input: hsl(0 0% 90%); /* soft gray */
-  --color-ring: hsl(345 85% 35%); /* bordo */
+  --color-secondary: hsl(150 25% 42%); /* sage green */
+  --color-secondary-foreground: hsl(0 0% 100%);
+  --color-muted: hsl(30 25% 95%); /* warm light */
+  --color-muted-foreground: hsl(20 8% 58%); /* warm muted */
+  --color-accent: hsl(32 55% 55%); /* warm amber */
+  --color-accent-foreground: hsl(20 30% 15%); /* dark warm */
+  --color-destructive: hsl(0 60% 50%);
+  --color-destructive-foreground: hsl(0 0% 100%);
+  --color-border: hsl(30 15% 88%); /* warm border */
+  --color-input: hsl(30 15% 88%); /* warm border */
+  --color-ring: hsl(14 65% 48%); /* terracotta */
 
-  /* Drawer/Dialog colors - aligned with gray theme */
-  --color-drawer-bg: hsl(0 0% 100%); /* white */
-  --color-drawer-border: hsl(0 0% 90%); /* soft gray */
-  --color-drawer-foreground: hsl(0 0% 15%); /* very dark gray */
-  --color-drawer-title: hsl(0 0% 15%); /* very dark gray */
-  --color-drawer-description: hsl(0 0% 45%); /* neutral gray */
-  --color-drawer-overlay: rgba(0, 0, 0, 0.5); /* semi-transparent overlay */
+  /* Drawer/Dialog colors */
+  --color-drawer-bg: hsl(0 0% 100%);
+  --color-drawer-border: hsl(30 15% 88%);
+  --color-drawer-foreground: hsl(20 20% 15%);
+  --color-drawer-title: hsl(20 20% 15%);
+  --color-drawer-description: hsl(20 8% 58%);
+  --color-drawer-overlay: rgba(0, 0, 0, 0.5);
+
+  /* Icon rail colors */
+  --color-rail-bg: hsl(20 15% 15%); /* dark walnut */
+  --color-rail-text: hsl(30 15% 65%); /* muted rail text */
+  --color-rail-active: hsl(14 65% 48%); /* terracotta */
+  --color-rail-hover: hsl(20 15% 20%); /* slightly lighter walnut */
+
+  /* Surface & text semantic tokens */
+  --color-surface: hsl(0 0% 100%);
+  --color-surface-warm: hsl(30 25% 95%);
+  --color-surface-raised: hsl(35 20% 93%);
+  --color-text-primary: hsl(20 20% 15%);
+  --color-text-secondary: hsl(20 10% 42%);
+  --color-text-muted: hsl(20 8% 58%);
+
+  /* Status colors */
+  --color-success: hsl(150 50% 38%);
+  --color-success-bg: hsl(150 40% 94%);
+  --color-warning: hsl(32 80% 50%);
+  --color-warning-bg: hsl(32 70% 94%);
+  --color-error: hsl(0 60% 50%);
+  --color-error-bg: hsl(0 50% 95%);
+  --color-info: hsl(217 91% 50%);
+  --color-info-bg: hsl(217 80% 94%);
 
   --radius-lg: 0.5rem;
   --radius-md: calc(0.5rem - 2px);
@@ -94,69 +118,73 @@
   /* Transition duration extension */
   --transition-duration-600: 600ms;
   --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
+
+  /* oklch variables for shadcn/Tailwind integration */
+  --background: oklch(0.97 0.005 80);
+  --foreground: oklch(0.22 0.02 50);
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
+  --card-foreground: oklch(0.22 0.02 50);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: 0 0% 100%; /* white */
-  --sidebar-foreground: 217 91% 20%; /* dark blue */
-  --sidebar-primary: 345 85% 35%; /* bordo */
+  --popover-foreground: oklch(0.22 0.02 50);
+  --primary: oklch(0.55 0.15 30);
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.55 0.08 160);
+  --secondary-foreground: oklch(1 0 0);
+  --muted: oklch(0.96 0.005 80);
+  --muted-foreground: oklch(0.55 0.01 50);
+  --accent: oklch(0.68 0.12 70);
+  --accent-foreground: oklch(0.22 0.02 50);
+  --destructive: oklch(0.55 0.2 25);
+  --border: oklch(0.90 0.01 70);
+  --input: oklch(0.90 0.01 70);
+  --ring: oklch(0.55 0.15 30);
+  --chart-1: oklch(0.55 0.15 30);
+  --chart-2: oklch(0.55 0.08 160);
+  --chart-3: oklch(0.68 0.12 70);
+  --chart-4: oklch(0.55 0.2 25);
+  --chart-5: oklch(0.65 0.1 120);
+
+  /* Sidebar/rail HSL variables for shadcn sidebar component */
+  --sidebar: 20 15% 15%; /* dark walnut */
+  --sidebar-foreground: 30 15% 90%; /* light text on dark */
+  --sidebar-primary: 14 65% 48%; /* terracotta */
   --sidebar-primary-foreground: 0 0% 100%; /* white */
-  --sidebar-accent: 217 91% 95%; /* light blue hover */
-  --sidebar-accent-foreground: 217 91% 20%; /* dark blue */
-  --sidebar-border: 217 91% 85%; /* light blue */
-  --sidebar-ring: 345 85% 35%; /* bordo */
+  --sidebar-accent: 20 15% 20%; /* rail hover */
+  --sidebar-accent-foreground: 30 15% 90%; /* light text */
+  --sidebar-border: 20 10% 25%; /* dark border */
+  --sidebar-ring: 14 65% 48%; /* terracotta */
 }
 
 /* Legacy CSS variables for backward compatibility */
 :root {
-  --header-bg: 345 85% 35%;
-  --header-bg-end: 345 85% 25%;
+  --header-bg: 14 65% 48%;
+  --header-bg-end: 14 65% 38%;
   --sidebar-bg: 0 0% 100%;
-  --sidebar-border: 217 91% 85%;
-  --sidebar-text: 217 91% 20%;
-  --sidebar-hover: 217 91% 95%;
-  --sidebar-active: 345 85% 35%;
-  --footer-bg: 345 85% 25%;
+  --sidebar-border: 30 15% 88%;
+  --sidebar-text: 20 20% 15%;
+  --sidebar-hover: 30 25% 95%;
+  --sidebar-active: 14 65% 48%;
+  --footer-bg: 0 0% 100%;
   --table-header-bg: 0 0% 100%;
-  --table-border: 217 91% 85%;
-  --table-text: 217 91% 20%;
-  --table-text-muted: 217 91% 50%;
-  --table-hover: 217 91% 95%;
-  --table-selected: 345 85% 95%;
-  --button-create: 217 91% 60%;
-  --button-edit: 345 85% 35%;
-  --button-delete: 0 84.2% 60.2%;
+  --table-border: 30 15% 88%;
+  --table-text: 20 20% 15%;
+  --table-text-muted: 20 8% 58%;
+  --table-hover: 30 25% 95%;
+  --table-selected: 14 50% 94%;
+  --button-create: 14 65% 48%;
+  --button-edit: 14 65% 48%;
+  --button-delete: 0 60% 50%;
   --button-disabled: 209 213 219;
 
-  --background: 0 0% 100%;
-  --foreground: 222.2 84% 4.9%;
-  --border: 217 91% 85%;
-  --muted-foreground: 215.4 16.3% 46.9%;
-  --secondary: 217 91% 95%;
+  --background: 35 30% 96%;
+  --foreground: 20 20% 15%;
+  --border: 30 15% 88%;
+  --muted-foreground: 20 8% 58%;
+  --secondary: 30 25% 95%;
 
-  --header-height: 5rem;
-  --sidebar-width: 16rem;
-  --footer-height: 3rem;
+  --header-height: 3.5rem;
+  --rail-width: 60px;
+  --footer-height: 2.25rem;
 }
 
 @layer base {
@@ -174,12 +202,22 @@
   body {
     background-color: hsl(var(--background));
     color: hsl(var(--foreground));
+    font-family: 'Source Sans 3', -apple-system, BlinkMacSystemFont, sans-serif;
     font-feature-settings: "rlig" 1, "calt" 1;
     overflow: hidden;
   }
 }
 
 @layer components {
+  /* Table row states */
+  tr[data-table-row]:hover {
+    background-color: var(--color-table-hover);
+  }
+
+  tr[data-table-row][data-state="selected"] {
+    background-color: var(--color-table-selected);
+  }
+
   /* Modern card style */
   .card {
     background-color: var(--color-card);
@@ -187,21 +225,119 @@
     @apply rounded-lg border shadow-sm;
   }
 
-  /* Modern header */
-  .app-header {
-    border-color: hsl(var(--border));
-    @apply h-16 bg-white border-b flex items-center px-6 shadow-sm;
+  /* Icon Rail */
+  .icon-rail {
+    width: var(--rail-width);
+    min-width: var(--rail-width);
+    height: 100vh;
+    background-color: var(--color-rail-bg);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 12px;
+    transition: background-color 0.3s;
+    z-index: 10;
   }
 
-  /* Modern sidebar */
-  .app-sidebar {
-    border-color: hsl(var(--border));
-    @apply w-64 bg-white border-r h-full overflow-y-auto;
+  .rail-logo {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 24px;
+  }
+
+  .rail-nav {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    width: 100%;
+  }
+
+  .rail-item {
+    position: relative;
+    width: 100%;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--color-rail-text);
+    transition: color 0.2s, background-color 0.2s;
+    border-left: 3px solid transparent;
+    text-decoration: none;
+    font-size: 18px;
+  }
+
+  .rail-item:hover {
+    background-color: var(--color-rail-hover);
+    color: var(--color-rail-active);
+  }
+
+  .rail-item.active {
+    color: var(--color-rail-active);
+    border-left-color: var(--color-rail-active);
+    background-color: var(--color-rail-hover);
+  }
+
+  /* Rail tooltip (CSS only) */
+  .rail-item::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    left: 68px;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: var(--color-text-primary);
+    color: var(--color-background);
+    padding: 4px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s;
+    z-index: 100;
+  }
+
+  .rail-item::before {
+    content: '';
+    position: absolute;
+    left: 60px;
+    top: 50%;
+    transform: translateY(-50%);
+    border: 5px solid transparent;
+    border-right-color: var(--color-text-primary);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s;
+    z-index: 100;
+  }
+
+  .rail-item:hover::after,
+  .rail-item:hover::before {
+    opacity: 1;
+  }
+
+  /* Content Header */
+  .content-header {
+    height: var(--header-height);
+    min-height: var(--header-height);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 28px;
+    background-color: var(--color-surface);
+    border-bottom: 1px solid var(--color-border);
+    transition: background-color 0.3s, border-color 0.3s;
   }
 
   /* Modern main content */
   .app-main {
-    @apply flex-1 overflow-auto bg-gray-50/50 p-6;
+    @apply flex-1 overflow-auto p-6;
+    background-color: var(--color-background);
   }
 
   /* Button variants */
@@ -270,20 +406,21 @@
 
 /* Scrollbar styling */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  @apply bg-transparent;
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-gray-300 rounded-full;
+  background-color: var(--color-gray-300);
+  border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background-color: hsl(0 0% 64%);
+  background-color: var(--color-gray-400);
 }
 
 @theme inline {
@@ -327,38 +464,162 @@
   --color-sidebar-ring: var(--sidebar-ring);
 }
 
+/* Dark mode overrides */
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  /* oklch variables for shadcn/Tailwind */
+  --background: oklch(0.18 0.01 50);
+  --foreground: oklch(0.93 0.005 70);
+  --card: oklch(0.22 0.01 50);
+  --card-foreground: oklch(0.93 0.005 70);
+  --popover: oklch(0.22 0.01 50);
+  --popover-foreground: oklch(0.93 0.005 70);
+  --primary: oklch(0.65 0.12 30);
+  --primary-foreground: oklch(0.15 0.01 50);
+  --secondary: oklch(0.30 0.01 50);
+  --secondary-foreground: oklch(0.93 0.005 70);
+  --muted: oklch(0.30 0.01 50);
+  --muted-foreground: oklch(0.65 0.005 50);
+  --accent: oklch(0.30 0.01 50);
+  --accent-foreground: oklch(0.93 0.005 70);
+  --destructive: oklch(0.65 0.18 22);
+  --border: oklch(0.36 0.01 50);
+  --input: oklch(0.38 0.01 50);
+  --ring: oklch(0.55 0.12 30);
+  --chart-1: oklch(0.65 0.12 30);
+  --chart-2: oklch(0.60 0.08 160);
+  --chart-3: oklch(0.68 0.10 70);
+  --chart-4: oklch(0.60 0.18 22);
+  --chart-5: oklch(0.55 0.08 120);
+
+  /* Sidebar/rail variables for dark mode */
+  --sidebar: 20 10% 7%;
+  --sidebar-foreground: 30 10% 80%;
+  --sidebar-primary: 14 55% 58%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 20 10% 12%;
+  --sidebar-accent-foreground: 30 10% 80%;
+  --sidebar-border: 20 8% 18%;
+  --sidebar-ring: 14 55% 58%;
+
+  /* Legacy HSL variables for dark mode */
+  --header-bg: 14 55% 58%;
+  --header-bg-end: 14 55% 48%;
+  --sidebar-bg: 20 10% 14%;
+  --sidebar-border: 20 8% 28%;
+  --sidebar-text: 30 15% 90%;
+  --sidebar-hover: 20 10% 18%;
+  --sidebar-active: 14 55% 58%;
+  --footer-bg: 20 10% 14%;
+  --table-header-bg: 20 10% 14%;
+  --table-border: 20 8% 28%;
+  --table-text: 30 15% 90%;
+  --table-text-muted: 30 5% 52%;
+  --table-hover: 20 10% 18%;
+  --table-selected: 14 30% 18%;
+  --button-create: 14 55% 58%;
+  --button-edit: 14 55% 58%;
+  --button-delete: 0 60% 55%;
+  --background: 20 12% 10%;
+  --foreground: 30 15% 90%;
+  --border: 20 8% 28%;
+  --muted-foreground: 30 5% 52%;
+  --secondary: 20 10% 18%;
+
+  /* Custom theme color overrides for dark mode */
+  --color-header-bg: hsl(14 55% 58%);
+  --color-header-bg-end: hsl(14 55% 48%);
+  --color-sidebar-bg: hsl(20 10% 14%);
+  --color-sidebar-border: hsl(20 8% 28%);
+  --color-sidebar-text: hsl(30 15% 90%);
+  --color-sidebar-hover: hsl(20 10% 18%);
+  --color-sidebar-active: hsl(14 55% 58%);
+  --color-footer-bg: hsl(20 10% 14%);
+  --color-table-header-bg: hsl(20 10% 14%);
+  --color-table-border: hsl(20 8% 28%);
+  --color-table-text: hsl(30 15% 90%);
+  --color-table-text-muted: hsl(30 5% 52%);
+  --color-table-hover: hsl(20 10% 18%);
+  --color-table-selected: hsl(14 30% 18%);
+  --color-button-create: hsl(14 55% 58%);
+  --color-button-edit: hsl(14 55% 58%);
+  --color-button-delete: hsl(0 60% 55%);
+  --color-button-disabled: hsl(20 5% 30%);
+  --color-button-primary: hsl(14 55% 58%);
+  --color-button-primary-foreground: hsl(20 20% 8%);
+  --color-button-primary-hover: hsl(14 55% 50%);
+  --color-button-secondary: hsl(20 10% 18%);
+  --color-button-secondary-foreground: hsl(30 15% 90%);
+  --color-button-secondary-hover: hsl(20 8% 28%);
+  --color-button-destructive: hsl(0 60% 55%);
+  --color-button-destructive-foreground: hsl(0 0% 100%);
+  --color-button-outline: hsl(20 10% 14%);
+  --color-button-outline-foreground: hsl(30 15% 90%);
+  --color-button-outline-border: hsl(20 8% 28%);
+  --color-button-outline-hover: hsl(20 10% 18%);
+  --color-button-ghost-foreground: hsl(30 15% 90%);
+  --color-button-ghost-hover: hsl(20 10% 18%);
+  --color-button-link: hsl(14 55% 58%);
+  --color-button-link-hover: hsl(14 55% 50%);
+  --color-background: hsl(20 12% 10%);
+  --color-foreground: hsl(30 15% 90%);
+  --color-card: hsl(20 10% 14%);
+  --color-card-foreground: hsl(30 15% 90%);
+  --color-popover: hsl(20 10% 14%);
+  --color-popover-foreground: hsl(30 15% 90%);
+  --color-primary: hsl(14 55% 58%);
+  --color-primary-foreground: hsl(20 20% 8%);
+  --color-secondary: hsl(150 25% 50%);
+  --color-secondary-foreground: hsl(20 20% 8%);
+  --color-muted: hsl(20 10% 18%);
+  --color-muted-foreground: hsl(30 5% 52%);
+  --color-accent: hsl(32 45% 58%);
+  --color-accent-foreground: hsl(20 20% 8%);
+  --color-destructive: hsl(0 60% 55%);
+  --color-border: hsl(20 8% 28%);
+  --color-input: hsl(20 8% 28%);
+  --color-ring: hsl(14 55% 58%);
+  --color-drawer-bg: hsl(20 10% 14%);
+  --color-drawer-border: hsl(20 8% 28%);
+  --color-drawer-foreground: hsl(30 15% 90%);
+  --color-drawer-title: hsl(30 15% 90%);
+  --color-drawer-description: hsl(30 5% 52%);
+  --color-drawer-overlay: rgba(0, 0, 0, 0.7);
+  --color-rail-bg: hsl(20 10% 7%);
+  --color-rail-text: hsl(30 10% 50%);
+  --color-rail-active: hsl(14 55% 58%);
+  --color-rail-hover: hsl(20 10% 12%);
+  --color-surface: hsl(20 10% 14%);
+  --color-surface-warm: hsl(20 8% 16%);
+  --color-surface-raised: hsl(20 10% 18%);
+  --color-text-primary: hsl(30 15% 90%);
+  --color-text-secondary: hsl(30 8% 65%);
+  --color-text-muted: hsl(30 5% 52%);
+  --color-success: hsl(150 50% 45%);
+  --color-success-bg: hsl(150 15% 16%);
+  --color-warning: hsl(32 70% 55%);
+  --color-warning-bg: hsl(32 15% 16%);
+  --color-error: hsl(0 60% 55%);
+  --color-error-bg: hsl(0 15% 16%);
+  --color-info: hsl(217 80% 65%);
+  --color-info-bg: hsl(217 15% 16%);
+  --color-gray-50: hsl(20 8% 16%);
+  --color-gray-100: hsl(20 10% 18%);
+  --color-gray-200: hsl(20 8% 28%);
+  --color-gray-300: hsl(20 8% 35%);
+  --color-gray-400: hsl(30 5% 52%);
+  --color-gray-500: hsl(30 8% 65%);
+  --color-gray-600: hsl(30 10% 70%);
+  --color-gray-700: hsl(30 12% 78%);
+  --color-gray-800: hsl(30 15% 90%);
+  --color-gray-900: hsl(30 20% 95%);
+}
+
+/* Dark mode transition helper */
+html.transitioning,
+html.transitioning *,
+html.transitioning *::before,
+html.transitioning *::after {
+  transition: all 0.3s ease !important;
 }
 
 @layer base {

@@ -5,15 +5,14 @@
 import express from 'express';
 import request from 'supertest';
 
-// Create mock functions that will be shared across all instances
+// Mock the AuthService before importing anything else
 const mockLogin = jest.fn();
 const mockSignUp = jest.fn();
 
-// Mock the AuthService before importing anything else
 jest.mock('@controllers', () => ({
   AuthService: jest.fn().mockImplementation(() => ({
-    Login: mockLogin,
-    SignUp: mockSignUp,
+    Login: (...args: unknown[]) => mockLogin(...args),
+    SignUp: (...args: unknown[]) => mockSignUp(...args),
   })),
 }));
 
@@ -27,8 +26,9 @@ describe('Auth Routes Integration', () => {
     app = express();
     app.use(express.json());
     app.use(authRoutes.url, authRoutes.router);
-    
-    jest.clearAllMocks();
+
+    mockLogin.mockReset();
+    mockSignUp.mockReset();
   });
 
   describe('POST /auth/login', () => {

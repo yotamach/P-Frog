@@ -35,7 +35,7 @@ export class AuthService {
       newUser.save();
       return { status: HttpStatus.CREATED, resBody: { success: true, data: user} };
     } catch (err) {
-      return { status: HttpStatus.INTERNAL_SERVER_ERROR, resBody: { success: false, data: err}};
+      return { status: HttpStatus.INTERNAL_SERVER_ERROR, resBody: { success: false, data: err instanceof Error ? err.message : String(err)}};
     }
   }
 
@@ -75,12 +75,15 @@ export class AuthService {
         // save user token
         user.token = token;
 
-        // user
-        return { status: HttpStatus.OK, resBody: { success: true, data: user} };
+        // Return user as plain object with token included
+        // (toJSON transform strips the token, so we add it back)
+        const userData = user.toJSON();
+        userData.token = token;
+        return { status: HttpStatus.OK, resBody: { success: true, data: userData} };
       }
       return { status: HttpStatus.BAD_REQUEST, resBody: { success: false, data: "Invalid Credentials!"} };
     } catch (err) {
-      return { status: HttpStatus.INTERNAL_SERVER_ERROR, resBody: { success: false, data: err}};
+      return { status: HttpStatus.INTERNAL_SERVER_ERROR, resBody: { success: false, data: err instanceof Error ? err.message : String(err)}};
     }
   }
 }

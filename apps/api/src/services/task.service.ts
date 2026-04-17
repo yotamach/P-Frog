@@ -1,6 +1,6 @@
 import {Logger} from "tslog";
 import {TaskModel } from "@models";
-import { CallbackError, Types } from "mongoose";
+import { Types } from "mongoose";
 import { ITask, Task, ProjectMember } from "@schemas";
 import { isSuperuser } from "./permission.service";
 

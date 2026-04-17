@@ -71,20 +71,18 @@ userRouter.post('/',async (req: Request, res: Response) => {
  *       200:
  *         description: User updated
  */
-userRouter.patch('/:id', (req: Request, res: Response) => {
+userRouter.patch('/:id', async (req: Request, res: Response) => {
   const {id} = req.params;
   log.info(`PATCH /users/${id} - Updating user`);
-  const user: UserModel = req.body;
-  userService.updateUser(user, id, (err, user) => {
-    if (err) {
-      log.error(`PATCH /users/${id} - Error: ${err}`);
-      res.send({ success: false, error: err});
-    }
-    else {
-      log.info(`PATCH /users/${id} - User updated successfully`);
-      res.send({ success: true, user});
-    }
-  });
+  try {
+    const userData: UserModel = req.body;
+    const user = await userService.updateUser(userData, id);
+    log.info(`PATCH /users/${id} - User updated successfully`);
+    res.send({ success: true, user});
+  } catch (err) {
+    log.error(`PATCH /users/${id} - Error: ${err}`);
+    res.send({ success: false, error: err});
+  }
 });
 
 /**
@@ -177,19 +175,17 @@ userRouter.patch('/:id/superuser', auth, requireSuperuser(), async (req: any, re
  *                 user:
  *                   $ref: '#/components/schemas/User'
  */
-userRouter.get('/:id', (req: Request, res: Response) => {
+userRouter.get('/:id', async (req: Request, res: Response) => {
   const {id} = req.params;
   log.info(`GET /users/${id} - Fetching user by id`);
-  userService.getUserByParams({ id }, (err, user) => {
-    if (err) {
-      log.error(`GET /users/${id} - Error: ${err}`);
-      res.send({ success: false, error: err});
-    }
-    else {
-      log.info(`GET /users/${id} - User retrieved successfully`);
-      res.send({ success: true, user});
-    }
-  });
+  try {
+    const user = await userService.getUserByParams({ id });
+    log.info(`GET /users/${id} - User retrieved successfully`);
+    res.send({ success: true, user});
+  } catch (err) {
+    log.error(`GET /users/${id} - Error: ${err}`);
+    res.send({ success: false, error: err});
+  }
 });
 
 /**

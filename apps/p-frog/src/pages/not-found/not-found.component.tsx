@@ -10,7 +10,7 @@ export function NotFound(props: NotFoundProps) {
 
   // Content that's shown in both authenticated and unauthenticated states
   const content = (
-    <div className="w-full max-w-lg space-y-6 rounded-2xl bg-white/95 p-10 shadow-2xl backdrop-blur">
+    <div className="w-full max-w-lg space-y-6 rounded-2xl p-10 shadow-2xl backdrop-blur" style={{ backgroundColor: 'var(--color-card)' }}>
       <p
         className="text-sm font-semibold uppercase tracking-[0.3em]"
         style={{ color: 'hsl(var(--table-text-muted))' }}

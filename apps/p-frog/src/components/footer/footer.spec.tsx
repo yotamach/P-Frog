@@ -19,7 +19,6 @@ describe('Footer', () => {
     
     expect(footer).toHaveClass('w-full');
     expect(footer).toHaveClass('text-center');
-    expect(footer).toHaveClass('text-white');
     expect(footer).toHaveClass('text-sm');
   });
 

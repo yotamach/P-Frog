@@ -6,7 +6,6 @@
       "plugin": "@nx/vite/plugin",
       "options": {
         "buildTargetName": "vite:build",
-        "testTargetName": "test",
         "serveTargetName": "vite:serve",
         "devTargetName": "dev",
         "previewTargetName": "preview",
@@ -14,13 +13,6 @@
         "typecheckTargetName": "typecheck",
         "buildDepsTargetName": "build-deps",
         "watchDepsTargetName": "watch-deps"
-      }
-    },
-    {
-      "plugin": "@nx/vitest",
-      "options": {
-        "testTargetName": "test",
-        "ciTargetName": "test-ci"
       }
     },
     {
@@ -60,5 +52,6 @@
         "linter": "eslint"
       }
     }
-  }
+  },
+  "analytics": true
 }

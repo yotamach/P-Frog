@@ -4,7 +4,6 @@ import { TaskService } from "./task.service";
 import { AuthService } from './auth.service';
 import { ProjectService } from './project.service';
 import { ProjectMemberService } from './project-member.service';
-import * as PermissionService from './permission.service';
 
 export {
   UserService,
