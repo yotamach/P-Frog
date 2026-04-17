@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><title>Option B — Slate Dark Theme</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, sans-serif; }
+body { display: flex; flex-direction: column; height: 100vh; }
+.header { height: 56px; background: hsl(222,25%,8%); border-bottom: 1px solid hsl(222,20%,16%); display: flex; align-items: center; padding: 0 24px; gap: 12px; flex-shrink: 0; }
+.logo { width: 32px; height: 32px; border-radius: 6px; background: hsl(260,80%,60%); display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 900; font-size: 13px; }
+.app-title { color: #d8ddf0; font-weight: 700; font-size: 18px; flex: 1; }
+.app-sub { color: rgba(200,210,255,0.4); font-size: 12px; margin-left: 6px; }
+.avatar { width: 36px; height: 36px; border-radius: 6px; background: hsl(222,18%,22%); border: 1px solid hsl(222,18%,28%); }
+.body { display: flex; flex: 1; overflow: hidden; }
+.sidebar { width: 220px; background: hsl(222,18%,12%); border-right: 1px solid hsl(222,20%,18%); padding: 20px 10px; display: flex; flex-direction: column; gap: 3px; }
+.sidebar-label { font-size: 10px; color: hsl(220,15%,38%); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; padding: 8px 14px 4px; }
+.nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: 4px; font-size: 14px; color: hsl(220,15%,58%); cursor: pointer; transition: all 0.15s; }
+.nav-item.active { background: hsl(260,80%,60%); color: #fff; }
+.nav-item:hover:not(.active) { background: hsl(222,18%,18%); color: hsl(220,15%,80%); }
+.icon { width: 18px; height: 18px; border-radius: 2px; background: currentColor; opacity: 0.45; flex-shrink: 0; }
+.nav-item.active .icon { background: rgba(255,255,255,0.8); opacity: 1; }
+.main { flex: 1; background: hsl(222,20%,10%); padding: 28px; display: flex; flex-direction: column; gap: 22px; overflow-y: auto; }
+.page-header { display: flex; align-items: center; justify-content: space-between; }
+.page-title { font-size: 22px; font-weight: 700; color: hsl(220,15%,90%); }
+.page-sub { font-size: 13px; color: hsl(220,15%,45%); margin-top: 2px; }
+.cards { display: flex; gap: 12px; }
+.card { flex: 1; background: hsl(222,18%,14%); border-radius: 4px; border: 1px solid hsl(222,20%,20%); padding: 20px; }
+.card-label { font-size: 11px; color: hsl(220,15%,48%); font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 8px; }
+.card-value { font-size: 30px; font-weight: 700; color: hsl(260,80%,70%); }
+.card-trend { font-size: 11px; color: hsl(150,60%,50%); margin-top: 4px; }
+.actions { display: flex; gap: 10px; }
+.btn { padding: 9px 20px; font-size: 13px; font-weight: 600; border: none; cursor: pointer; border-radius: 4px; transition: all 0.15s; }
+.btn-primary { background: hsl(260,80%,60%); color: #fff; }
+.btn-primary:hover { background: hsl(260,80%,52%); }
+.btn-secondary { background: hsl(222,18%,20%); color: hsl(220,15%,70%); border: 1px solid hsl(222,18%,26%); }
+.section-title { font-size: 14px; font-weight: 700; color: hsl(220,15%,70%); }
+.table { background: hsl(222,18%,13%); border-radius: 4px; border: 1px solid hsl(222,20%,20%); overflow: hidden; }
+.table-head { display: flex; gap: 16px; padding: 10px 18px; font-size: 11px; font-weight: 700; color: hsl(220,15%,38%); text-transform: uppercase; letter-spacing: 0.5px; background: hsl(222,20%,11%); border-bottom: 1px solid hsl(222,20%,18%); }
+.table-row { display: flex; align-items: center; gap: 16px; padding: 13px 18px; font-size: 13px; color: hsl(220,15%,72%); border-bottom: 1px solid hsl(222,20%,17%); transition: background 0.15s; }
+.table-row:last-child { border-bottom: none; }
+.table-row:hover { background: hsl(222,18%,16%); }
+.row-name { flex: 1; font-weight: 500; color: hsl(220,15%,82%); }
+.row-date { width: 90px; color: hsl(220,15%,42%); font-size: 12px; }
+.badge { padding: 3px 10px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+.badge-purple { background: hsl(260,60%,25%); color: hsl(260,80%,75%); }
+.badge-green { background: hsl(150,50%,18%); color: hsl(150,65%,55%); }
+.badge-gray { background: hsl(222,18%,20%); color: hsl(220,15%,52%); }
+.badge-yellow { background: hsl(45,70%,20%); color: hsl(45,80%,65%); }
+</style></head>
+<body>
+<div class="header">
+  <div class="logo">PF</div>
+  <span class="app-title">P-Frog <span class="app-sub">Project Manager</span></span>
+  <div class="avatar"></div>
+</div>
+<div class="body">
+  <div class="sidebar">
+    <div class="sidebar-label">Main</div>
+    <div class="nav-item active"><div class="icon"></div>Dashboard</div>
+    <div class="nav-item"><div class="icon"></div>Projects</div>
+    <div class="nav-item"><div class="icon"></div>Tasks</div>
+    <div class="sidebar-label">Account</div>
+    <div class="nav-item"><div class="icon"></div>Settings</div>
+    <div class="nav-item"><div class="icon"></div>Profile</div>
+  </div>
+  <div class="main">
+    <div class="page-header">
+      <div><div class="page-title">Dashboard</div><div class="page-sub">Welcome back — here's what's happening</div></div>
+      <div class="actions">
+        <button class="btn btn-secondary">Export</button>
+        <button class="btn btn-primary">+ New Project</button>
+      </div>
+    </div>
+    <div class="cards">
+      <div class="card">
+        <div class="card-label">Total Projects</div>
+        <div class="card-value">12</div>
+        <div class="card-trend">↑ 2 this month</div>
+      </div>
+      <div class="card">
+        <div class="card-label">Open Tasks</div>
+        <div class="card-value">47</div>
+        <div class="card-trend">↓ 5 since last week</div>
+      </div>
+      <div class="card">
+        <div class="card-label">Completed</div>
+        <div class="card-value">31</div>
+        <div class="card-trend">↑ 8 this month</div>
+      </div>
+    </div>
+    <div class="section-title">Recent Projects</div>
+    <div class="table">
+      <div class="table-head"><span class="row-name">Name</span><span class="row-date">Due Date</span><span>Status</span></div>
+      <div class="table-row"><span class="row-name">Alpha Launch</span><span class="row-date">Apr 30</span><span class="badge badge-purple">In Progress</span></div>
+      <div class="table-row"><span class="row-name">Beta Release</span><span class="row-date">Mar 15</span><span class="badge badge-green">Done</span></div>
+      <div class="table-row"><span class="row-name">Gamma Prep</span><span class="row-date">May 20</span><span class="badge badge-gray">To Do</span></div>
+      <div class="table-row"><span class="row-name">Delta Rollout</span><span class="row-date">May 5</span><span class="badge badge-yellow">On Hold</span></div>
+    </div>
+  </div>
+</div>
+</body></html>
