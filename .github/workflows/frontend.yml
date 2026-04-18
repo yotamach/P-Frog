@@ -1,0 +1,94 @@
+name: Frontend CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  build-client:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '22'
+          cache: 'yarn'
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile || yarn install
+
+      - name: Check for frontend changes
+        id: check
+        run: |
+          if [ "${{ github.event_name }}" == "push" ] && [ "${{ github.ref }}" == "refs/heads/master" ]; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          elif [ "${{ github.event_name }}" == "pull_request" ]; then
+            git fetch origin ${{ github.base_ref }}
+            CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD)
+            if echo "$CHANGED_FILES" | grep -qE '^apps/p-frog/|^libs/data/'; then
+              echo "changed=true" >> $GITHUB_OUTPUT
+            else
+              echo "changed=false" >> $GITHUB_OUTPUT
+            fi
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Build client
+        if: steps.check.outputs.changed == 'true'
+        run: yarn build
+
+      - name: Skip
+        if: steps.check.outputs.changed == 'false'
+        run: echo "No frontend changes detected, skipping build"
+
+  lint-client:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '22'
+          cache: 'yarn'
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile || yarn install
+
+      - name: Check for frontend changes
+        id: check
+        run: |
+          if [ "${{ github.event_name }}" == "push" ] && [ "${{ github.ref }}" == "refs/heads/master" ]; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          elif [ "${{ github.event_name }}" == "pull_request" ]; then
+            git fetch origin ${{ github.base_ref }}
+            CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD)
+            if echo "$CHANGED_FILES" | grep -qE '^apps/p-frog/'; then
+              echo "changed=true" >> $GITHUB_OUTPUT
+            else
+              echo "changed=false" >> $GITHUB_OUTPUT
+            fi
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Lint client
+        if: steps.check.outputs.changed == 'true'
+        run: yarn nx run p-frog:lint
+
+      - name: Skip
+        if: steps.check.outputs.changed == 'false'
+        run: echo "No frontend changes detected, skipping lint"

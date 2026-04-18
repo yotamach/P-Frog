@@ -1,0 +1,27 @@
+name: PR Checks
+
+on:
+  pull_request:
+    branches: [master]
+
+jobs:
+  validate-branch-name:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check branch name
+        run: |
+          BRANCH_NAME="${{ github.head_ref }}"
+          echo "Validating branch name: $BRANCH_NAME"
+
+          if [[ ! "$BRANCH_NAME" =~ ^PF-[0-9]+_[A-Za-z0-9_]+$ ]]; then
+            echo "❌ Branch name does not match required pattern: ^PF-\\d+_[A-Za-z0-9_]+$"
+            echo "Example valid branch names:"
+            echo "  - PF-123_FeatureName"
+            echo "  - PF-456_BugFix"
+            echo "  - PF-4_Create_Home_Page"
+            echo "  - PF-10_Update_API_v2"
+            exit 1
+          fi
+
+          echo "✅ Branch name is valid"
