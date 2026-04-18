@@ -4,6 +4,7 @@ import settingsRoutes from "./settings.route";
 import authRoutes from './auth.route';
 import projectRoutes from './project.route';
 import projectMemberRoutes from './project-member.route';
+import healthRoutes from './health.route';
 
 export {
   userRoutes,
@@ -11,5 +12,6 @@ export {
   settingsRoutes,
   authRoutes,
   projectRoutes,
-  projectMemberRoutes
+  projectMemberRoutes,
+  healthRoutes
 }

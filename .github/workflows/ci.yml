@@ -239,7 +239,7 @@ jobs:
         if: steps.check-apps.outputs.changed == 'true'
         run: |
           echo "Waiting for backend to start on http://localhost:3333..."
-          timeout 120 bash -c 'until curl -s http://localhost:3333/api > /dev/null; do sleep 2; done'
+          timeout 180 bash -c 'until curl -sf http://localhost:3333/api/health > /dev/null 2>&1; do sleep 2; done'
           echo "Backend is ready!"
 
       - name: Start client in background
