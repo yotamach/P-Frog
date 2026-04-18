@@ -6,15 +6,19 @@ import { Home, Login, Registration, Welcome, NotFound } from '@pages/index';
 import { ProtectedRoute } from '../components/protected-route/protected-route';
 import { lazy, Suspense, useEffect } from 'react';
 import { initializeAuth } from '@data/queries/auth.queries';
+import { useStore } from '@tanstack/react-store';
+import { authStore, selectUser } from '@data/store/authStore';
+import { SystemRole } from '@p-frog/data';
 
 const Dashboard = lazy(() => import('@pages/dashboard/dashboard.component'));
 const Settings = lazy(() => import('@pages/settings/settings.component'));
 const Tasks = lazy(() => import('@pages/tasks/tasks.component'));
 const Projects = lazy(() => import('@pages/projects/projects.component'));
+const Users = lazy(() => import('@pages/users/users.component'));
 
 const PageLoader = () => (
   <div className="flex h-screen w-screen items-center justify-center">
-    <div 
+    <div
       className="w-16 h-16 border-4 rounded-full animate-spin"
       style={{
         borderColor: 'hsl(var(--border))',
@@ -23,6 +27,13 @@ const PageLoader = () => (
     />
   </div>
 );
+
+const RequireAdmin = ({ children }: { children: JSX.Element }) => {
+  const user = useStore(authStore, selectUser);
+  const role: SystemRole = user?.role ?? SystemRole.MEMBER;
+  const allowed = role === SystemRole.ADMIN || role === SystemRole.SUPERUSER;
+  return allowed ? children : <Navigate to="/home" replace />;
+};
 
 export const App = () => {
   // Initialize auth from localStorage on app load
@@ -56,6 +67,7 @@ export const App = () => {
                   <Route path='tasks/*' element={<Tasks />} />
                   <Route path='projects' element={<Projects />} />
                   <Route path='settings' element={<Settings />} />
+                  <Route path='users' element={<RequireAdmin><Users /></RequireAdmin>} />
                   {/* 404 for authenticated users - with layout */}
                   <Route path='*' element={<NotFound />} />
                 </Route>

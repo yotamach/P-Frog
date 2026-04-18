@@ -1,6 +1,6 @@
 import {Logger} from "tslog";
 import {UserModel} from "@models";
-import { IUser, User } from "@schemas";
+import { IUser, User, SystemRole } from "@schemas";
 
 type UserQueryParams = Record<string, unknown>;
 
@@ -49,16 +49,9 @@ export class UserService {
     return User.findByIdAndDelete(id).exec();
   }
 
-  /**
-   * Set superuser status for a user
-   */
-  async setSuperuserStatus(userId: string, isSuperuser: boolean): Promise<IUser | null> {
-    log.info(`UserService.setSuperuserStatus: setting superuser=${isSuperuser} for user ${userId}`);
-    return User.findByIdAndUpdate(
-      userId,
-      { isSuperuser },
-      { new: true }
-    ).exec();
+  async updateUserRole(userId: string, role: SystemRole): Promise<IUser | null> {
+    log.info(`UserService.updateUserRole: setting role=${role} for user ${userId}`);
+    return User.findByIdAndUpdate(userId, { role }, { new: true }).exec();
   }
 
   /**

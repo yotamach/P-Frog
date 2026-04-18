@@ -8,6 +8,7 @@ import Home from './home/home.component';
 import { Welcome } from './welcome/welcome.component';
 import Login from './login/login.component';
 import NotFound from './not-found/not-found.component';
+import Users from './users/users.component';
 export {
   Dashboard,
   Settings,
@@ -17,5 +18,6 @@ export {
   Home,
   Login,
   Welcome,
-  NotFound
+  NotFound,
+  Users
 }

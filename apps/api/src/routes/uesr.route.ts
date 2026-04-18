@@ -4,8 +4,9 @@ import { Logger } from "tslog";
 import {AppRouter} from "@models";
 import {UserService} from "@controllers";
 import { auth } from "../middleware/authentication";
-import { requireSuperuser, getUserId } from "../middleware/authorization";
-import { isSuperuser } from "@controllers";
+import { requireSuperuser, requireAdmin, getUserId } from "../middleware/authorization";
+import { isSuperuser, isAdmin } from "@controllers";
+import { SystemRole } from "@schemas";
 
 const log = new Logger({});
 const userRouter: Router = Router();
@@ -116,36 +117,81 @@ userRouter.patch('/:id', async (req: Request, res: Response) => {
  */
 
 /**
- * PATCH /users/:id/superuser
- * Set superuser status for a user
- * Requires: superuser
- * Body: { isSuperuser: boolean }
+ * PATCH /users/:id/role
+ * Update system role for a user
+ * Superuser: any role; Admin: only project_manager or member
  */
-userRouter.patch('/:id/superuser', auth, requireSuperuser(), async (req: any, res: Response) => {
+userRouter.patch('/:id/role', auth, requireAdmin(), async (req: any, res: Response) => {
   const { id } = req.params;
-  const { isSuperuser: newStatus } = req.body;
+  const { role: newRole } = req.body;
   const requesterId = getUserId(req);
-  
-  log.info(`PATCH /users/${id}/superuser - Setting superuser=${newStatus} (requester: ${requesterId})`);
-  
-  if (typeof newStatus !== 'boolean') {
-    return res.status(400).send({ success: false, error: 'isSuperuser must be a boolean' });
+
+  log.info(`PATCH /users/${id}/role - Setting role=${newRole} (requester: ${requesterId})`);
+
+  if (!Object.values(SystemRole).includes(newRole)) {
+    return res.status(400).send({ success: false, error: `Invalid role. Valid values: ${Object.values(SystemRole).join(', ')}` });
   }
-  
-  // Prevent removing your own superuser status
-  if (id === requesterId && !newStatus) {
-    return res.status(400).send({ success: false, error: 'Cannot remove your own superuser status' });
-  }
-  
+
   try {
-    const user = await userService.setSuperuserStatus(id, newStatus);
+    const requesterIsSuperuser = await isSuperuser(requesterId);
+    const requesterIsAdmin = await isAdmin(requesterId);
+
+    // Only superuser can set admin role
+    if (newRole === SystemRole.ADMIN && !requesterIsSuperuser) {
+      return res.status(403).send({ success: false, error: 'Forbidden: Only superusers can assign admin role' });
+    }
+
+    // Admins cannot change the role of other admins or superusers
+    if (requesterIsAdmin && !requesterIsSuperuser) {
+      const targetUser = await userService.getUserById(id);
+      if (!targetUser) {
+        return res.status(404).send({ success: false, error: 'User not found' });
+      }
+      if (targetUser.role === SystemRole.ADMIN || targetUser.role === SystemRole.SUPERUSER) {
+        return res.status(403).send({ success: false, error: 'Forbidden: Cannot change role of admin or superuser' });
+      }
+    }
+
+    // Prevent removing your own superuser/admin role
+    if (id === requesterId) {
+      return res.status(400).send({ success: false, error: 'Cannot change your own role' });
+    }
+
+    const user = await userService.updateUserRole(id, newRole);
     if (!user) {
       return res.status(404).send({ success: false, error: 'User not found' });
     }
-    log.info(`PATCH /users/${id}/superuser - Superuser status updated successfully`);
+    log.info(`PATCH /users/${id}/role - Role updated successfully`);
     res.send({ success: true, user });
   } catch(e) {
-    log.error(`PATCH /users/${id}/superuser - Error: ${e}`);
+    log.error(`PATCH /users/${id}/role - Error: ${e}`);
+    res.status(500).send({ success: false, error: e.message });
+  }
+});
+
+/**
+ * DELETE /users/:id
+ * Delete a user — superuser only
+ */
+userRouter.delete('/:id', auth, requireSuperuser(), async (req: any, res: Response) => {
+  const { id } = req.params;
+  const requesterId = getUserId(req);
+
+  log.info(`DELETE /users/${id} - Deleting user (requester: ${requesterId})`);
+
+  if (id === requesterId) {
+    return res.status(400).send({ success: false, error: 'Cannot delete your own account' });
+  }
+
+  try {
+    const user = await userService.deleteUser(id);
+    if (!user) {
+      return res.status(404).send({ success: false, error: 'User not found' });
+    }
+    log.info(`DELETE /users/${id} - User deleted successfully`);
+    res.send({ success: true });
+  } catch(e) {
+    log.error(`DELETE /users/${id} - Error: ${e}`);
     res.status(500).send({ success: false, error: e.message });
   }
 });
@@ -214,29 +260,14 @@ userRouter.get('/:id', async (req: Request, res: Response) => {
 
 /**
  * GET /users
- * List all users
- * For non-superusers: limited info for searching members
- * For superusers: full user list
+ * List all users — admin and superuser only (full user list with roles)
  */
-userRouter.get('/', auth, async (req: any, res: Response) => {
+userRouter.get('/', auth, requireAdmin(), async (req: any, res: Response) => {
   const userId = getUserId(req);
   log.info(`GET /users - Fetching all users (requester: ${userId})`);
-  
+
   try {
-    const isSuperuserUser = await isSuperuser(userId);
     const users = await userService.getAllUsers();
-    
-    // Non-superusers get limited fields
-    if (!isSuperuserUser) {
-      const limitedUsers = users.map(u => ({
-        id: u.id,
-        userName: u.userName,
-        firstName: u.firstName,
-        lastName: u.lastName
-      }));
-      return res.send({ success: true, users: limitedUsers });
-    }
-    
     log.info(`GET /users - Users retrieved successfully`);
     res.send({ success: true, users });
   } catch(e) {

@@ -1,5 +1,5 @@
 import { Logger } from "tslog";
-import { User, ProjectMember, ProjectRole } from '@schemas';
+import { User, ProjectMember, ProjectRole, SystemRole } from '@schemas';
 
 const log = new Logger({});
 
@@ -9,9 +9,35 @@ const log = new Logger({});
 export const isSuperuser = async (userId: string): Promise<boolean> => {
   try {
     const user = await User.findById(userId);
-    return user?.isSuperuser === true;
+    return user?.role === SystemRole.SUPERUSER;
   } catch (err) {
     log.error(`Error checking superuser status: ${err.message}`);
+    return false;
+  }
+};
+
+/**
+ * Check if a user is an admin or superuser
+ */
+export const isAdmin = async (userId: string): Promise<boolean> => {
+  try {
+    const user = await User.findById(userId);
+    return user?.role === SystemRole.ADMIN || user?.role === SystemRole.SUPERUSER;
+  } catch (err) {
+    log.error(`Error checking admin status: ${err.message}`);
+    return false;
+  }
+};
+
+/**
+ * Check if a user is project_manager, admin, or superuser
+ */
+export const isProjectManagerOrAbove = async (userId: string): Promise<boolean> => {
+  try {
+    const user = await User.findById(userId);
+    return user?.role !== SystemRole.MEMBER && user?.role != null;
+  } catch (err) {
+    log.error(`Error checking project manager status: ${err.message}`);
     return false;
   }
 };
@@ -62,23 +88,28 @@ export const isProjectAdmin = async (userId: string, projectId: string): Promise
 
 /**
  * Check if a user has permission to access a project
- * Superusers always have access, otherwise checks membership
+ * Superusers and admins always have access, otherwise checks membership
  */
 export const canAccessProject = async (userId: string, projectId: string): Promise<boolean> => {
-  const superuser = await isSuperuser(userId);
-  if (superuser) return true;
-  
+  const admin = await isAdmin(userId);
+  if (admin) return true;
+
   return isProjectMember(userId, projectId);
 };
 
 /**
  * Check if a user has permission to manage a project (edit/delete project, manage members)
- * Requires admin role or superuser
+ * Superusers and admins bypass; project_managers must be a project admin
  */
 export const canManageProject = async (userId: string, projectId: string): Promise<boolean> => {
-  const superuser = await isSuperuser(userId);
-  if (superuser) return true;
-  
+  const admin = await isAdmin(userId);
+  if (admin) return true;
+
+  const pmOrAbove = await isProjectManagerOrAbove(userId);
+  if (pmOrAbove) {
+    return isProjectAdmin(userId, projectId);
+  }
+
   return isProjectAdmin(userId, projectId);
 };
 
@@ -90,14 +121,14 @@ export const canManageProject = async (userId: string, projectId: string): Promi
  * - Task assignee can modify their assigned task
  */
 export const canModifyTask = async (
-  userId: string, 
-  taskCreatedBy: string, 
-  taskAssignee: string | null, 
+  userId: string,
+  taskCreatedBy: string,
+  taskAssignee: string | null,
   projectId: string | null
 ): Promise<boolean> => {
-  // Superuser can do anything
-  const superuser = await isSuperuser(userId);
-  if (superuser) return true;
+  // Superuser and admin can do anything
+  const admin = await isAdmin(userId);
+  if (admin) return true;
   
   // Task creator can modify
   if (taskCreatedBy === userId) return true;
@@ -123,11 +154,11 @@ export const canModifyTask = async (
 export const canCreateTaskInProject = async (userId: string, projectId: string | null): Promise<boolean> => {
   // No project means standalone task - anyone can create
   if (!projectId) return true;
-  
-  // Superuser can create anywhere
-  const superuser = await isSuperuser(userId);
-  if (superuser) return true;
-  
+
+  // Admin and above can create anywhere
+  const admin = await isAdmin(userId);
+  if (admin) return true;
+
   // Must be a project member
   return isProjectMember(userId, projectId);
 };
@@ -139,11 +170,11 @@ export const canCreateTaskInProject = async (userId: string, projectId: string |
 export const canAssignTask = async (userId: string, projectId: string | null): Promise<boolean> => {
   // No project means standalone task - only creator can assign (handled elsewhere)
   if (!projectId) return false;
-  
-  // Superuser can assign anywhere
-  const superuser = await isSuperuser(userId);
-  if (superuser) return true;
-  
+
+  // Admin and above can assign anywhere
+  const admin = await isAdmin(userId);
+  if (admin) return true;
+
   // Must be a project admin
   return isProjectAdmin(userId, projectId);
 };

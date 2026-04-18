@@ -1,6 +1,7 @@
 import { TasksAPI } from './tasks.service';
 import { ProjectsAPI } from './projects.service';
 import { AuthAPI } from './auth.service';
+import { UsersAPI } from './users.service';
 import { authStore, clearAuth } from '../store/authStore';
 
 // Helper to safely access import.meta.env (works in both Vite and Jest)
@@ -117,5 +118,6 @@ export {
     BASE_URL,
     TasksAPI,
     ProjectsAPI,
-    AuthAPI
+    AuthAPI,
+    UsersAPI
 }
