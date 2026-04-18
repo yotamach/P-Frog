@@ -1,5 +1,5 @@
 
-import {settingsRoutes, taskRoutes, userRoutes, authRoutes, projectRoutes, projectMemberRoutes} from './routes/index';
+import {settingsRoutes, taskRoutes, userRoutes, authRoutes, projectRoutes, projectMemberRoutes, healthRoutes} from './routes/index';
 import './config/config'
 import { App } from './App';
 
@@ -16,6 +16,7 @@ app.addRouter(taskRoutes);
 app.addRouter(projectRoutes);
 app.addRouter(projectMemberRoutes);
 
+app.addRouter(healthRoutes);
 app.start();
 app.dbConnect(DB_HOST, DB_PORT, DB_USERNAME, DB_PASSWORD, DB_SCHEMA);
 
