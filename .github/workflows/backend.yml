@@ -1,0 +1,137 @@
+name: Backend CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  build-server:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '22'
+          cache: 'yarn'
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile || yarn install
+
+      - name: Check for backend changes
+        id: check
+        run: |
+          if [ "${{ github.event_name }}" == "push" ] && [ "${{ github.ref }}" == "refs/heads/master" ]; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          elif [ "${{ github.event_name }}" == "pull_request" ]; then
+            git fetch origin ${{ github.base_ref }}
+            CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD)
+            if echo "$CHANGED_FILES" | grep -qE '^apps/api/|^libs/data/'; then
+              echo "changed=true" >> $GITHUB_OUTPUT
+            else
+              echo "changed=false" >> $GITHUB_OUTPUT
+            fi
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Build server
+        if: steps.check.outputs.changed == 'true'
+        run: yarn build:server-dev
+
+      - name: Skip
+        if: steps.check.outputs.changed == 'false'
+        run: echo "No backend changes detected, skipping build"
+
+  lint-server:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '22'
+          cache: 'yarn'
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile || yarn install
+
+      - name: Check for backend changes
+        id: check
+        run: |
+          if [ "${{ github.event_name }}" == "push" ] && [ "${{ github.ref }}" == "refs/heads/master" ]; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          elif [ "${{ github.event_name }}" == "pull_request" ]; then
+            git fetch origin ${{ github.base_ref }}
+            CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD)
+            if echo "$CHANGED_FILES" | grep -qE '^apps/api/'; then
+              echo "changed=true" >> $GITHUB_OUTPUT
+            else
+              echo "changed=false" >> $GITHUB_OUTPUT
+            fi
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Lint server
+        if: steps.check.outputs.changed == 'true'
+        run: yarn nx run api:lint
+
+      - name: Skip
+        if: steps.check.outputs.changed == 'false'
+        run: echo "No backend changes detected, skipping lint"
+
+  server-unittests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '22'
+          cache: 'yarn'
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile || yarn install
+
+      - name: Check for backend changes
+        id: check
+        run: |
+          if [ "${{ github.event_name }}" == "push" ] && [ "${{ github.ref }}" == "refs/heads/master" ]; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          elif [ "${{ github.event_name }}" == "pull_request" ]; then
+            git fetch origin ${{ github.base_ref }}
+            CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD)
+            if echo "$CHANGED_FILES" | grep -qE '^apps/api/|^libs/'; then
+              echo "changed=true" >> $GITHUB_OUTPUT
+            else
+              echo "changed=false" >> $GITHUB_OUTPUT
+            fi
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Run server tests
+        if: steps.check.outputs.changed == 'true'
+        run: yarn test:server
+
+      - name: Skip
+        if: steps.check.outputs.changed == 'false'
+        run: echo "No backend changes detected, skipping tests"

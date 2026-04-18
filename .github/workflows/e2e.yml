@@ -1,0 +1,110 @@
+name: E2E Tests
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  e2e-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '22'
+          cache: 'yarn'
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile || yarn install
+
+      - name: Check for app changes
+        id: check
+        run: |
+          if [ "${{ github.event_name }}" == "push" ] && [ "${{ github.ref }}" == "refs/heads/master" ]; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          elif [ "${{ github.event_name }}" == "pull_request" ]; then
+            git fetch origin ${{ github.base_ref }}
+            CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD)
+            if echo "$CHANGED_FILES" | grep -qE '^apps/p-frog/|^apps/api/|^libs/data/'; then
+              echo "changed=true" >> $GITHUB_OUTPUT
+            else
+              echo "changed=false" >> $GITHUB_OUTPUT
+            fi
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create backend environment file
+        if: steps.check.outputs.changed == 'true'
+        run: |
+          cat > apps/api/.env.development << EOF
+          SERVER_HOST=localhost
+          SERVER_PORT=3333
+          DB_HOST=localhost
+          DB_PORT=27017
+          DB_SCHEMA=p-frog
+          DB_USERNAME=admin
+          DB_PASSWORD=pfrogpswrd
+          JWT_SECRET=test-jwt-secret-for-ci-cd
+          EOF
+
+      - name: Create frontend environment file
+        if: steps.check.outputs.changed == 'true'
+        run: |
+          cat > apps/p-frog/.env.development << EOF
+          VITE_SERVER_HOST=localhost
+          VITE_SERVER_PORT=3333
+          EOF
+
+      - name: Start MongoDB in Docker
+        if: steps.check.outputs.changed == 'true'
+        run: docker compose up -d
+
+      - name: Wait for MongoDB to be ready
+        if: steps.check.outputs.changed == 'true'
+        run: |
+          echo "Waiting for MongoDB to start..."
+          timeout 60 bash -c 'until docker exec p-frog_mongo mongosh -u admin -p pfrogpswrd --authenticationDatabase admin --eval "db.runCommand({ ping: 1 })" > /dev/null 2>&1; do sleep 2; done'
+          echo "MongoDB is ready!"
+
+      - name: Start backend server in background
+        if: steps.check.outputs.changed == 'true'
+        run: yarn start:server-dev &
+
+      - name: Wait for backend to be ready
+        if: steps.check.outputs.changed == 'true'
+        run: |
+          echo "Waiting for backend to start on http://localhost:3333..."
+          timeout 180 bash -c 'until curl -sf http://localhost:3333/api/health > /dev/null 2>&1; do sleep 2; done'
+          echo "Backend is ready!"
+
+      - name: Start client in background
+        if: steps.check.outputs.changed == 'true'
+        run: yarn start &
+
+      - name: Wait for client to be ready
+        if: steps.check.outputs.changed == 'true'
+        run: |
+          echo "Waiting for client to start on http://localhost:4200..."
+          timeout 120 bash -c 'until curl -s http://localhost:4200 > /dev/null; do sleep 2; done'
+          echo "Client is ready!"
+
+      - name: Run e2e tests
+        if: steps.check.outputs.changed == 'true'
+        run: yarn nx run p-frog-e2e:e2e
+
+      - name: Cleanup
+        if: always() && steps.check.outputs.changed == 'true'
+        run: docker compose down
+
+      - name: Skip
+        if: steps.check.outputs.changed == 'false'
+        run: echo "No app changes detected, skipping e2e tests"
