@@ -1,3 +1,11 @@
+// System-level role hierarchy
+export enum SystemRole {
+    SUPERUSER = 'superuser',
+    ADMIN = 'admin',
+    PROJECT_MANAGER = 'project_manager',
+    MEMBER = 'member'
+}
+
 // User types
 export interface User {
     id?: string;
@@ -6,7 +14,7 @@ export interface User {
     userName: string;
     email?: string;
     password: string;
-    isSuperuser?: boolean;
+    role?: SystemRole;
 }
 
 // Project Role types

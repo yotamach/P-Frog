@@ -5,6 +5,9 @@ import {
   Schema
 } from 'mongoose';
 import { UserModel } from '@models';
+import { SystemRole } from '@p-frog/data';
+
+export { SystemRole };
 
 export interface IUser extends Document, UserModel {};
 
@@ -30,9 +33,10 @@ const UserSchema: Schema = new Schema({
     required: true
   },
   token: { type: String },
-  isSuperuser: {
-    type: Boolean,
-    default: false
+  role: {
+    type: String,
+    enum: Object.values(SystemRole),
+    default: SystemRole.MEMBER
   }
 });
 

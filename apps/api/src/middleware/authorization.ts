@@ -75,9 +75,9 @@ export const requireProjectRole = (...roles: ProjectRole[]) => {
     }
 
     try {
-      // Superusers bypass role checks
-      const isSuperuser = await PermissionService.isSuperuser(userId);
-      if (isSuperuser) {
+      // Admins and superusers bypass role checks
+      const isAdmin = await PermissionService.isAdmin(userId);
+      if (isAdmin) {
         req.isSuperuser = true;
         return next();
       }
@@ -131,13 +131,85 @@ export const requireProjectAdmin = () => {
 };
 
 /**
+ * Middleware factory: Require user to be an admin or superuser
+ */
+export const requireAdmin = () => {
+  return async (req: any, res: any, next: any) => {
+    const userId = getUserId(req);
+
+    if (!userId) {
+      return res.status(HttpStatus.UNAUTHORIZED).send({
+        success: false,
+        data: "Unauthorized: User not authenticated"
+      });
+    }
+
+    try {
+      const isAdmin = await PermissionService.isAdmin(userId);
+
+      if (!isAdmin) {
+        log.warn(`Admin access denied for user ${userId}`);
+        return res.status(HttpStatus.FORBIDDEN).send({
+          success: false,
+          data: "Forbidden: Admin access required"
+        });
+      }
+
+      next();
+    } catch (err) {
+      log.error(`Authorization error: ${err.message}`);
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).send({
+        success: false,
+        data: "Internal server error during authorization"
+      });
+    }
+  };
+};
+
+/**
+ * Middleware factory: Require user to be project_manager, admin, or superuser
+ */
+export const requireProjectManagerOrAbove = () => {
+  return async (req: any, res: any, next: any) => {
+    const userId = getUserId(req);
+
+    if (!userId) {
+      return res.status(HttpStatus.UNAUTHORIZED).send({
+        success: false,
+        data: "Unauthorized: User not authenticated"
+      });
+    }
+
+    try {
+      const isPmOrAbove = await PermissionService.isProjectManagerOrAbove(userId);
+
+      if (!isPmOrAbove) {
+        log.warn(`Project manager access denied for user ${userId}`);
+        return res.status(HttpStatus.FORBIDDEN).send({
+          success: false,
+          data: "Forbidden: Project manager or above required"
+        });
+      }
+
+      next();
+    } catch (err) {
+      log.error(`Authorization error: ${err.message}`);
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).send({
+        success: false,
+        data: "Internal server error during authorization"
+      });
+    }
+  };
+};
+
+/**
  * Middleware: Attach permission context to request for use in route handlers
  * Does not block - just adds permission info to the request
  */
 export const attachPermissionContext = () => {
   return async (req: any, res: any, next: any) => {
     const userId = getUserId(req);
-    
+
     if (!userId) {
       return next();
     }
@@ -145,6 +217,7 @@ export const attachPermissionContext = () => {
     try {
       req.permissionContext = {
         isSuperuser: await PermissionService.isSuperuser(userId),
+        isAdmin: await PermissionService.isAdmin(userId),
         userId
       };
       next();

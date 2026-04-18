@@ -1,3 +1,5 @@
+import { SystemRole } from '@p-frog/data';
+
 export interface UserModel {
     firstName?: string;
     lastName?: string;
@@ -5,5 +7,5 @@ export interface UserModel {
     email?: string;
     password: string;
     token?: string;
-    isSuperuser?: boolean;
+    role?: SystemRole;
 }
