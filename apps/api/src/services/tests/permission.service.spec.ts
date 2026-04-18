@@ -1,6 +1,6 @@
 import { Types } from 'mongoose';
 import * as PermissionService from '../permission.service';
-import { User, ProjectMember, ProjectRole } from '../../schemas';
+import { User, ProjectMember, ProjectRole, SystemRole } from '../../schemas';
 
 jest.mock('../../schemas/user.schema');
 jest.mock('../../schemas/project-member.schema');
@@ -17,7 +17,7 @@ describe('PermissionService', () => {
 
   describe('isSuperuser', () => {
     it('should return true for superuser', async () => {
-      (User.findById as jest.Mock) = jest.fn().mockResolvedValue({ isSuperuser: true });
+      (User.findById as jest.Mock) = jest.fn().mockResolvedValue({ role: SystemRole.SUPERUSER });
 
       const result = await PermissionService.isSuperuser(mockUserId);
 
@@ -26,7 +26,7 @@ describe('PermissionService', () => {
     });
 
     it('should return false for non-superuser', async () => {
-      (User.findById as jest.Mock) = jest.fn().mockResolvedValue({ isSuperuser: false });
+      (User.findById as jest.Mock) = jest.fn().mockResolvedValue({ role: SystemRole.MEMBER });
 
       const result = await PermissionService.isSuperuser(mockUserId);
 
@@ -124,7 +124,7 @@ describe('PermissionService', () => {
 
   describe('canAccessProject', () => {
     it('should return true for superuser', async () => {
-      (User.findById as jest.Mock) = jest.fn().mockResolvedValue({ isSuperuser: true });
+      (User.findById as jest.Mock) = jest.fn().mockResolvedValue({ role: SystemRole.SUPERUSER });
 
       const result = await PermissionService.canAccessProject(mockUserId, mockProjectId);
 
@@ -132,7 +132,7 @@ describe('PermissionService', () => {
     });
 
     it('should return true for project member', async () => {
-      (User.findById as jest.Mock) = jest.fn().mockResolvedValue({ isSuperuser: false });
+      (User.findById as jest.Mock) = jest.fn().mockResolvedValue({ role: SystemRole.MEMBER });
       (ProjectMember.findOne as jest.Mock) = jest.fn().mockResolvedValue({ user: mockUserId });
 
       const result = await PermissionService.canAccessProject(mockUserId, mockProjectId);
@@ -141,7 +141,7 @@ describe('PermissionService', () => {
     });
 
     it('should return false for non-member non-superuser', async () => {
-      (User.findById as jest.Mock) = jest.fn().mockResolvedValue({ isSuperuser: false });
+      (User.findById as jest.Mock) = jest.fn().mockResolvedValue({ role: SystemRole.MEMBER });
       (ProjectMember.findOne as jest.Mock) = jest.fn().mockResolvedValue(null);
 
       const result = await PermissionService.canAccessProject(mockUserId, mockProjectId);
@@ -152,7 +152,7 @@ describe('PermissionService', () => {
 
   describe('canManageProject', () => {
     it('should return true for superuser', async () => {
-      (User.findById as jest.Mock) = jest.fn().mockResolvedValue({ isSuperuser: true });
+      (User.findById as jest.Mock) = jest.fn().mockResolvedValue({ role: SystemRole.SUPERUSER });
 
       const result = await PermissionService.canManageProject(mockUserId, mockProjectId);
 
@@ -160,7 +160,7 @@ describe('PermissionService', () => {
     });
 
     it('should return true for project admin', async () => {
-      (User.findById as jest.Mock) = jest.fn().mockResolvedValue({ isSuperuser: false });
+      (User.findById as jest.Mock) = jest.fn().mockResolvedValue({ role: SystemRole.MEMBER });
       (ProjectMember.findOne as jest.Mock) = jest.fn().mockResolvedValue({ role: ProjectRole.ADMIN });
 
       const result = await PermissionService.canManageProject(mockUserId, mockProjectId);
@@ -169,7 +169,7 @@ describe('PermissionService', () => {
     });
 
     it('should return false for regular member', async () => {
-      (User.findById as jest.Mock) = jest.fn().mockResolvedValue({ isSuperuser: false });
+      (User.findById as jest.Mock) = jest.fn().mockResolvedValue({ role: SystemRole.MEMBER });
       (ProjectMember.findOne as jest.Mock) = jest.fn().mockResolvedValue(null);
 
       const result = await PermissionService.canManageProject(mockUserId, mockProjectId);
@@ -183,7 +183,7 @@ describe('PermissionService', () => {
     const mockAssigneeId = new Types.ObjectId().toString();
 
     it('should return true for superuser', async () => {
-      (User.findById as jest.Mock) = jest.fn().mockResolvedValue({ isSuperuser: true });
+      (User.findById as jest.Mock) = jest.fn().mockResolvedValue({ role: SystemRole.SUPERUSER });
 
       const result = await PermissionService.canModifyTask(mockUserId, mockTaskCreatorId, mockAssigneeId, mockProjectId);
 
@@ -191,7 +191,7 @@ describe('PermissionService', () => {
     });
 
     it('should return true for task creator', async () => {
-      (User.findById as jest.Mock) = jest.fn().mockResolvedValue({ isSuperuser: false });
+      (User.findById as jest.Mock) = jest.fn().mockResolvedValue({ role: SystemRole.MEMBER });
 
       const result = await PermissionService.canModifyTask(mockUserId, mockUserId, mockAssigneeId, mockProjectId);
 
@@ -199,7 +199,7 @@ describe('PermissionService', () => {
     });
 
     it('should return true for task assignee', async () => {
-      (User.findById as jest.Mock) = jest.fn().mockResolvedValue({ isSuperuser: false });
+      (User.findById as jest.Mock) = jest.fn().mockResolvedValue({ role: SystemRole.MEMBER });
 
       const result = await PermissionService.canModifyTask(mockUserId, mockTaskCreatorId, mockUserId, mockProjectId);
 
@@ -207,7 +207,7 @@ describe('PermissionService', () => {
     });
 
     it('should return true for project admin', async () => {
-      (User.findById as jest.Mock) = jest.fn().mockResolvedValue({ isSuperuser: false });
+      (User.findById as jest.Mock) = jest.fn().mockResolvedValue({ role: SystemRole.MEMBER });
       (ProjectMember.findOne as jest.Mock) = jest.fn().mockResolvedValue({ role: ProjectRole.ADMIN });
 
       const result = await PermissionService.canModifyTask(mockUserId, mockTaskCreatorId, mockAssigneeId, mockProjectId);
@@ -216,7 +216,7 @@ describe('PermissionService', () => {
     });
 
     it('should return false for non-authorized user', async () => {
-      (User.findById as jest.Mock) = jest.fn().mockResolvedValue({ isSuperuser: false });
+      (User.findById as jest.Mock) = jest.fn().mockResolvedValue({ role: SystemRole.MEMBER });
       (ProjectMember.findOne as jest.Mock) = jest.fn().mockResolvedValue(null);
 
       const result = await PermissionService.canModifyTask(mockUserId, mockTaskCreatorId, mockAssigneeId, mockProjectId);
@@ -233,7 +233,7 @@ describe('PermissionService', () => {
     });
 
     it('should return true for superuser', async () => {
-      (User.findById as jest.Mock) = jest.fn().mockResolvedValue({ isSuperuser: true });
+      (User.findById as jest.Mock) = jest.fn().mockResolvedValue({ role: SystemRole.SUPERUSER });
 
       const result = await PermissionService.canCreateTaskInProject(mockUserId, mockProjectId);
 
@@ -241,7 +241,7 @@ describe('PermissionService', () => {
     });
 
     it('should return true for project member', async () => {
-      (User.findById as jest.Mock) = jest.fn().mockResolvedValue({ isSuperuser: false });
+      (User.findById as jest.Mock) = jest.fn().mockResolvedValue({ role: SystemRole.MEMBER });
       (ProjectMember.findOne as jest.Mock) = jest.fn().mockResolvedValue({ user: mockUserId });
 
       const result = await PermissionService.canCreateTaskInProject(mockUserId, mockProjectId);
@@ -250,7 +250,7 @@ describe('PermissionService', () => {
     });
 
     it('should return false for non-member', async () => {
-      (User.findById as jest.Mock) = jest.fn().mockResolvedValue({ isSuperuser: false });
+      (User.findById as jest.Mock) = jest.fn().mockResolvedValue({ role: SystemRole.MEMBER });
       (ProjectMember.findOne as jest.Mock) = jest.fn().mockResolvedValue(null);
 
       const result = await PermissionService.canCreateTaskInProject(mockUserId, mockProjectId);
@@ -267,7 +267,7 @@ describe('PermissionService', () => {
     });
 
     it('should return true for superuser', async () => {
-      (User.findById as jest.Mock) = jest.fn().mockResolvedValue({ isSuperuser: true });
+      (User.findById as jest.Mock) = jest.fn().mockResolvedValue({ role: SystemRole.SUPERUSER });
 
       const result = await PermissionService.canAssignTask(mockUserId, mockProjectId);
 
@@ -275,7 +275,7 @@ describe('PermissionService', () => {
     });
 
     it('should return true for project admin', async () => {
-      (User.findById as jest.Mock) = jest.fn().mockResolvedValue({ isSuperuser: false });
+      (User.findById as jest.Mock) = jest.fn().mockResolvedValue({ role: SystemRole.MEMBER });
       (ProjectMember.findOne as jest.Mock) = jest.fn().mockResolvedValue({ role: ProjectRole.ADMIN });
 
       const result = await PermissionService.canAssignTask(mockUserId, mockProjectId);
@@ -284,7 +284,7 @@ describe('PermissionService', () => {
     });
 
     it('should return false for regular member', async () => {
-      (User.findById as jest.Mock) = jest.fn().mockResolvedValue({ isSuperuser: false });
+      (User.findById as jest.Mock) = jest.fn().mockResolvedValue({ role: SystemRole.MEMBER });
       (ProjectMember.findOne as jest.Mock) = jest.fn().mockResolvedValue(null);
 
       const result = await PermissionService.canAssignTask(mockUserId, mockProjectId);
