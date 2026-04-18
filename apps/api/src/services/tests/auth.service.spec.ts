@@ -154,6 +154,7 @@ describe('AuthService', () => {
       password: 'hashedPassword',
       token: '',
       save: jest.fn(),
+      toJSON: jest.fn().mockReturnValue({ _id: mockUserId, userName: 'testuser', email: 'test@example.com', token: '' }),
     };
 
     it('should return NOT_FOUND if username or password is missing', async () => {
