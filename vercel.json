@@ -1,0 +1,7 @@
+{
+  "buildCommand": "yarn build",
+  "outputDirectory": "dist/apps/p-frog",
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}
