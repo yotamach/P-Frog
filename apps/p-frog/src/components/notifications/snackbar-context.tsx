@@ -59,19 +59,17 @@ export function SnackbarProvider({ children }: { children: ReactNode }) {
         {snacks.map(snack => (
           <div
             key={snack.id}
-            className="flex items-start gap-3 rounded-xl border px-4 py-3 shadow-lg ring-1 ring-black/5"
+            className="flex items-start gap-3 rounded-xl border border-white/20 px-4 py-3 shadow-lg ring-1 ring-black/5 text-white"
             style={{
               backgroundColor: snack.variant === 'success'
-                ? 'rgba(34, 197, 94, 0.95)'
+                ? 'var(--color-success)'
                 : snack.variant === 'error'
-                  ? 'rgba(239, 68, 68, 0.95)'
+                  ? 'var(--color-error)'
                   : snack.variant === 'warning'
-                    ? 'rgba(245, 158, 11, 0.95)'
+                    ? 'var(--color-warning)'
                     : snack.variant === 'info'
-                      ? 'rgba(59, 130, 246, 0.95)'
-                      : 'rgba(30, 41, 59, 0.95)',
-              color: 'white',
-              borderColor: 'rgba(255, 255, 255, 0.2)'
+                      ? 'var(--color-info)'
+                      : 'var(--color-foreground)',
             }}
           >
             <div className="flex-1 text-sm font-medium leading-snug">

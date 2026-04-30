@@ -120,10 +120,10 @@ export const UsersTable: React.FC<UsersTableProps> = ({ users }) => {
                       <button
                         onClick={() => deleteUser(user.id!)}
                         disabled={isDeleting || isUpdating}
-                        className="p-1.5 rounded hover:bg-red-50 transition-colors disabled:opacity-50"
+                        className="p-1.5 rounded hover:bg-destructive/10 transition-colors disabled:opacity-50"
                         title="Delete user"
                       >
-                        <Trash2 className="w-4 h-4 text-red-500" />
+                        <Trash2 className="w-4 h-4 text-destructive" />
                       </button>
                     )}
                   </td>

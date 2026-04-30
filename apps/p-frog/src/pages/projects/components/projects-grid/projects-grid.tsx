@@ -100,7 +100,7 @@ export const ProjectsGrid: React.FC = () => {
   if (isError) {
     return (
       <div className="text-center p-8">
-        <p className="text-red-600">Failed to load projects. Please try again later.</p>
+        <p className="text-destructive">Failed to load projects. Please try again later.</p>
       </div>
     );
   }

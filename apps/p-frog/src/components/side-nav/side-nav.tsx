@@ -8,30 +8,24 @@ const SideNav: React.FC<{
   menuItems: NavMenuItem[];
 }> = ({ title, menuItems }) => {
   return (
-    <aside 
-      className="w-64 h-full border-r overflow-y-auto shrink-0"
-      style={{ 
-        backgroundColor: 'hsl(var(--sidebar-bg))',
-        borderColor: 'hsl(var(--sidebar-border))'
-      }}
-    >
+    <aside className="w-64 h-full border-r border-border bg-card overflow-y-auto shrink-0">
       <div className="py-6 px-3">
         {title && (
-          <h2 className="px-4 py-3 mb-4 text-xs font-bold tracking-widest uppercase text-[hsl(var(--muted-foreground))] opacity-70">
+          <h2 className="px-4 py-3 mb-4 text-xs font-bold tracking-widest uppercase text-muted-foreground opacity-70">
             {title}
           </h2>
         )}
         <nav className="flex flex-col gap-1.5 px-2">
           {menuItems.map((item) => (
-            <NavLink 
-              to={item.link} 
+            <NavLink
+              to={item.link}
               key={item.title}
               end={item.link === '/home'}
-              className={({ isActive }) => 
+              className={({ isActive }) =>
                 `group flex items-center gap-3 py-3.5 px-4 rounded-xl text-[0.9375rem] font-semibold transition-all duration-300 ${
-                  isActive 
-                    ? 'bg-[hsl(var(--sidebar-active))] text-white shadow-lg translate-x-1' 
-                    : 'text-[hsl(var(--sidebar-text))] hover:bg-[hsl(var(--sidebar-hover))]'
+                  isActive
+                    ? 'bg-gradient-primary text-white shadow-lg shadow-glow-primary translate-x-1'
+                    : 'text-foreground hover:bg-muted'
                 }`
               }
             >

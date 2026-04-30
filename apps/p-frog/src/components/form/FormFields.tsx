@@ -20,10 +20,10 @@ export const FormTextField = <T extends FieldValues>({name, control, rules = {},
 					type={type}
 					value={value}
 					onChange={onChange}
-					style={error ? { borderColor: 'hsl(var(--color-destructive))' } : undefined}
+					className={error ? 'border-destructive' : ''}
 				/>
 				{error && (
-					<p className="text-xs" style={{ color: 'hsl(var(--color-destructive))' }}>{error.message}</p>
+					<p className="text-xs text-destructive">{error.message}</p>
 				)}
 			</div>
 		)}
@@ -55,10 +55,10 @@ export const FormDateField = <T extends FieldValues>({name, control, rules = {},
 					type="date"
 					value={typeof value === 'string' ? value : (value as any)?.toISOString?.()?.split('T')?.[0] || ''}
 					onChange={(e) => onChange(e.target.value)}
-					style={error ? { borderColor: 'hsl(var(--color-destructive))' } : undefined}
+					className={error ? 'border-destructive' : ''}
 				/>
 				{error && (
-					<p className="text-xs" style={{ color: 'hsl(var(--color-destructive))' }}>{error.message}</p>
+					<p className="text-xs text-destructive">{error.message}</p>
 				)}
 			</div>
 		)}
@@ -82,10 +82,10 @@ export const FormTextAreaField = <T extends FieldValues>({name, control, rules =
 					value={value}
 					rows={rows}
 					onChange={onChange}
-					style={error ? { borderColor: 'hsl(var(--color-destructive))' } : undefined}
+					className={error ? 'border-destructive' : ''}
 				/>
 				{error && (
-					<p className="text-xs" style={{ color: 'hsl(var(--color-destructive))' }}>{error.message}</p>
+					<p className="text-xs text-destructive">{error.message}</p>
 				)}
 			</div>
 		)}
@@ -124,14 +124,13 @@ export const RadioGroupField = <T extends FieldValues>({row = true, options = []
 								value={optionValue}
 								checked={value === optionValue}
 								onChange={() => onChange(optionValue)}
-								className="w-4 h-4 cursor-pointer"
-								style={{ accentColor: 'var(--primary)' }}
+								className="w-4 h-4 cursor-pointer accent-primary"
 							/>
 						</Label>
 					))}
 				</div>
 				{error && (
-					<p className="text-xs" style={{ color: 'hsl(var(--color-destructive))' }}>{error.message}</p>
+					<p className="text-xs text-destructive">{error.message}</p>
 				)}
 			</div>
 		)}
@@ -163,7 +162,7 @@ export const FormSelectField = <T extends FieldValues>({name, control, rules = {
 					id={inputId}
 					value={value}
 					onChange={onChange}
-					style={error ? { borderColor: 'hsl(var(--color-destructive))' } : undefined}
+					className={error ? 'border-destructive' : ''}
 				>
 					{options.map((option) => (
 						<option key={option.value} value={option.value}>
@@ -172,7 +171,7 @@ export const FormSelectField = <T extends FieldValues>({name, control, rules = {
 					))}
 				</Select>
 				{error && (
-					<p className="text-xs" style={{ color: 'hsl(var(--color-destructive))' }}>{error.message}</p>
+					<p className="text-xs text-destructive">{error.message}</p>
 				)}
 			</div>
 		)}

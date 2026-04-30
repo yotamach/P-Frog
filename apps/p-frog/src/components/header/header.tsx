@@ -76,11 +76,11 @@ const Header = ({ title = undefined }: { title?: string | undefined }) => {
             
             <Dropdown
               trigger={
-                <div 
+                <div
                   className="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold border-2 cursor-pointer transition-all duration-200 hover:scale-105"
                   style={{
-                    backgroundColor: 'rgba(255, 255, 255, 0.3)',
-                    borderColor: 'rgba(255, 255, 255, 0.5)'
+                    backgroundColor: 'var(--color-avatar-bg)',
+                    borderColor: 'var(--color-avatar-border)'
                   }}
                 >
                   {getUserInitials()}
@@ -91,11 +91,11 @@ const Header = ({ title = undefined }: { title?: string | undefined }) => {
           </>
         )}
         {!isAuth && (
-          <div 
+          <div
             className="w-10 h-10 rounded-full flex items-center justify-center text-white border-2"
             style={{
-              backgroundColor: 'rgba(255, 255, 255, 0.3)',
-              borderColor: 'rgba(255, 255, 255, 0.5)'
+              backgroundColor: 'var(--color-avatar-bg)',
+              borderColor: 'var(--color-avatar-border)'
             }}
           >
             <UserIcon />
