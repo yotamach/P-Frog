@@ -50,28 +50,12 @@ export function Dropdown({ trigger, items, className = '' }: DropdownProps) {
       </div>
 
       {isOpen && (
-        <div 
-          className="absolute top-full right-0 mt-2 w-48 rounded-lg shadow-lg overflow-hidden z-50"
-          style={{
-            backgroundColor: 'hsl(var(--background))',
-            border: '1px solid hsl(var(--border))'
-          }}
-        >
+        <div className="absolute top-full right-0 mt-2 w-48 rounded-lg shadow-lg overflow-hidden z-50 bg-background border border-border">
           {items.map((item, index) => (
             <button
               key={index}
               onClick={() => handleItemClick(item.onClick)}
-              className="w-full px-4 py-3 text-left text-sm font-medium transition-colors flex items-center gap-2"
-              style={{
-                color: 'hsl(var(--foreground))',
-                backgroundColor: 'transparent'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = 'hsl(var(--sidebar-hover))';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = 'transparent';
-              }}
+              className="w-full px-4 py-3 text-left text-sm font-medium transition-colors flex items-center gap-2 text-foreground bg-transparent hover:bg-muted"
             >
               {item.icon && <span className="flex-shrink-0">{item.icon}</span>}
               {item.label}

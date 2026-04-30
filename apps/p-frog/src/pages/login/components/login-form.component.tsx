@@ -25,56 +25,64 @@ function LoginForm() {
     });
 
     return (
-        <form onSubmit={onSubmit} className="rounded-2xl p-8 shadow-2xl backdrop-blur" style={{ backgroundColor: 'var(--color-card)' }}>
-            <div className="mb-6 text-center">
-                <h2 className="text-3xl font-extrabold tracking-tight" style={{ color: 'hsl(var(--sidebar-text))' }}>
-                    Sign in
+        <div className="rounded-2xl shadow-2xl overflow-hidden bg-card backdrop-blur">
+            <div className="bg-gradient-header h-24 flex items-end px-8 pb-4">
+                <h2 className="text-3xl font-extrabold tracking-tight text-white">
+                    P-Frog
                 </h2>
-                <p className="mt-2 text-sm" style={{ color: 'hsl(var(--table-text-muted))' }}>
-                    Enter your credentials to access your workspace
-                </p>
             </div>
 
-            <div className="space-y-5">
-                <FormTextField 
-                    control={control} 
-                    name="userName" 
-                    label="Username" 
-                    rules={{ 
-                        required: 'Username is required'
-                    }} 
-                />
-                <FormTextField
-                    control={control}
-                    name="password"
-                    type="password"
-                    label="Password"
-                    rules={{ required: 'Password is required' }}
-                />
-            </div>
+            <form onSubmit={onSubmit} className="p-8">
+                <div className="mb-6">
+                    <h3 className="text-2xl font-bold tracking-tight text-foreground">
+                        Sign in
+                    </h3>
+                    <p className="mt-2 text-sm text-muted-foreground">
+                        Enter your credentials to access your workspace
+                    </p>
+                </div>
 
-            <Button
-                type="submit"
-                className="mt-8 w-full shadow-lg transition-all duration-200 hover:-translate-y-0.5 hover:shadow-xl"
-                size="lg"
-                disabled={isPending}
-            >
-                {isPending ? 'Logging in...' : 'Log In'}
-            </Button>
+                <div className="space-y-5">
+                    <FormTextField
+                        control={control}
+                        name="userName"
+                        label="Username"
+                        rules={{
+                            required: 'Username is required'
+                        }}
+                    />
+                    <FormTextField
+                        control={control}
+                        name="password"
+                        type="password"
+                        label="Password"
+                        rules={{ required: 'Password is required' }}
+                    />
+                </div>
 
-            <div className="mt-6 text-center">
-                <p className="text-sm" style={{ color: 'hsl(var(--table-text-muted))' }}>
-                    Don't have an account?{' '}
-                    <Link 
-                        to="/registration" 
-                        className="font-semibold hover:underline"
-                        style={{ color: 'hsl(var(--sidebar-active))' }}
-                    >
-                        Sign up
-                    </Link>
-                </p>
-            </div>
-        </form>
+                <Button
+                    type="submit"
+                    variant="gradient"
+                    size="lg"
+                    className="mt-8 w-full transition-all duration-200 hover:-translate-y-0.5"
+                    disabled={isPending}
+                >
+                    {isPending ? 'Logging in...' : 'Log In'}
+                </Button>
+
+                <div className="mt-6 text-center">
+                    <p className="text-sm text-muted-foreground">
+                        Don't have an account?{' '}
+                        <Link
+                            to="/registration"
+                            className="font-semibold text-primary hover:underline"
+                        >
+                            Sign up
+                        </Link>
+                    </p>
+                </div>
+            </form>
+        </div>
     );
 }
 

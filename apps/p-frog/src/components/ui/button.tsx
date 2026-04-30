@@ -5,7 +5,7 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "../../lib/utils"
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 disabled:pointer-events-none disabled:opacity-50 cursor-pointer [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-1 disabled:pointer-events-none disabled:opacity-50 cursor-pointer [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
   {
     variants: {
       variant: {
@@ -19,6 +19,8 @@ const buttonVariants = cva(
           "shadow-sm hover:opacity-80",
         ghost: "",
         link: "underline-offset-4 hover:underline",
+        gradient:
+          "bg-gradient-primary text-white shadow-lg hover:brightness-110 hover:shadow-glow-primary",
       },
       size: {
         default: "h-9 px-4 py-2",
@@ -43,7 +45,7 @@ export interface ButtonProps
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant, size, asChild = false, style, ...props }, ref) => {
     const Comp = asChild ? Slot : "button"
-    
+
     const getVariantStyles = () => {
       switch (variant) {
         case 'destructive':
@@ -70,6 +72,8 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           return {
             color: 'var(--color-button-link)',
           };
+        case 'gradient':
+          return {};
         default:
           return {
             backgroundColor: 'var(--color-button-primary)',
@@ -77,7 +81,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           };
       }
     };
-    
+
     return (
       <Comp
         className={cn(buttonVariants({ variant, size, className }))}

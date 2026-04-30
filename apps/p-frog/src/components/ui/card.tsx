@@ -2,25 +2,34 @@ import * as React from "react"
 
 import { cn } from "../../lib/utils"
 
-const Card = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, style, ...props }, ref) => (
-  <div
-    ref={ref}
-    className={cn(
-      "rounded-lg border shadow-sm",
-      className
-    )}
-    style={{
-      backgroundColor: 'var(--color-card)',
-      borderColor: 'var(--color-border)',
-      color: 'var(--color-card-foreground)',
-      ...style
-    }}
-    {...props}
-  />
-))
+interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
+  accent?: 'primary' | 'secondary' | 'accent' | 'success' | 'warning' | 'destructive';
+  gradientBorder?: boolean;
+}
+
+const accentClassMap: Record<NonNullable<CardProps['accent']>, string> = {
+  primary: 'border-l-4 border-l-primary',
+  secondary: 'border-l-4 border-l-secondary',
+  accent: 'border-l-4 border-l-accent',
+  success: 'border-l-4 border-l-[var(--color-success)]',
+  warning: 'border-l-4 border-l-[var(--color-warning)]',
+  destructive: 'border-l-4 border-l-destructive',
+};
+
+const Card = React.forwardRef<HTMLDivElement, CardProps>(
+  ({ className, accent, gradientBorder, ...props }, ref) => (
+    <div
+      ref={ref}
+      className={cn(
+        "rounded-lg border bg-card text-card-foreground shadow-sm",
+        accent && accentClassMap[accent],
+        gradientBorder && "relative overflow-hidden before:absolute before:inset-0 before:rounded-lg before:p-[1px] before:bg-gradient-primary before:-z-10",
+        className
+      )}
+      {...props}
+    />
+  )
+)
 Card.displayName = "Card"
 
 const CardHeader = React.forwardRef<
@@ -56,8 +65,7 @@ const CardDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <p
     ref={ref}
-    className={cn("text-sm", className)}
-    style={{ color: 'var(--color-muted-foreground)' }}
+    className={cn("text-sm text-muted-foreground", className)}
     {...props}
   />
 ))

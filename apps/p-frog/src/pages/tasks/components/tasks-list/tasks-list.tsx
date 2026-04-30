@@ -117,9 +117,9 @@ const TasksList: React.FC = () => {
       header: 'Project',
       cell: (info) => {
         const project = info.getValue() as Project | undefined;
-        if (!project) return <span style={{ color: 'hsl(var(--muted-foreground))' }}>-</span>;
+        if (!project) return <span className="text-muted-foreground">-</span>;
         return (
-          <Badge variant="outline" style={{ backgroundColor: 'hsl(var(--muted))', color: 'hsl(var(--foreground))' }}>
+          <Badge variant="secondary">
             {typeof project === 'object' ? project.title : project}
           </Badge>
         );
@@ -131,40 +131,35 @@ const TasksList: React.FC = () => {
       cell: (info) => {
         const status = info.getValue() as TaskStatus;
         const statusConfig = {
-          [TaskStatus.TODO]: { 
-            label: 'To Do', 
-            variant: 'secondary' as const, 
+          [TaskStatus.TODO]: {
+            label: 'To Do',
+            variant: 'secondary' as const,
             icon: Circle,
-            style: { backgroundColor: 'hsl(220 13% 69% / 0.15)', color: 'hsl(220 13% 45%)', borderColor: 'hsl(220 13% 69% / 0.3)' }
           },
-          [TaskStatus.IN_PROGRESS]: { 
-            label: 'In Progress', 
-            variant: 'info' as const, 
+          [TaskStatus.IN_PROGRESS]: {
+            label: 'In Progress',
+            variant: 'info' as const,
             icon: Clock,
-            style: { backgroundColor: 'hsl(217 91% 60% / 0.15)', color: 'hsl(217 91% 50%)', borderColor: 'hsl(217 91% 60% / 0.3)' }
           },
-          [TaskStatus.DONE]: { 
-            label: 'Done', 
-            variant: 'success' as const, 
+          [TaskStatus.DONE]: {
+            label: 'Done',
+            variant: 'success' as const,
             icon: CheckCircle2,
-            style: { backgroundColor: 'hsl(142 71% 45% / 0.15)', color: 'hsl(142 71% 35%)', borderColor: 'hsl(142 71% 45% / 0.3)' }
           },
-          [TaskStatus.CANCELLED]: { 
-            label: 'Cancelled', 
-            variant: 'destructive' as const, 
+          [TaskStatus.CANCELLED]: {
+            label: 'Cancelled',
+            variant: 'destructive' as const,
             icon: XCircle,
-            style: { backgroundColor: 'hsl(0 84% 60% / 0.15)', color: 'hsl(0 84% 50%)', borderColor: 'hsl(0 84% 60% / 0.3)' }
           },
         };
-        const config = statusConfig[status] || { 
-          label: status, 
-          variant: 'outline' as const, 
+        const config = statusConfig[status] || {
+          label: status,
+          variant: 'outline' as const,
           icon: Circle,
-          style: {} 
         };
         const IconComponent = config.icon;
         return (
-          <Badge variant={config.variant} style={config.style}>
+          <Badge variant={config.variant}>
             <IconComponent className="w-3 h-3" />
             {config.label}
           </Badge>
@@ -267,13 +262,13 @@ const TasksList: React.FC = () => {
       
       <Drawer open={open} onOpenChange={setOpen} direction="right">
         <DrawerContent>
-          <DrawerHeader style={{ borderBottom: '1px solid var(--color-drawer-border)' }}>
+          <DrawerHeader className="border-b border-border">
             <DrawerTitle>{editingTask ? 'Edit Task' : 'Create New Task'}</DrawerTitle>
             <DrawerDescription>
               {editingTask ? 'Update task details below' : 'Fill in the details to create a new task'}
             </DrawerDescription>
           </DrawerHeader>
-          <div className="p-4 flex-1" style={{ backgroundColor: 'var(--color-drawer-bg)' }}>
+          <div className="p-4 flex-1 bg-card">
             <form id="task-form" onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               <FormTextField 
                 control={control} 
@@ -327,7 +322,7 @@ const TasksList: React.FC = () => {
                 }}
               />
               {selectedProject && selectedProject.dueDate && (
-                <div className="text-xs p-2 rounded" style={{ backgroundColor: 'hsl(var(--muted))', color: 'hsl(var(--muted-foreground))' }}>
+                <div className="text-xs p-2 rounded bg-muted text-muted-foreground">
                   Project due date: {new Date(selectedProject.dueDate).toLocaleDateString()}
                 </div>
               )}

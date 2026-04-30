@@ -20,11 +20,11 @@ const statusOptions = [
   { value: TaskStatus.CANCELLED, label: 'Cancelled' },
 ];
 
-const statusColors = {
-  [TaskStatus.TODO]: 'bg-gray-100 text-gray-800',
-  [TaskStatus.IN_PROGRESS]: 'bg-blue-100 text-blue-800',
-  [TaskStatus.DONE]: 'bg-green-100 text-green-800',
-  [TaskStatus.CANCELLED]: 'bg-red-100 text-red-800',
+const statusVariant = {
+  [TaskStatus.TODO]: 'secondary' as const,
+  [TaskStatus.IN_PROGRESS]: 'info' as const,
+  [TaskStatus.DONE]: 'success' as const,
+  [TaskStatus.CANCELLED]: 'destructive' as const,
 };
 
 export const ProjectTasks: React.FC<ProjectTasksProps> = ({ project }) => {
@@ -111,7 +111,7 @@ export const ProjectTasks: React.FC<ProjectTasksProps> = ({ project }) => {
                         {taskObj.title || 'Task'}
                       </h4>
                       {taskObj.status && (
-                        <Badge className={statusColors[taskObj.status as TaskStatus]}>
+                        <Badge variant={statusVariant[taskObj.status as TaskStatus]}>
                           {taskObj.status}
                         </Badge>
                       )}
@@ -130,10 +130,10 @@ export const ProjectTasks: React.FC<ProjectTasksProps> = ({ project }) => {
                   </div>
                   <button
                     onClick={() => handleDelete(taskObj.id)}
-                    className="p-2 rounded-md hover:bg-red-50 transition-colors"
+                    className="p-2 rounded-md hover:bg-destructive/10 transition-colors"
                     title="Remove task"
                   >
-                    <Trash2 className="w-4 h-4 text-red-600" />
+                    <Trash2 className="w-4 h-4 text-destructive" />
                   </button>
                 </div>
               </div>
