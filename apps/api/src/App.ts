@@ -24,11 +24,17 @@ export class App {
     this.port = port;
   }
 
-  start(): void {
-    const server = this.app.listen(this.port, () => {
-      log.info('Listening at https://' + this.host + ':' + this.port + BASE_API);
+  start(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const server = this.app.listen(this.port, this.host, () => {
+        log.info('Listening at https://' + this.host + ':' + this.port + BASE_API);
+        resolve();
+      });
+      server.on('error', (error) => {
+        log.error('Server error:', error);
+        reject(error);
+      });
     });
-    server.on('error', (error) => log.error('Server error:', error));
   }
 
   configure(): void {
@@ -73,12 +79,15 @@ export class App {
     });
   };
 
-  dbConnect(host: string, port: string, userName: string, password: string, schema: string) {
-    connect(`mongodb://${userName}:${password}@${host}:${port}/${schema}?authSource=admin`).then(() => {
-      log.info(`Connected to mongoDB DB: ${schema}`);
-    }).catch((e) => {
-      log.error(`Connecteion to mongoDB was failed, reason ${e}`);
-    });
+  dbConnect(host: string, port: string, userName: string, password: string, schema: string): Promise<void> {
+    return connect(`mongodb://${userName}:${password}@${host}:${port}/${schema}?authSource=admin`)
+      .then(() => {
+        log.info(`Connected to mongoDB DB: ${schema}`);
+      })
+      .catch((e) => {
+        log.error(`Connection to mongoDB was failed, reason: ${e}`);
+        throw e;
+      });
   }
 }
 

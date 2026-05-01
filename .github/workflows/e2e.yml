@@ -77,13 +77,17 @@ jobs:
 
       - name: Start backend server in background
         if: steps.check.outputs.changed == 'true'
-        run: yarn start:server-dev &
+        run: yarn start:server-dev > /tmp/backend.log 2>&1 &
 
       - name: Wait for backend to be ready
         if: steps.check.outputs.changed == 'true'
         run: |
           echo "Waiting for backend to start on http://localhost:3333..."
-          timeout 180 bash -c 'until curl -sf http://localhost:3333/api/health > /dev/null 2>&1; do sleep 2; done'
+          timeout 180 bash -c 'until curl -sf http://localhost:3333/api/health > /dev/null 2>&1; do sleep 2; done' || {
+            echo "Backend health check failed. Backend logs:"
+            cat /tmp/backend.log || echo "No backend logs available"
+            exit 1
+          }
           echo "Backend is ready!"
 
       - name: Start client in background
