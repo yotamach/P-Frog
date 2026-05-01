@@ -54,6 +54,7 @@ jobs:
           DB_USERNAME=admin
           DB_PASSWORD=pfrogpswrd
           JWT_SECRET=test-jwt-secret-for-ci-cd
+          SESSION_SECRET=test-session-secret-for-ci-cd
           EOF
 
       - name: Create frontend environment file
