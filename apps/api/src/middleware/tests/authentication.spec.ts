@@ -173,17 +173,15 @@ describe('Authentication Middleware', () => {
       expect(mockNext).toHaveBeenCalled();
     });
 
-    it('should fall back to default secret if JWT_SECRET not set', () => {
+    it('should return UNAUTHORIZED if JWT_SECRET is not set', () => {
       delete process.env.JWT_SECRET;
-      const mockDecoded = { user_id: '123', userName: 'testuser' };
       mockRequest.body = { token: 'Bearer valid-token' };
-
-      (jwt.verify as jest.Mock).mockReturnValue(mockDecoded);
 
       auth(mockRequest, mockResponse, mockNext);
 
-      expect(jwt.verify).toHaveBeenCalledWith('valid-token', mockJwtSecret);
-      expect(mockNext).toHaveBeenCalled();
+      expect(mockResponse.status).toHaveBeenCalledWith(HttpStatus.UNAUTHORIZED);
+      expect(mockNext).not.toHaveBeenCalled();
+      expect(jwt.verify).not.toHaveBeenCalled();
     });
 
     it('should attach decoded user data to request object', () => {
