@@ -21,6 +21,11 @@ describe('AuthService', () => {
   beforeEach(() => {
     authService = new AuthService();
     jest.clearAllMocks();
+    process.env.JWT_SECRET = 'test-jwt-secret';
+  });
+
+  afterEach(() => {
+    delete process.env.JWT_SECRET;
   });
 
   describe('SignUp', () => {

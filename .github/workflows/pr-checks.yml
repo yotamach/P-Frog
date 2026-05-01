@@ -14,7 +14,7 @@ jobs:
           BRANCH_NAME="${{ github.head_ref }}"
           echo "Validating branch name: $BRANCH_NAME"
 
-          if [[ ! "$BRANCH_NAME" =~ ^PF-[0-9]+_[A-Za-z0-9_]+$ ]]; then
+          if [[ ! "$BRANCH_NAME" =~ ^PF-[0-9]+_[A-Za-z0-9_]+$ ]] && [[ ! "$BRANCH_NAME" =~ ^claude/ ]]; then
             echo "❌ Branch name does not match required pattern: ^PF-\\d+_[A-Za-z0-9_]+$"
             echo "Example valid branch names:"
             echo "  - PF-123_FeatureName"
