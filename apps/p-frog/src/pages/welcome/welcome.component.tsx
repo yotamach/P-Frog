@@ -1,4 +1,3 @@
-import { Fragment } from "react";
 import { Footer, Header, Card, CardHeader, CardTitle, CardDescription, CardContent, Button } from "@components/index";
 import { Link } from 'react-router-dom';
 
@@ -7,7 +6,7 @@ export interface WelcomeProps {}
 
 export function Welcome(props: WelcomeProps) {
   return (
-    <Fragment>
+    <div className="flex flex-col h-screen w-screen">
       <Header title={'LOGO'} />
       <main className="flex flex-1 flex-col items-center justify-center px-6 py-10" style={{ backgroundColor: 'hsl(var(--secondary))' }}>
         <div className="w-full max-w-4xl space-y-8">
@@ -84,7 +83,7 @@ export function Welcome(props: WelcomeProps) {
         </div>
       </main>
       <Footer />
-    </Fragment>
+    </div>
   );
 }
 
