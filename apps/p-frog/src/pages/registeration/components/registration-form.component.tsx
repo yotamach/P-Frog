@@ -39,7 +39,7 @@ function RegistrationForm() {
                 <h2 className="text-3xl font-extrabold tracking-tight text-primary">
                     Create Account
                 </h2>
-                <p className="mt-2 text-sm text-secondary">
+                <p className="mt-2 text-sm text-muted-foreground">
                     Sign up to start managing your projects
                 </p>
             </div>

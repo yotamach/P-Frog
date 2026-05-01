@@ -37,7 +37,7 @@ function LoginForm() {
                     <h3 className="text-2xl font-bold tracking-tight text-primary">
                         Sign in
                     </h3>
-                    <p className="mt-2 text-sm text-secondary">
+                    <p className="mt-2 text-sm text-muted-foreground">
                         Enter your credentials to access your workspace
                     </p>
                 </div>
