@@ -34,12 +34,12 @@ function RegistrationForm() {
     });
 
     return (
-        <form onSubmit={onSubmit} className="rounded-2xl p-8 shadow-2xl backdrop-blur" style={{ backgroundColor: 'var(--color-card)' }}>
+        <form onSubmit={onSubmit} className="rounded-2xl p-8 shadow-2xl backdrop-blur bg-card">
             <div className="mb-6 text-center">
-                <h2 className="text-3xl font-extrabold tracking-tight" style={{ color: 'hsl(var(--sidebar-text))' }}>
+                <h2 className="text-3xl font-extrabold tracking-tight text-primary">
                     Create Account
                 </h2>
-                <p className="mt-2 text-sm" style={{ color: 'hsl(var(--table-text-muted))' }}>
+                <p className="mt-2 text-sm text-secondary">
                     Sign up to start managing your projects
                 </p>
             </div>
