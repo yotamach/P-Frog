@@ -27,10 +27,11 @@ export const auth = (req: any, res: any, next: any) => {
     }
 
     const jwtToken = tokenParts[1];
-    const decoded = jwt.verify(
-      jwtToken, 
-      process.env.JWT_SECRET || 'g2r0e1e3n_t2o5p8s5_e0n5e2r5g8y30119'
-    );
+    const jwtSecret = process.env.JWT_SECRET;
+    if (!jwtSecret) {
+      throw new Error('JWT_SECRET environment variable is not set');
+    }
+    const decoded = jwt.verify(jwtToken, jwtSecret);
     
     log.info(`User authenticated: ${JSON.stringify(decoded)}`);
     req.user = decoded;
