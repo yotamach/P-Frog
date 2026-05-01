@@ -34,10 +34,10 @@ function LoginForm() {
 
             <form onSubmit={onSubmit} className="p-8">
                 <div className="mb-6">
-                    <h3 className="text-2xl font-bold tracking-tight text-foreground">
+                    <h3 className="text-2xl font-bold tracking-tight text-primary">
                         Sign in
                     </h3>
-                    <p className="mt-2 text-sm text-muted-foreground">
+                    <p className="mt-2 text-sm text-secondary">
                         Enter your credentials to access your workspace
                     </p>
                 </div>
