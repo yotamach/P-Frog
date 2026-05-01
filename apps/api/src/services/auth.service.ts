@@ -24,9 +24,11 @@ export class AuthService {
         password: encryptedPassword,
       });
 
+      const jwtSecret = process.env.JWT_SECRET;
+      if (!jwtSecret) throw new Error('JWT_SECRET environment variable is not set');
       const token = jwt.sign(
         { user_id: newUser._id, userName },
-        process.env.JWT_SECRET || 'g2r0e1e3n_t2o5p8s5_e0n5e2r5g8y30119',
+        jwtSecret,
         {
           expiresIn: "2h",
         }
@@ -64,9 +66,11 @@ export class AuthService {
       const isMatch = await bcrypt.compare(password, user.password);
       if (isMatch) {
         // Create token
+        const jwtSecret = process.env.JWT_SECRET;
+        if (!jwtSecret) throw new Error('JWT_SECRET environment variable is not set');
         const token = jwt.sign(
           { user_id: user._id, userName },
-          process.env.JWT_SECRET || 'g2r0e1e3n_t2o5p8s5_e0n5e2r5g8y30119',
+          jwtSecret,
           {
             expiresIn: "2h",
           }

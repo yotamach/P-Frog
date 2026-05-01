@@ -42,9 +42,11 @@ export class App {
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: false }));
     this.app.use(cookieParser());
+    const sessionSecret = process.env.SESSION_SECRET;
+    if (!sessionSecret) throw new Error('SESSION_SECRET environment variable is not set');
     this.app.use(
       expressSession({
-        secret: 'Pfrog-session',
+        secret: sessionSecret,
         resave: false,
         saveUninitialized: false,
       }) as any

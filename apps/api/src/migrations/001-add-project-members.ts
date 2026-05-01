@@ -20,13 +20,17 @@ const log = new Logger({});
 
 async function runMigration() {
   const { DB_HOST, DB_PORT, DB_SCHEMA, DB_USERNAME, DB_PASSWORD } = process.env;
-  
-  // Use defaults if not set
-  const host = DB_HOST || 'localhost';
-  const port = DB_PORT || '27017';
-  const schema = DB_SCHEMA || 'pfrog';
-  const userName = DB_USERNAME || 'admin';
-  const password = DB_PASSWORD || 'pfrogpswrd';
+
+  if (!DB_HOST || !DB_PORT || !DB_SCHEMA || !DB_USERNAME || !DB_PASSWORD) {
+    log.error('Missing required environment variables: DB_HOST, DB_PORT, DB_SCHEMA, DB_USERNAME, DB_PASSWORD');
+    process.exit(1);
+  }
+
+  const host = DB_HOST;
+  const port = DB_PORT;
+  const schema = DB_SCHEMA;
+  const userName = DB_USERNAME;
+  const password = DB_PASSWORD;
   
   log.info('Starting migration: Add Project Members');
   log.info(`Connecting to MongoDB at ${host}:${port}/${schema}`);
