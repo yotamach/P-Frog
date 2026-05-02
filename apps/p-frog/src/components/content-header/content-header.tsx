@@ -92,24 +92,32 @@ export function ContentHeader() {
         {/* Theme toggle */}
         <ThemeToggle />
 
-        {/* User avatar */}
+        {/* User name + avatar */}
         {isAuth && user ? (
-          <Dropdown
-            trigger={
-              <div
-                className="flex items-center justify-center rounded-full cursor-pointer text-[13px] font-bold transition-colors"
-                style={{
-                  width: 34,
-                  height: 34,
-                  backgroundColor: 'var(--color-primary)',
-                  color: 'var(--color-primary-foreground)',
-                }}
-              >
-                {getUserInitials()}
-              </div>
-            }
-            items={dropdownItems}
-          />
+          <>
+            <div className="hidden md:flex flex-col items-end">
+              <span className="text-sm font-medium" style={{ color: 'var(--color-text-primary)' }}>
+                {user.firstName || user.name || user.email}
+              </span>
+            </div>
+            <Dropdown
+              trigger={
+                <div
+                  data-testid="user-avatar"
+                  className="flex items-center justify-center rounded-full cursor-pointer text-[13px] font-bold transition-colors"
+                  style={{
+                    width: 34,
+                    height: 34,
+                    backgroundColor: 'var(--color-primary)',
+                    color: 'var(--color-primary-foreground)',
+                  }}
+                >
+                  {getUserInitials()}
+                </div>
+              }
+              items={dropdownItems}
+            />
+          </>
         ) : (
           <div
             className="flex items-center justify-center rounded-full text-[13px] font-bold"
