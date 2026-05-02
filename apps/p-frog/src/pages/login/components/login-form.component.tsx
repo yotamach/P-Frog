@@ -37,7 +37,7 @@ function LoginForm() {
                     <h3 className="text-2xl font-bold tracking-tight text-primary">
                         Sign in
                     </h3>
-                    <p className="mt-2 text-sm text-secondary">
+                    <p className="mt-2 text-sm" style={{ color: 'hsl(var(--table-text-muted))' }}>
                         Enter your credentials to access your workspace
                     </p>
                 </div>
@@ -71,7 +71,7 @@ function LoginForm() {
                 </Button>
 
                 <div className="mt-6 text-center">
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-sm" style={{ color: 'hsl(var(--table-text-muted))' }}>
                         Don't have an account?{' '}
                         <Link
                             to="/registration"

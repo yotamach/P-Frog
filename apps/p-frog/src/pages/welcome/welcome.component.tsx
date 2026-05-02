@@ -7,7 +7,7 @@ export interface WelcomeProps {}
 export function Welcome(props: WelcomeProps) {
   return (
     <div className="flex flex-col h-screen w-screen">
-      <Header title={'LOGO'} />
+      <Header />
       <main className="flex flex-1 flex-col items-center justify-center px-6 py-10" style={{ backgroundColor: 'hsl(var(--secondary))' }}>
         <div className="w-full max-w-4xl space-y-8">
           {/* Hero Section */}
