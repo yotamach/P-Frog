@@ -280,9 +280,7 @@ describe('Authentication E2E Tests - Comprehensive', () => {
 
     it('should allow user to logout', () => {
       // Click on user avatar/dropdown
-      cy.get('header').within(() => {
-        cy.get('[class*="rounded-full"]').click();
-      });
+      cy.get('[data-testid="user-avatar"]').click();
 
       // Click logout option
       cy.contains(/logout/i).click();
@@ -293,9 +291,7 @@ describe('Authentication E2E Tests - Comprehensive', () => {
 
     it('should clear authentication after logout', () => {
       // Logout
-      cy.get('header').within(() => {
-        cy.get('[class*="rounded-full"]').click();
-      });
+      cy.get('[data-testid="user-avatar"]').click();
       cy.contains(/logout/i).click();
       cy.url({ timeout: 5000 }).should('include', '/login');
 
