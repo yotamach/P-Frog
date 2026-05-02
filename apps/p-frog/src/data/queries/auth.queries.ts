@@ -81,7 +81,7 @@ export function useSignUp() {
       }
     },
     onError: (error: any) => {
-      const errorMessage = error?.response?.data?.message || 'Registration failed. Please try again.';
+      const errorMessage = error?.response?.data?.data || error?.response?.data?.message || 'Registration failed. Please try again.';
       enqueueSnackbar(errorMessage, { variant: 'error' });
     },
   });
