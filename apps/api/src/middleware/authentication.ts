@@ -1,9 +1,7 @@
 import { fromNodeHeaders } from 'better-auth/node';
 import HttpStatus from 'http-status-codes';
-import { Logger } from 'tslog';
+import { logger as log } from '../utils/logger';
 import type { Auth } from '../config/auth';
-
-const log = new Logger({});
 
 let _auth: Auth | null = null;
 
@@ -36,7 +34,7 @@ export const auth = async (req: any, res: any, next: any) => {
     req.session_data = session.session;
     next();
   } catch (err) {
-    log.error(`Authentication error: ${err}`);
+    log.error('Authentication error', { reason: err.message });
     return res.status(HttpStatus.UNAUTHORIZED).send({
       success: false,
       data: 'Unauthorized',

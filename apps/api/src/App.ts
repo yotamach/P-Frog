@@ -1,7 +1,6 @@
-import express from "express";
+import express, { Request, Response, NextFunction } from "express";
 import { AppRouter } from "@models";
 import { connect, set } from "mongoose";
-import { Logger } from "tslog";
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import swaggerUi from 'swagger-ui-express';
@@ -9,8 +8,8 @@ import { toNodeHandler } from 'better-auth/node';
 import { BASE_API } from "./config/config";
 import { swaggerSpec } from "./config/swagger";
 import type { Auth } from "./config/auth";
-
-const log = new Logger({ name: 'P-Frog API' });
+import { correlationIdMiddleware } from "./middleware/correlation-id";
+import { logger } from "./utils/logger";
 
 // Suppress Mongoose strictQuery deprecation warning
 set('strictQuery', false);
@@ -28,17 +27,30 @@ export class App {
   start(): Promise<void> {
     return new Promise((resolve, reject) => {
       const server = this.app.listen(this.port, this.host, () => {
-        log.info('Listening at https://' + this.host + ':' + this.port + BASE_API);
+        logger.info('Listening at https://' + this.host + ':' + this.port + BASE_API);
         resolve();
       });
       server.on('error', (error) => {
-        log.error('Server error:', error);
+        logger.error('Server error', { error });
         reject(error);
       });
     });
   }
 
   configure(auth: Auth): void {
+    this.app.use(correlationIdMiddleware);
+    this.app.use((req: Request, res: Response, next: NextFunction) => {
+      const start = Date.now();
+      res.on('finish', () => {
+        logger.info('HTTP request', {
+          method: req.method,
+          url: req.originalUrl,
+          status: res.statusCode,
+          durationMs: Date.now() - start,
+        });
+      });
+      next();
+    });
     this.app.use(cors({
       origin: process.env.FRONTEND_URL || 'http://localhost:4200',
       credentials: true,
@@ -56,7 +68,7 @@ export class App {
 
   setupSwagger(): void {
     this.app.use(`${BASE_API}/docs`, swaggerUi.serve, swaggerUi.setup(swaggerSpec));
-    log.info(`Swagger docs available at ${BASE_API}/docs`);
+    logger.info(`Swagger docs available at ${BASE_API}/docs`);
   }
 
   addRouter(appRouter: AppRouter): void {
@@ -69,29 +81,23 @@ export class App {
       const err = new Error('Not Found');
       next(err);
     });
-    
-    // error handler
-    this.app.use(function(req, res, next ,err) {
-      // set locals, only providing error in development
+
+    this.app.use(function(req, res, next, err) {
       res.locals.message = err.message;
       res.locals.error = req.app.get('env') === 'development' ? err : {};
-    
-      // render the error page
       res.status(err.status || 500);
       res.render('error');
     });
-  };
+  }
 
   dbConnect(host: string, port: string, userName: string, password: string, schema: string): Promise<void> {
     return connect(`mongodb://${userName}:${password}@${host}:${port}/${schema}?authSource=admin`)
       .then(() => {
-        log.info(`Connected to mongoDB DB: ${schema}`);
+        logger.info(`Connected to mongoDB DB: ${schema}`);
       })
       .catch((e) => {
-        log.error(`Connection to mongoDB was failed, reason: ${e}`);
+        logger.error('Connection to mongoDB failed', { reason: e.message });
         throw e;
       });
   }
 }
-
-
