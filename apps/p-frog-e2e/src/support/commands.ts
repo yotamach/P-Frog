@@ -37,22 +37,26 @@ Cypress.Commands.add('logout', () => {
   cy.url().should('include', '/welcome');
 });
 
-// Create test user via API
+// Create test user via better-auth API
 Cypress.Commands.add('createTestUser', () => {
   const timestamp = Date.now();
   const testUser = {
     firstName: 'Test',
     lastName: 'User',
-    userName: `testuser${timestamp}`,
     email: `test${timestamp}@example.com`,
     password: 'Test123!@#',
     name: `Test User ${timestamp}`
   };
 
-  cy.request('POST', 'http://localhost:3333/api/auth/signup', testUser)
-    .then((response) => {
-      expect(response.status).to.eq(201);
-    });
+  cy.request('POST', 'http://localhost:3333/api/auth/sign-up/email', {
+    email: testUser.email,
+    password: testUser.password,
+    name: testUser.name,
+    firstName: testUser.firstName,
+    lastName: testUser.lastName,
+  }).then((response) => {
+    expect(response.status).to.eq(200);
+  });
 
   return cy.wrap(testUser);
 });

@@ -3,11 +3,12 @@ import { AppRouter } from "@models";
 import { connect, set } from "mongoose";
 import { Logger } from "tslog";
 import cors from 'cors';
-import cookieParser  from 'cookie-parser'
-import expressSession from 'express-session'
+import cookieParser from 'cookie-parser';
 import swaggerUi from 'swagger-ui-express';
+import { toNodeHandler } from 'better-auth/node';
 import { BASE_API } from "./config/config";
 import { swaggerSpec } from "./config/swagger";
+import type { Auth } from "./config/auth";
 
 const log = new Logger({ name: 'P-Frog API' });
 
@@ -37,20 +38,20 @@ export class App {
     });
   }
 
-  configure(): void {
-    this.app.use(cors());
+  configure(auth: Auth): void {
+    this.app.use(cors({
+      origin: process.env.FRONTEND_URL || 'http://localhost:4200',
+      credentials: true,
+      methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+      allowedHeaders: ['Content-Type', 'Authorization'],
+    }));
+
+    // better-auth handler must be mounted BEFORE express.json()
+    this.app.all('/api/auth/*', toNodeHandler(auth));
+
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: false }));
     this.app.use(cookieParser());
-    const sessionSecret = process.env.SESSION_SECRET;
-    if (!sessionSecret) throw new Error('SESSION_SECRET environment variable is not set');
-    this.app.use(
-      expressSession({
-        secret: sessionSecret,
-        resave: false,
-        saveUninitialized: false,
-      }) as any
-    );
   }
 
   setupSwagger(): void {

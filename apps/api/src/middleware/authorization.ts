@@ -9,7 +9,7 @@ const log = new Logger({});
  * Extract user ID from request (set by auth middleware)
  */
 export const getUserId = (req: any): string | null => {
-  return req.user?.user_id || req.user?.id || null;
+  return req.user?.id || null;
 };
 
 /**

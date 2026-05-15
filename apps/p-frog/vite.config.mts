@@ -33,6 +33,7 @@ export default defineConfig({
       '@utils': path.resolve(__dirname, 'src/utils'),
       '@state': path.resolve(__dirname, 'src/state'),
       '@types': path.resolve(__dirname, 'src/types/index.ts'),
+      '@lib': path.resolve(__dirname, 'src/lib'),
       '@pages': path.resolve(__dirname, 'src/pages'),
       '@p-frog/data': path.resolve(__dirname, '../../libs/data/index.ts'),
     },

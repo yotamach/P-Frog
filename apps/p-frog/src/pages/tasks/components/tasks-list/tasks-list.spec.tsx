@@ -5,12 +5,6 @@ jest.mock('@data/queries/tasks.queries');
 
 // Mock services to prevent instantiation errors during module imports
 jest.mock('@data/services', () => ({
-  AuthAPI: jest.fn().mockImplementation(() => ({
-    login: jest.fn(),
-    signUp: jest.fn(),
-    signOut: jest.fn(),
-    getProfile: jest.fn(),
-  })),
   TasksAPI: jest.fn().mockImplementation(() => ({
     getTasks: jest.fn(),
     createTask: jest.fn(),

@@ -30,9 +30,9 @@ const UserSchema: Schema = new Schema({
   },
   userName: {
     type: String,
-    required: true
+    required: false,
+    default: function(this: any) { return this.email; }
   },
-  token: { type: String },
   role: {
     type: String,
     enum: Object.values(SystemRole),
@@ -46,7 +46,6 @@ UserSchema.set('toJSON', {
     delete ret._id;
     delete ret.__v;
     delete ret.password;
-    delete ret.token;
   }
 });
 

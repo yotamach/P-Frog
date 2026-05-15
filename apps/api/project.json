@@ -27,7 +27,7 @@
       },
       "configurations": {
         "production": {
-          "command": "env-cmd --file ./apps/api/.env.production node dist/apps/api/src/main.js",
+          "command": "env-cmd --file ./apps/api/.env.production npx tsx --tsconfig apps/api/tsconfig.app.json -r tsconfig-paths/register apps/api/src/main.ts",
           "cwd": "{workspaceRoot}"
         },
         "development": {

@@ -1,341 +1,122 @@
-import jwt from 'jsonwebtoken';
 import HttpStatus from 'http-status-codes';
-import { auth } from '../authentication';
 
-// Mock jwt
-jest.mock('jsonwebtoken');
+jest.mock('better-auth/node', () => ({
+  fromNodeHeaders: jest.fn((headers) => headers),
+}));
+
+jest.mock('tslog', () => ({
+  Logger: jest.fn().mockImplementation(() => ({
+    error: jest.fn(),
+    info: jest.fn(),
+  })),
+}));
+
+import { auth, setAuthInstance } from '../authentication';
+
+const makeResponse = () => ({
+  status: jest.fn().mockReturnThis(),
+  send: jest.fn().mockReturnThis(),
+});
 
 describe('Authentication Middleware', () => {
   let mockRequest: any;
   let mockResponse: any;
-  let mockNext: any;
-  const mockJwtSecret = 'g2r0e1e3n_t2o5p8s5_e0n5e2r5g8y30119';
+  let mockNext: jest.Mock;
 
   beforeEach(() => {
-    mockRequest = {
-      body: {},
-      query: {},
-      headers: {},
-    };
-
-    mockResponse = {
-      status: jest.fn().mockReturnThis(),
-      send: jest.fn().mockReturnThis(),
-    };
-
+    mockRequest = { headers: {}, body: {}, query: {} };
+    mockResponse = makeResponse();
     mockNext = jest.fn();
-
-    // Reset environment variable
-    process.env.JWT_SECRET = mockJwtSecret;
-
-    // Clear console logs
-    jest.spyOn(console, 'log').mockImplementation();
-  });
-
-  afterEach(() => {
+    // Reset auth instance before each test
+    setAuthInstance(null as any);
     jest.clearAllMocks();
-    jest.restoreAllMocks();
   });
 
-  describe('Token Validation', () => {
-    it('should reject request when no token is provided', () => {
-      auth(mockRequest, mockResponse, mockNext);
+  describe('when auth instance is not initialized', () => {
+    it('should return 500 Auth not configured', async () => {
+      await auth(mockRequest, mockResponse, mockNext);
 
-      expect(mockResponse.status).toHaveBeenCalledWith(HttpStatus.FORBIDDEN);
+      expect(mockResponse.status).toHaveBeenCalledWith(HttpStatus.INTERNAL_SERVER_ERROR);
       expect(mockResponse.send).toHaveBeenCalledWith({
         success: false,
-        data: 'A token is required for authentication',
+        data: 'Auth not configured',
       });
-      expect(mockNext).not.toHaveBeenCalled();
-    });
-
-    it('should accept token from request body', () => {
-      const mockDecoded = { user_id: '123', userName: 'testuser' };
-      mockRequest.body = { token: 'Bearer valid-token' };
-
-      (jwt.verify as jest.Mock).mockReturnValue(mockDecoded);
-
-      auth(mockRequest, mockResponse, mockNext);
-
-      expect(jwt.verify).toHaveBeenCalledWith('valid-token', mockJwtSecret);
-      expect((mockRequest as any).user).toEqual(mockDecoded);
-      expect(mockNext).toHaveBeenCalled();
-      expect(mockResponse.status).not.toHaveBeenCalled();
-    });
-
-    it('should accept token from query parameter', () => {
-      const mockDecoded = { user_id: '456', userName: 'queryuser' };
-      mockRequest.query = { token: 'Bearer query-token' };
-
-      (jwt.verify as jest.Mock).mockReturnValue(mockDecoded);
-
-      auth(mockRequest, mockResponse, mockNext);
-
-      expect(jwt.verify).toHaveBeenCalledWith('query-token', mockJwtSecret);
-      expect((mockRequest as any).user).toEqual(mockDecoded);
-      expect(mockNext).toHaveBeenCalled();
-    });
-
-    it('should accept token from x-access-token header', () => {
-      const mockDecoded = { user_id: '789', userName: 'headeruser' };
-      mockRequest.headers = { 'x-access-token': 'Bearer header-token' };
-
-      (jwt.verify as jest.Mock).mockReturnValue(mockDecoded);
-
-      auth(mockRequest, mockResponse, mockNext);
-
-      expect(jwt.verify).toHaveBeenCalledWith('header-token', mockJwtSecret);
-      expect((mockRequest as any).user).toEqual(mockDecoded);
-      expect(mockNext).toHaveBeenCalled();
-    });
-
-    it('should prioritize body token over query and header', () => {
-      const mockDecoded = { user_id: '123', userName: 'bodyuser' };
-      mockRequest.body = { token: 'Bearer body-token' };
-      mockRequest.query = { token: 'Bearer query-token' };
-      mockRequest.headers = { 'x-access-token': 'Bearer header-token' };
-
-      (jwt.verify as jest.Mock).mockReturnValue(mockDecoded);
-
-      auth(mockRequest, mockResponse, mockNext);
-
-      expect(jwt.verify).toHaveBeenCalledWith('body-token', mockJwtSecret);
-      expect((mockRequest as any).user).toEqual(mockDecoded);
-    });
-
-    it('should prioritize query token over header', () => {
-      const mockDecoded = { user_id: '456', userName: 'queryuser' };
-      mockRequest.query = { token: 'Bearer query-token' };
-      mockRequest.headers = { 'x-access-token': 'Bearer header-token' };
-
-      (jwt.verify as jest.Mock).mockReturnValue(mockDecoded);
-
-      auth(mockRequest, mockResponse, mockNext);
-
-      expect(jwt.verify).toHaveBeenCalledWith('query-token', mockJwtSecret);
-      expect((mockRequest as any).user).toEqual(mockDecoded);
-    });
-  });
-
-  describe('Token Format Handling', () => {
-    it('should extract token from "Bearer <token>" format', () => {
-      const mockDecoded = { user_id: '123', userName: 'testuser' };
-      mockRequest.body = { token: 'Bearer my-jwt-token-123' };
-
-      (jwt.verify as jest.Mock).mockReturnValue(mockDecoded);
-
-      auth(mockRequest, mockResponse, mockNext);
-
-      expect(jwt.verify).toHaveBeenCalledWith('my-jwt-token-123', mockJwtSecret);
-      expect(mockNext).toHaveBeenCalled();
-    });
-
-    it('should reject token without Bearer prefix', () => {
-      mockRequest.body = { token: 'plain-token' };
-
-      auth(mockRequest, mockResponse, mockNext);
-
-      expect(mockResponse.status).toHaveBeenCalledWith(HttpStatus.UNAUTHORIZED);
-      expect(mockResponse.send).toHaveBeenCalledWith({
-        success: false,
-        data: "Unauthorized: Invalid token format. Expected 'Bearer <token>'",
-      });
-      expect(jwt.verify).not.toHaveBeenCalled();
       expect(mockNext).not.toHaveBeenCalled();
     });
   });
 
-  describe('JWT Verification', () => {
-    it('should successfully verify valid token with correct secret', () => {
-      const mockDecoded = { user_id: '123', userName: 'testuser', exp: 1234567890 };
-      mockRequest.body = { token: 'Bearer valid-jwt-token' };
+  describe('when auth instance is initialized', () => {
+    let mockGetSession: jest.Mock;
+    let mockAuth: any;
 
-      (jwt.verify as jest.Mock).mockReturnValue(mockDecoded);
-
-      auth(mockRequest, mockResponse, mockNext);
-
-      expect(jwt.verify).toHaveBeenCalledWith('valid-jwt-token', mockJwtSecret);
-      expect((mockRequest as any).user).toEqual(mockDecoded);
-      expect(mockNext).toHaveBeenCalled();
-      expect(mockResponse.status).not.toHaveBeenCalled();
+    beforeEach(() => {
+      mockGetSession = jest.fn();
+      mockAuth = { api: { getSession: mockGetSession } };
+      setAuthInstance(mockAuth);
     });
 
-    it('should use environment JWT_SECRET if available', () => {
-      process.env.JWT_SECRET = 'custom-secret-key';
-      const mockDecoded = { user_id: '123', userName: 'testuser' };
-      mockRequest.body = { token: 'Bearer valid-token' };
+    it('should return 401 when no valid session exists', async () => {
+      mockGetSession.mockResolvedValue(null);
 
-      (jwt.verify as jest.Mock).mockReturnValue(mockDecoded);
-
-      auth(mockRequest, mockResponse, mockNext);
-
-      expect(jwt.verify).toHaveBeenCalledWith('valid-token', 'custom-secret-key');
-      expect(mockNext).toHaveBeenCalled();
-    });
-
-    it('should return UNAUTHORIZED if JWT_SECRET is not set', () => {
-      delete process.env.JWT_SECRET;
-      mockRequest.body = { token: 'Bearer valid-token' };
-
-      auth(mockRequest, mockResponse, mockNext);
-
-      expect(mockResponse.status).toHaveBeenCalledWith(HttpStatus.UNAUTHORIZED);
-      expect(mockNext).not.toHaveBeenCalled();
-      expect(jwt.verify).not.toHaveBeenCalled();
-    });
-
-    it('should attach decoded user data to request object', () => {
-      const mockDecoded = {
-        user_id: '123',
-        userName: 'testuser',
-        email: 'test@example.com',
-        iat: 1234567890,
-        exp: 1234571490,
-      };
-      mockRequest.body = { token: 'Bearer valid-token' };
-
-      (jwt.verify as jest.Mock).mockReturnValue(mockDecoded);
-
-      auth(mockRequest, mockResponse, mockNext);
-
-      expect((mockRequest as any).user).toEqual(mockDecoded);
-      expect((mockRequest as any).user.user_id).toBe('123');
-      expect((mockRequest as any).user.userName).toBe('testuser');
-    });
-  });
-
-  describe('Error Handling', () => {
-    it('should reject expired token', () => {
-      const tokenExpiredError = new Error('jwt expired');
-      tokenExpiredError.name = 'TokenExpiredError';
-      mockRequest.body = { token: 'Bearer expired-token' };
-
-      (jwt.verify as jest.Mock).mockImplementation(() => {
-        throw tokenExpiredError;
-      });
-
-      auth(mockRequest, mockResponse, mockNext);
+      await auth(mockRequest, mockResponse, mockNext);
 
       expect(mockResponse.status).toHaveBeenCalledWith(HttpStatus.UNAUTHORIZED);
       expect(mockResponse.send).toHaveBeenCalledWith({
         success: false,
-        data: 'Unauthorized: Token has expired!',
+        data: 'Unauthorized: No valid session',
       });
       expect(mockNext).not.toHaveBeenCalled();
     });
 
-    it('should reject invalid token signature', () => {
-      const invalidSignatureError = new Error('invalid signature');
-      invalidSignatureError.name = 'JsonWebTokenError';
-      mockRequest.body = { token: 'Bearer invalid-signature-token' };
+    it('should attach user and session to request and call next when session is valid', async () => {
+      const mockUser = { id: 'user-123', email: 'test@example.com', role: 'member' };
+      const mockSession = { id: 'session-abc', userId: 'user-123' };
+      mockGetSession.mockResolvedValue({ user: mockUser, session: mockSession });
 
-      (jwt.verify as jest.Mock).mockImplementation(() => {
-        throw invalidSignatureError;
-      });
+      await auth(mockRequest, mockResponse, mockNext);
 
-      auth(mockRequest, mockResponse, mockNext);
-
-      expect(mockResponse.status).toHaveBeenCalledWith(HttpStatus.UNAUTHORIZED);
-      expect(mockResponse.send).toHaveBeenCalledWith({
-        success: false,
-        data: 'Unauthorized: Invalid token signature!',
-      });
-      expect(mockNext).not.toHaveBeenCalled();
-    });
-
-    it('should reject malformed token', () => {
-      const malformedError = new Error('jwt malformed');
-      malformedError.name = 'JsonWebTokenError';
-      mockRequest.body = { token: 'Bearer malformed-token' };
-
-      (jwt.verify as jest.Mock).mockImplementation(() => {
-        throw malformedError;
-      });
-
-      auth(mockRequest, mockResponse, mockNext);
-
-      expect(mockResponse.status).toHaveBeenCalledWith(HttpStatus.UNAUTHORIZED);
-      expect(mockResponse.send).toHaveBeenCalledWith({
-        success: false,
-        data: 'Unauthorized: Invalid token signature!',
-      });
-      expect(mockNext).not.toHaveBeenCalled();
-    });
-
-    it('should handle any jwt verification error', () => {
-      const genericError = new Error('Unknown JWT error');
-      mockRequest.body = { token: 'Bearer problematic-token' };
-
-      (jwt.verify as jest.Mock).mockImplementation(() => {
-        throw genericError;
-      });
-
-      auth(mockRequest, mockResponse, mockNext);
-
-      expect(mockResponse.status).toHaveBeenCalledWith(HttpStatus.UNAUTHORIZED);
-      expect(mockResponse.send).toHaveBeenCalledWith({
-        success: false,
-        data: 'Unauthorized: Invalid token!',
-      });
-      expect(mockNext).not.toHaveBeenCalled();
-    });
-
-    it('should log errors using Logger', () => {
-      const error = new Error('jwt error');
-      mockRequest.body = { token: 'Bearer error-token' };
-
-      (jwt.verify as jest.Mock).mockImplementation(() => {
-        throw error;
-      });
-
-      auth(mockRequest, mockResponse, mockNext);
-
-      // Logger is being used (we can see it in test output)
-      expect(mockResponse.status).toHaveBeenCalledWith(HttpStatus.UNAUTHORIZED);
-      expect(mockResponse.send).toHaveBeenCalledWith({
-        success: false,
-        data: 'Unauthorized: Invalid token!',
-      });
-    });
-  });
-
-  describe('Integration Scenarios', () => {
-    it('should allow authenticated request to proceed', () => {
-      const mockDecoded = { user_id: '123', userName: 'authenticateduser' };
-      mockRequest.headers = { 'x-access-token': 'Bearer valid-token' };
-
-      (jwt.verify as jest.Mock).mockReturnValue(mockDecoded);
-
-      auth(mockRequest, mockResponse, mockNext);
-
+      expect(mockRequest.user).toEqual(mockUser);
+      expect(mockRequest.session_data).toEqual(mockSession);
       expect(mockNext).toHaveBeenCalledTimes(1);
       expect(mockResponse.status).not.toHaveBeenCalled();
-      expect(mockResponse.send).not.toHaveBeenCalled();
     });
 
-    it('should block unauthenticated request', () => {
-      // No token provided
-      auth(mockRequest, mockResponse, mockNext);
+    it('should pass request headers to getSession', async () => {
+      mockRequest.headers = { cookie: 'session=abc123' };
+      mockGetSession.mockResolvedValue(null);
 
+      await auth(mockRequest, mockResponse, mockNext);
+
+      expect(mockGetSession).toHaveBeenCalledWith({
+        headers: mockRequest.headers,
+      });
+    });
+
+    it('should return 401 when getSession throws an error', async () => {
+      mockGetSession.mockRejectedValue(new Error('DB connection error'));
+
+      await auth(mockRequest, mockResponse, mockNext);
+
+      expect(mockResponse.status).toHaveBeenCalledWith(HttpStatus.UNAUTHORIZED);
+      expect(mockResponse.send).toHaveBeenCalledWith({
+        success: false,
+        data: 'Unauthorized',
+      });
       expect(mockNext).not.toHaveBeenCalled();
-      expect(mockResponse.status).toHaveBeenCalledWith(HttpStatus.FORBIDDEN);
     });
 
-    it('should preserve other request properties', () => {
-      const mockDecoded = { user_id: '123', userName: 'testuser' };
-      mockRequest.body = {
-        token: 'Bearer valid-token',
-        someData: 'important-data',
-      };
+    it('should preserve other request properties when authenticated', async () => {
+      const mockUser = { id: 'user-789', email: 'user@example.com' };
+      mockRequest.body = { someData: 'important' };
       mockRequest.params = { id: '456' };
+      mockGetSession.mockResolvedValue({ user: mockUser, session: {} });
 
-      (jwt.verify as jest.Mock).mockReturnValue(mockDecoded);
+      await auth(mockRequest, mockResponse, mockNext);
 
-      auth(mockRequest, mockResponse, mockNext);
-
-      expect((mockRequest as any).body.someData).toBe('important-data');
-      expect((mockRequest as any).params.id).toBe('456');
-      expect((mockRequest as any).user).toEqual(mockDecoded);
+      expect(mockRequest.body.someData).toBe('important');
+      expect(mockRequest.params.id).toBe('456');
+      expect(mockRequest.user).toEqual(mockUser);
+      expect(mockNext).toHaveBeenCalled();
     });
   });
 });

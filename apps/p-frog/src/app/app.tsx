@@ -5,7 +5,8 @@ import { SnackbarProvider } from '@components/notifications/snackbar-context';
 import { Home, Login, Registration, Welcome, NotFound } from '@pages/index';
 import { ProtectedRoute } from '../components/protected-route/protected-route';
 import { lazy, Suspense, useEffect } from 'react';
-import { initializeAuth } from '@data/queries/auth.queries';
+import { useSession } from '@lib/auth-client';
+import { setAuth, clearAuth } from '@data/store/authStore';
 import { useStore } from '@tanstack/react-store';
 import { authStore, selectUser } from '@data/store/authStore';
 import { SystemRole } from '@p-frog/data';
@@ -35,12 +36,23 @@ const RequireAdmin = ({ children }: { children: JSX.Element }) => {
   return allowed ? children : <Navigate to="/home" replace />;
 };
 
-export const App = () => {
-  // Initialize auth from localStorage on app load
-  useEffect(() => {
-    initializeAuth();
-  }, []);
+const AuthInitializer = ({ children }: { children: React.ReactNode }) => {
+  const { data: session, isPending } = useSession();
 
+  useEffect(() => {
+    if (!isPending) {
+      if (session?.user) {
+        setAuth(true, session.user);
+      } else {
+        clearAuth();
+      }
+    }
+  }, [session, isPending]);
+
+  return <>{children}</>;
+};
+
+export const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <SnackbarProvider>
@@ -50,33 +62,35 @@ export const App = () => {
             v7_relativeSplatPath: true,
           }}
         >
-          <Suspense fallback={<PageLoader />}>
-            <Routes>
-              {/* Redirect root to welcome */}
-              <Route path='/' element={<Navigate to="/welcome" replace />} />
-              
-              {/* Public routes */}
-              <Route path='/welcome' element={<Welcome />} />
-              <Route path='/registration' element={<Registration />} />
-              <Route path='/login' element={<Login />} />
-              
-              {/* Protected routes with layout */}
-              <Route element={<ProtectedRoute />}>
-                <Route path='/home' element={<Home />}>
-                  <Route index element={<Dashboard />} />
-                  <Route path='tasks/*' element={<Tasks />} />
-                  <Route path='projects' element={<Projects />} />
-                  <Route path='settings' element={<Settings />} />
-                  <Route path='users' element={<RequireAdmin><Users /></RequireAdmin>} />
-                  {/* 404 for authenticated users - with layout */}
-                  <Route path='*' element={<NotFound />} />
-                </Route>
-              </Route>
+          <AuthInitializer>
+            <Suspense fallback={<PageLoader />}>
+              <Routes>
+                {/* Redirect root to welcome */}
+                <Route path='/' element={<Navigate to="/welcome" replace />} />
 
-              {/* 404 for unauthenticated users - without layout */}
-              <Route path='*' element={<NotFound />} />
-            </Routes>
-          </Suspense>
+                {/* Public routes */}
+                <Route path='/welcome' element={<Welcome />} />
+                <Route path='/registration' element={<Registration />} />
+                <Route path='/login' element={<Login />} />
+
+                {/* Protected routes with layout */}
+                <Route element={<ProtectedRoute />}>
+                  <Route path='/home' element={<Home />}>
+                    <Route index element={<Dashboard />} />
+                    <Route path='tasks/*' element={<Tasks />} />
+                    <Route path='projects' element={<Projects />} />
+                    <Route path='settings' element={<Settings />} />
+                    <Route path='users' element={<RequireAdmin><Users /></RequireAdmin>} />
+                    {/* 404 for authenticated users - with layout */}
+                    <Route path='*' element={<NotFound />} />
+                  </Route>
+                </Route>
+
+                {/* 404 for unauthenticated users - without layout */}
+                <Route path='*' element={<NotFound />} />
+              </Routes>
+            </Suspense>
+          </AuthInitializer>
         </BrowserRouter>
       </SnackbarProvider>
     </QueryClientProvider>

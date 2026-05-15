@@ -1,17 +1,19 @@
 import App from './app';
 
-jest.mock('@data/services/auth.service', () => ({
-  AuthAPI: jest.fn().mockImplementation(() => ({
-    login: jest.fn(),
-    register: jest.fn(),
-    getProfile: jest.fn(),
-  })),
+jest.mock('@lib/auth-client', () => ({
+  useSession: jest.fn().mockReturnValue({ data: null, isPending: false }),
+  signIn: { email: jest.fn() },
+  signUp: { email: jest.fn() },
+  signOut: jest.fn(),
+  getSession: jest.fn(),
 }));
 
 jest.mock('@data/queries/auth.queries', () => ({
   useLogin: jest.fn(),
-  useRegister: jest.fn(),
-  useProfile: jest.fn(),
+  useSignUp: jest.fn(),
+  useSignOut: jest.fn(),
+  useLogout: jest.fn(),
+  initializeAuth: jest.fn(),
 }));
 
 describe('App', () => {

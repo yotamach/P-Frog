@@ -11,9 +11,10 @@ export interface User {
     id?: string;
     firstName?: string;
     lastName?: string;
-    userName: string;
-    email?: string;
-    password: string;
+    name?: string;
+    userName?: string;
+    email: string;
+    password?: string;
     role?: SystemRole;
 }
 
@@ -34,12 +35,11 @@ export interface ProjectMember {
 
 // Authentication types
 export interface AuthCredentials {
-    userName: string;
+    email: string;
     password: string;
 }
 
 export interface AuthResponse {
-    token: string;
     user: User;
 }
 

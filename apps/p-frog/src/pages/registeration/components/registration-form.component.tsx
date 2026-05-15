@@ -7,7 +7,6 @@ import { Link } from 'react-router-dom';
 interface RegistrationFormValues {
     firstName: string;
     lastName: string;
-    userName: string;
     email: string;
     password: string;
     confirmPassword: string;
@@ -18,7 +17,6 @@ function RegistrationForm() {
         defaultValues: {
             firstName: '',
             lastName: '',
-            userName: '',
             email: '',
             password: '',
             confirmPassword: ''
@@ -29,8 +27,8 @@ function RegistrationForm() {
     const password = watch('password');
 
     const onSubmit = handleSubmit((values) => {
-        const { firstName, lastName, userName, email, password } = values;
-        signUpMutation.mutate({ firstName, lastName, userName, email, password });
+        const { firstName, lastName, email, password } = values;
+        signUpMutation.mutate({ firstName, lastName, email, password });
     });
 
     return (
@@ -45,60 +43,48 @@ function RegistrationForm() {
             </div>
 
             <div className="space-y-5">
-                <FormTextField 
-                    control={control} 
-                    name="firstName" 
-                    label="First Name" 
-                    rules={{ 
+                <FormTextField
+                    control={control}
+                    name="firstName"
+                    label="First Name"
+                    rules={{
                         required: 'First name is required',
                         minLength: {
                             value: 2,
                             message: 'First name must be at least 2 characters'
                         }
-                    }} 
+                    }}
                 />
-                <FormTextField 
-                    control={control} 
-                    name="lastName" 
-                    label="Last Name" 
-                    rules={{ 
+                <FormTextField
+                    control={control}
+                    name="lastName"
+                    label="Last Name"
+                    rules={{
                         required: 'Last name is required',
                         minLength: {
                             value: 2,
                             message: 'Last name must be at least 2 characters'
                         }
-                    }} 
+                    }}
                 />
-                <FormTextField 
-                    control={control} 
-                    name="userName" 
-                    label="Username" 
-                    rules={{ 
-                        required: 'Username is required',
-                        minLength: {
-                            value: 3,
-                            message: 'Username must be at least 3 characters'
-                        }
-                    }} 
-                />
-                <FormTextField 
-                    control={control} 
-                    name="email" 
-                    label="Email" 
-                    rules={{ 
+                <FormTextField
+                    control={control}
+                    name="email"
+                    label="Email"
+                    rules={{
                         required: 'Email is required',
                         pattern: {
                             value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
                             message: 'Invalid email address'
                         }
-                    }} 
+                    }}
                 />
                 <FormTextField
                     control={control}
                     name="password"
                     type="password"
                     label="Password"
-                    rules={{ 
+                    rules={{
                         required: 'Password is required',
                         minLength: {
                             value: 6,
@@ -111,7 +97,7 @@ function RegistrationForm() {
                     name="confirmPassword"
                     type="password"
                     label="Confirm Password"
-                    rules={{ 
+                    rules={{
                         required: 'Please confirm your password',
                         validate: (value: string) => value === password || 'Passwords do not match'
                     }}
@@ -129,8 +115,8 @@ function RegistrationForm() {
             <div className="mt-6 text-center">
                 <p className="text-sm" style={{ color: 'hsl(var(--table-text-muted))' }}>
                     Already have an account?{' '}
-                    <Link 
-                        to="/login" 
+                    <Link
+                        to="/login"
                         className="font-semibold hover:underline"
                         style={{ color: 'hsl(var(--sidebar-active))' }}
                     >
