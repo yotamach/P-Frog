@@ -10,6 +10,11 @@ if [ "$BRANCH_NAME" = "master" ]; then
     exit 0
 fi
 
+# Skip validation for Claude Code managed branches (matches GitHub Actions pr-checks.yml)
+if [[ "$BRANCH_NAME" =~ ^claude/ ]]; then
+    exit 0
+fi
+
 # Validate branch name pattern: PF-{number}_{Letters/Numbers/Underscores}
 if [[ ! "$BRANCH_NAME" =~ ^PF-[0-9]+_[A-Za-z0-9_]+$ ]]; then
     echo ""
