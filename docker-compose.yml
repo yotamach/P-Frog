@@ -8,9 +8,8 @@ services:
         logging:
             options:
                 max-size: 1g
-        environment:
-            - MONGO_INITDB_ROOT_USERNAME=admin
-            - MONGO_INITDB_ROOT_PASSWORD=pfrogpswrd
+        env_file:
+            - docker-compose.env
         image: mongo:7.0
         volumes:
             - ./db:/data/db

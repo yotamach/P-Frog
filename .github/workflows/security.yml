@@ -38,12 +38,12 @@ jobs:
       - name: Install dependencies
         run: yarn install --frozen-lockfile || yarn install
 
-      - name: Run audit
+      - name: Run audit (all deps, informational)
         run: yarn audit --level moderate
         continue-on-error: true
 
-      - name: Run audit (exit on high/critical)
-        run: yarn audit --level high
+      - name: Run audit (production deps only, fail on high/critical)
+        run: npx audit-ci --config audit-ci.jsonc
 
   sast:
     name: SAST (Semgrep)
