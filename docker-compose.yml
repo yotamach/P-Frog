@@ -16,6 +16,7 @@ services:
             - ./db:/data/db
 
     opensearch:
+        profiles: [logging]
         image: opensearchproject/opensearch:2.18.0
         container_name: p-frog_opensearch
         restart: always
@@ -36,6 +37,7 @@ services:
                 hard: 65536
 
     opensearch-dashboards:
+        profiles: [logging]
         image: opensearchproject/opensearch-dashboards:2.18.0
         container_name: p-frog_opensearch_dashboards
         restart: always
