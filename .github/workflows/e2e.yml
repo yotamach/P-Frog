@@ -45,17 +45,23 @@ jobs:
       - name: Create backend environment file
         if: steps.check.outputs.changed == 'true'
         run: |
-          cat > apps/api/.env.development << EOF
-          SERVER_HOST=localhost
-          SERVER_PORT=3333
-          DB_HOST=localhost
-          DB_PORT=27017
-          DB_SCHEMA=p-frog
-          DB_USERNAME=admin
-          DB_PASSWORD=pfrogpswrd
-          JWT_SECRET=test-jwt-secret-for-ci-cd
-          SESSION_SECRET=test-session-secret-for-ci-cd
-          EOF
+          cat > apps/api/.env.development <<'EOF'
+SERVER_HOST=localhost
+SERVER_PORT=3333
+DB_HOST=localhost
+DB_PORT=27017
+DB_SCHEMA=p-frog
+DB_USERNAME=admin
+DB_PASSWORD=pfrogpswrd
+BETTER_AUTH_SECRET=ci-test-secret-at-least-32-characters-long
+BETTER_AUTH_URL=http://localhost:3333
+FRONTEND_URL=http://localhost:4200
+SMTP_HOST=localhost
+SMTP_PORT=1025
+SMTP_USER=
+SMTP_PASS=
+SMTP_FROM=noreply@p-frog.com
+EOF
 
       - name: Create frontend environment file
         if: steps.check.outputs.changed == 'true'

@@ -1,6 +1,6 @@
 import { betterAuth } from 'better-auth';
 import { mongodbAdapter } from 'better-auth/adapters/mongodb';
-import { emailAndPassword, magicLink, twoFactor } from 'better-auth/plugins';
+import { magicLink, twoFactor } from 'better-auth/plugins';
 import mongoose from 'mongoose';
 import nodemailer from 'nodemailer';
 import { Logger } from 'tslog';
@@ -28,11 +28,12 @@ export const createAuth = () => {
     secret: process.env.BETTER_AUTH_SECRET,
     database: mongodbAdapter(db),
 
+    emailAndPassword: {
+      enabled: true,
+      requireEmailVerification: false,
+    },
+
     plugins: [
-      emailAndPassword({
-        enabled: true,
-        requireEmailVerification: false,
-      }),
       magicLink({
         sendMagicLink: async ({ email, url }) => {
           try {

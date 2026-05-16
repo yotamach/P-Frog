@@ -55,7 +55,8 @@ export class App {
       origin: process.env.FRONTEND_URL || 'http://localhost:4200',
       credentials: true,
       methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-      allowedHeaders: ['Content-Type', 'Authorization'],
+      allowedHeaders: ['Content-Type', 'Authorization', 'x-correlation-id'],
+      exposedHeaders: ['x-correlation-id'],
     }));
 
     // better-auth handler must be mounted BEFORE express.json()
