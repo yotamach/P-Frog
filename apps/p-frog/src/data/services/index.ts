@@ -1,8 +1,7 @@
 import { TasksAPI } from './tasks.service';
 import { ProjectsAPI } from './projects.service';
-import { AuthAPI } from './auth.service';
 import { UsersAPI } from './users.service';
-import { authStore, clearAuth } from '../store/authStore';
+import { clearAuth } from '../store/authStore';
 
 // Helper to safely access import.meta.env (works in both Vite and Jest)
 const getEnvVar = (key: string, defaultValue: string) => {
@@ -38,12 +37,6 @@ const makeRequest = async <T = any>(config: FetchConfig): Promise<{ data: T }> =
     ...customHeaders,
   };
 
-  // Add auth token from store
-  const state = authStore.state;
-  if (state.token) {
-    headers['x-access-token'] = `Bearer ${state.token}`;
-  }
-
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), 30000);
 
@@ -53,6 +46,7 @@ const makeRequest = async <T = any>(config: FetchConfig): Promise<{ data: T }> =
       headers,
       body: body ? JSON.stringify(body) : undefined,
       signal: controller.signal,
+      credentials: 'include',
     });
 
     clearTimeout(timeoutId);
@@ -119,6 +113,5 @@ export {
     BASE_URL,
     TasksAPI,
     ProjectsAPI,
-    AuthAPI,
     UsersAPI
 }

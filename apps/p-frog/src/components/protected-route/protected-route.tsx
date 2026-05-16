@@ -1,27 +1,17 @@
 import { useStore } from '@tanstack/react-store';
-import { Navigate, Outlet } from 'react-router-dom';
+import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { authStore, selectIsAuth } from '@data/store/authStore';
-import { useProfile } from '@data/queries/auth.queries';
-import { useEffect, useState } from 'react';
+import { useSession } from '@lib/auth-client';
 
 export const ProtectedRoute = () => {
   const isAuth = useStore(authStore, selectIsAuth);
-  const [isValidating, setIsValidating] = useState(isAuth);
-  
-  // Validate token if user appears to be authenticated (from localStorage)
-  const { isLoading, isError } = useProfile(isAuth);
+  const location = useLocation();
+  const { isPending } = useSession();
 
-  useEffect(() => {
-    if (isAuth && !isLoading) {
-      setIsValidating(false);
-    }
-  }, [isAuth, isLoading]);
-
-  // Show loading while validating token on initial load
-  if (isAuth && isValidating) {
+  if (isPending) {
     return (
       <div className="flex h-screen w-screen items-center justify-center">
-        <div 
+        <div
           className="w-16 h-16 border-4 rounded-full animate-spin"
           style={{
             borderColor: 'hsl(var(--border))',
@@ -32,9 +22,8 @@ export const ProtectedRoute = () => {
     );
   }
 
-  // If not authenticated or token validation failed, redirect to login
-  if (!isAuth || isError) {
-    return <Navigate to="/login" replace />;
+  if (!isAuth) {
+    return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
   return <Outlet />;

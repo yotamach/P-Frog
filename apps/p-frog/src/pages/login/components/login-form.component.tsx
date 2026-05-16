@@ -6,14 +6,14 @@ import { useLogin } from '@data/queries/auth.queries';
 import { Link } from 'react-router-dom';
 
 interface LoginFormValues {
-    userName: string;
+    email: string;
     password: string;
 }
 
 function LoginForm() {
     const { control, handleSubmit } = useForm<LoginFormValues>({
         defaultValues: {
-            userName: '',
+            email: '',
             password: ''
         }
     });
@@ -45,10 +45,14 @@ function LoginForm() {
                 <div className="space-y-5">
                     <FormTextField
                         control={control}
-                        name="userName"
-                        label="Username"
+                        name="email"
+                        label="Email"
                         rules={{
-                            required: 'Username is required'
+                            required: 'Email is required',
+                            pattern: {
+                                value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                                message: 'Invalid email address'
+                            }
                         }}
                     />
                     <FormTextField

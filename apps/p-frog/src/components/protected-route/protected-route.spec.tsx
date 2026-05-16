@@ -1,19 +1,16 @@
 import { render, screen } from '@testing-library/react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-
-// Import component AFTER mocks are set up
+import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import { ProtectedRoute } from './protected-route';
 
-// Mock dependencies BEFORE importing component
 const mockUseStore = jest.fn();
-const mockUseProfile = jest.fn();
+const mockUseSession = jest.fn();
 
 jest.mock('@tanstack/react-store', () => ({
   useStore: (...args: any[]) => mockUseStore(...args),
 }));
 
-jest.mock('@data/queries/auth.queries', () => ({
-  useProfile: (isAuth: boolean) => mockUseProfile(isAuth),
+jest.mock('@lib/auth-client', () => ({
+  useSession: () => mockUseSession(),
 }));
 
 jest.mock('@data/store/authStore', () => ({
@@ -21,36 +18,24 @@ jest.mock('@data/store/authStore', () => ({
   selectIsAuth: jest.fn(),
 }));
 
-jest.mock('@data/services/auth.service', () => ({
-  AuthAPI: jest.fn().mockImplementation(() => ({
-    login: jest.fn(),
-    signup: jest.fn(),
-    profile: jest.fn(),
-  })),
-}));
-
 describe('ProtectedRoute', () => {
   beforeEach(() => {
-    // Only clear call history, not implementations
     mockUseStore.mockClear();
-    mockUseProfile.mockClear();
+    mockUseSession.mockClear();
   });
 
-  it('should show loading spinner when validating auth', () => {
-    mockUseStore.mockReturnValue(true); // isAuth = true
-    mockUseProfile.mockReturnValue({
-      isLoading: true,
-      isError: false,
-    } as any);
+  it('should show loading spinner while session is pending', () => {
+    mockUseStore.mockReturnValue(false);
+    mockUseSession.mockReturnValue({ isPending: true });
 
     const { container } = render(
-      <BrowserRouter>
+      <MemoryRouter initialEntries={['/']}>
         <Routes>
           <Route element={<ProtectedRoute />}>
             <Route path="/" element={<div>Protected Content</div>} />
           </Route>
         </Routes>
-      </BrowserRouter>
+      </MemoryRouter>
     );
 
     const spinner = container.querySelector('.animate-spin');
@@ -58,84 +43,40 @@ describe('ProtectedRoute', () => {
   });
 
   it('should redirect to login when not authenticated', () => {
-    mockUseStore.mockReturnValue(false); // isAuth = false
-    mockUseProfile.mockReturnValue({
-      isLoading: false,
-      isError: false,
-    } as any);
+    mockUseStore.mockReturnValue(false);
+    mockUseSession.mockReturnValue({ isPending: false });
 
     render(
-      <BrowserRouter>
+      <MemoryRouter initialEntries={['/']}>
         <Routes>
           <Route element={<ProtectedRoute />}>
             <Route path="/" element={<div>Protected Content</div>} />
           </Route>
           <Route path="/login" element={<div>Login Page</div>} />
         </Routes>
-      </BrowserRouter>
+      </MemoryRouter>
     );
 
     expect(screen.getByText('Login Page')).toBeTruthy();
     expect(screen.queryByText('Protected Content')).toBeNull();
   });
 
-  it('should redirect to login when token validation fails', () => {
-    mockUseStore.mockReturnValue(true); // isAuth = true
-    mockUseProfile.mockReturnValue({
-      isLoading: false,
-      isError: true, // token validation failed
-    } as any);
+  it('should render protected content when authenticated', () => {
+    mockUseStore.mockReturnValue(true);
+    mockUseSession.mockReturnValue({ isPending: false });
 
     render(
-      <BrowserRouter>
+      <MemoryRouter initialEntries={['/']}>
         <Routes>
           <Route element={<ProtectedRoute />}>
             <Route path="/" element={<div>Protected Content</div>} />
           </Route>
           <Route path="/login" element={<div>Login Page</div>} />
         </Routes>
-      </BrowserRouter>
+      </MemoryRouter>
     );
 
-    expect(screen.getByText('Login Page')).toBeTruthy();
-    expect(screen.queryByText('Protected Content')).toBeNull();
-  });
-
-  it('should render protected content when authenticated and validated', () => {
-    mockUseStore.mockReturnValue(true); // isAuth = true
-    mockUseProfile.mockReturnValue({
-      isLoading: false,
-      isError: false,
-    } as any);
-
-    // Need to wait for useEffect to complete
-    const { rerender } = render(
-      <BrowserRouter>
-        <Routes>
-          <Route element={<ProtectedRoute />}>
-            <Route path="/" element={<div>Protected Content</div>} />
-          </Route>
-          <Route path="/login" element={<div>Login Page</div>} />
-        </Routes>
-      </BrowserRouter>
-    );
-
-    // Re-render to trigger useEffect completion
-    rerender(
-      <BrowserRouter>
-        <Routes>
-          <Route element={<ProtectedRoute />}>
-            <Route path="/" element={<div>Protected Content</div>} />
-          </Route>
-          <Route path="/login" element={<div>Login Page</div>} />
-        </Routes>
-      </BrowserRouter>
-    );
-
-    // After validation completes, protected content should be visible
-    setTimeout(() => {
-      expect(screen.queryByText('Protected Content')).toBeTruthy();
-      expect(screen.queryByText('Login Page')).toBeNull();
-    }, 100);
+    expect(screen.getByText('Protected Content')).toBeTruthy();
+    expect(screen.queryByText('Login Page')).toBeNull();
   });
 });

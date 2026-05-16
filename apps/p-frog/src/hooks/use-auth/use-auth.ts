@@ -5,7 +5,7 @@ export interface UseAuth {
   isAuth: boolean;
   user: any | null;
   error: string | null;
-  login: (user: any, token: string) => void;
+  login: (user: any) => void;
   logout: () => void;
 }
 
@@ -14,17 +14,11 @@ export function useAuth(): UseAuth {
   const user = useStore(authStore, selectUser);
   const error = useStore(authStore, selectAuthError);
 
-  const login = (user: any, token: string) => {
-    // Save to localStorage
-    localStorage.setItem('token', token);
-    localStorage.setItem('user', JSON.stringify(user));
-    setAuth(true, user, token);
+  const login = (user: any) => {
+    setAuth(true, user);
   };
 
   const logout = () => {
-    // Clear localStorage
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
     clearAuth();
   };
 

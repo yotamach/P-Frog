@@ -1,58 +1,45 @@
-import jwt from "jsonwebtoken";
+import { fromNodeHeaders } from 'better-auth/node';
 import HttpStatus from 'http-status-codes';
-import { Logger } from "tslog";
+import { Logger } from 'tslog';
+import type { Auth } from '../config/auth';
 
 const log = new Logger({});
 
-export const auth = (req: any, res: any, next: any) => {
-  const token =
-    req.body.token || req.query.token || req.headers["x-access-token"];
+let _auth: Auth | null = null;
 
-  if (!token) {
-    return res.status(HttpStatus.FORBIDDEN).send({ 
-      success: false, 
-      data: "A token is required for authentication"
+export const setAuthInstance = (auth: Auth) => {
+  _auth = auth;
+};
+
+export const auth = async (req: any, res: any, next: any) => {
+  if (!_auth) {
+    log.error('Auth instance not initialized');
+    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).send({
+      success: false,
+      data: 'Auth not configured',
     });
   }
 
   try {
-    // Validate token format
-    const tokenParts = String(token).split(' ');
-    if (tokenParts.length !== 2 || tokenParts[0] !== 'Bearer') {
-      log.warn(`Invalid token format received: ${tokenParts.length === 1 ? 'Missing Bearer prefix' : 'Invalid format'}`);
-      return res.status(HttpStatus.UNAUTHORIZED).send({ 
-        success: false, 
-        data: "Unauthorized: Invalid token format. Expected 'Bearer <token>'"
+    const session = await _auth.api.getSession({
+      headers: fromNodeHeaders(req.headers),
+    });
+
+    if (!session) {
+      return res.status(HttpStatus.UNAUTHORIZED).send({
+        success: false,
+        data: 'Unauthorized: No valid session',
       });
     }
 
-    const jwtToken = tokenParts[1];
-    const jwtSecret = process.env.JWT_SECRET;
-    if (!jwtSecret) {
-      throw new Error('JWT_SECRET environment variable is not set');
-    }
-    const decoded = jwt.verify(jwtToken, jwtSecret);
-    
-    log.info(`User authenticated: ${JSON.stringify(decoded)}`);
-    req.user = decoded;
+    req.user = session.user;
+    req.session_data = session.session;
+    next();
   } catch (err) {
-    let errorMessage = "Unauthorized: Invalid token!";
-    
-    if (err.name === 'TokenExpiredError') {
-      errorMessage = "Unauthorized: Token has expired!";
-      log.warn(`Token expired: ${err.message}`);
-    } else if (err.name === 'JsonWebTokenError') {
-      errorMessage = "Unauthorized: Invalid token signature!";
-      log.warn(`Invalid token signature: ${err.message}`);
-    } else {
-      log.error(`Authentication failed: ${err.message}`);
-    }
-    
-    return res.status(HttpStatus.UNAUTHORIZED).send({ 
-      success: false, 
-      data: errorMessage
+    log.error(`Authentication error: ${err}`);
+    return res.status(HttpStatus.UNAUTHORIZED).send({
+      success: false,
+      data: 'Unauthorized',
     });
   }
-  
-  return next();
 };

@@ -4,16 +4,22 @@ describe('User Schema', () => {
   describe('Schema Definition', () => {
     it('should have required fields', () => {
       const userSchema = User.schema;
-      const requiredFields = ['email', 'password', 'firstName', 'lastName', 'userName'];
+      const requiredFields = ['email', 'password', 'firstName', 'lastName'];
 
       requiredFields.forEach((field) => {
         expect(userSchema.path(field).isRequired).toBe(true);
       });
     });
 
-    it('should have optional token field', () => {
+    it('should have optional userName field', () => {
       const userSchema = User.schema;
-      expect(userSchema.path('token')).toBeDefined();
+      expect(userSchema.path('userName')).toBeDefined();
+      expect(userSchema.path('userName').isRequired).toBeFalsy();
+    });
+
+    it('should not have token field (removed — sessions managed by better-auth)', () => {
+      const userSchema = User.schema;
+      expect(userSchema.path('token')).toBeUndefined();
     });
 
     it('should have correct field types', () => {
@@ -24,7 +30,6 @@ describe('User Schema', () => {
       expect(userSchema.path('firstName').instance).toBe('String');
       expect(userSchema.path('lastName').instance).toBe('String');
       expect(userSchema.path('userName').instance).toBe('String');
-      expect(userSchema.path('token').instance).toBe('String');
     });
   });
 
@@ -35,7 +40,6 @@ describe('User Schema', () => {
         password: 'hashedPassword123',
         firstName: 'John',
         lastName: 'Doe',
-        userName: 'johndoe',
       };
 
       const user = new User(userData);
@@ -44,22 +48,18 @@ describe('User Schema', () => {
       expect(user.password).toBe(userData.password);
       expect(user.firstName).toBe(userData.firstName);
       expect(user.lastName).toBe(userData.lastName);
-      expect(user.userName).toBe(userData.userName);
     });
 
-    it('should create a user with optional token', () => {
+    it('should default userName to email when not provided', () => {
       const userData = {
         email: 'test@example.com',
         password: 'hashedPassword123',
         firstName: 'John',
         lastName: 'Doe',
-        userName: 'johndoe',
-        token: 'jwt-token-here',
       };
 
       const user = new User(userData);
-
-      expect(user.token).toBe(userData.token);
+      expect(user.userName).toBe(userData.email);
     });
   });
 
@@ -73,7 +73,8 @@ describe('User Schema', () => {
       expect(validationError?.errors.password).toBeDefined();
       expect(validationError?.errors.firstName).toBeDefined();
       expect(validationError?.errors.lastName).toBeDefined();
-      expect(validationError?.errors.userName).toBeDefined();
+      // userName is now optional
+      expect(validationError?.errors.userName).toBeUndefined();
     });
 
     it('should pass validation with all required fields', () => {
@@ -82,7 +83,6 @@ describe('User Schema', () => {
         password: 'hashedPassword123',
         firstName: 'John',
         lastName: 'Doe',
-        userName: 'johndoe',
       };
 
       const user = new User(userData);

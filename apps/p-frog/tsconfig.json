@@ -13,6 +13,7 @@
       "@styles": ["./src/styles/base.scss"],
       "@utils/*": ["src/utils/*"],
       "@types": ["src/types/index.ts"],
+      "@lib/*": ["src/lib/*"],
       "@p-frog/data": ["../../libs/data/index.ts"]
     },
     "module": "ESNext",

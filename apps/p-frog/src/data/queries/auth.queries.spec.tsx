@@ -8,32 +8,17 @@ import { BrowserRouter } from 'react-router-dom';
 import { useLogin, useSignUp, useLogout, initializeAuth } from './auth.queries';
 import { authStore } from '@data/store/authStore';
 import React from 'react';
-import { AuthAPI } from '@data/services';
 
-// Create mock functions inside the mock factory to avoid hoisting issues
-jest.mock('@data/services', () => {
-  const mockLoginFn = jest.fn();
-  const mockSignUpFn = jest.fn();
-  const mockSignOutFn = jest.fn();
-  const mockGetProfileFn = jest.fn();
-  
-  return {
-    AuthAPI: jest.fn().mockImplementation(() => ({
-      login: mockLoginFn,
-      signUp: mockSignUpFn,
-      signOut: mockSignOutFn,
-      getProfile: mockGetProfileFn,
-    })),
-  };
-});
+const mockSignInEmail = jest.fn();
+const mockSignUpEmail = jest.fn();
+const mockSignOut = jest.fn();
 
-// Get the mocked AuthAPI instance to access mock functions
-const MockedAuthAPI = AuthAPI as jest.MockedClass<typeof AuthAPI>;
-const mockAuthInstance = new MockedAuthAPI();
-const mockLogin = mockAuthInstance.login as jest.Mock;
-const mockSignUp = mockAuthInstance.signUp as jest.Mock;
-const mockSignOut = mockAuthInstance.signOut as jest.Mock;
-const mockGetProfile = mockAuthInstance.getProfile as jest.Mock;
+jest.mock('@lib/auth-client', () => ({
+  signIn: { email: (...args: any[]) => mockSignInEmail(...args) },
+  signUp: { email: (...args: any[]) => mockSignUpEmail(...args) },
+  signOut: (...args: any[]) => mockSignOut(...args),
+  useSession: jest.fn().mockReturnValue({ data: null, isPending: false }),
+}));
 
 jest.mock('@components/notifications/snackbar-context', () => ({
   useSnackbar: () => ({
@@ -64,11 +49,9 @@ describe('Auth Queries', () => {
         mutations: { retry: false },
       },
     });
-    localStorage.clear();
     authStore.setState(() => ({
       isAuth: false,
       user: null,
-      token: null,
       error: null,
     }));
     jest.clearAllMocks();
@@ -79,72 +62,40 @@ describe('Auth Queries', () => {
   });
 
   describe('useLogin', () => {
-    it('should login successfully and store token', async () => {
-      // Arrange
-      const mockUser = {
-        _id: 'user-id',
-        userName: 'testuser',
-        email: 'test@example.com',
-        token: 'jwt-token',
-      };
+    it('should login successfully and update auth store', async () => {
+      const mockUser = { id: 'user-id', email: 'test@example.com', name: 'Test User' };
+      mockSignInEmail.mockResolvedValue({ data: { user: mockUser }, error: null });
 
-      mockLogin.mockResolvedValue({
-        data: {
-          success: true,
-          data: mockUser,
-        },
-      });
-
-      // Act
       const { result } = renderHook(() => useLogin(), { wrapper });
-      result.current.mutate({ userName: 'testuser', password: 'password123' });
+      result.current.mutate({ email: 'test@example.com', password: 'password123' });
 
-      // Assert
       await waitFor(() => {
         expect(result.current.isSuccess).toBe(true);
       });
 
-      expect(localStorage.getItem('token')).toBe('jwt-token');
-      expect(localStorage.getItem('user')).toBe(JSON.stringify(mockUser));
       expect(authStore.state.isAuth).toBe(true);
       expect(mockNavigate).toHaveBeenCalledWith('/home', { replace: true });
     });
 
     it('should handle login failure', async () => {
-      // Arrange
-      mockLogin.mockResolvedValue({
-        data: {
-          success: false,
-          data: 'Invalid Credentials!',
-        },
-      });
+      mockSignInEmail.mockResolvedValue({ data: null, error: { message: 'Invalid credentials' } });
 
-      // Act
       const { result } = renderHook(() => useLogin(), { wrapper });
-      result.current.mutate({ userName: 'wrong', password: 'wrong' });
+      result.current.mutate({ email: 'wrong@example.com', password: 'wrong' });
 
-      // Assert
       await waitFor(() => {
-        expect(result.current.isError || result.current.isSuccess).toBe(true);
+        expect(result.current.isError).toBe(true);
       });
 
-      expect(localStorage.getItem('token')).toBeNull();
       expect(authStore.state.isAuth).toBe(false);
     });
 
     it('should handle network errors', async () => {
-      // Arrange
-      mockLogin.mockRejectedValue({
-        response: {
-          data: { message: 'Network error' },
-        },
-      });
+      mockSignInEmail.mockRejectedValue(new Error('Network error'));
 
-      // Act
       const { result } = renderHook(() => useLogin(), { wrapper });
-      result.current.mutate({ userName: 'test', password: 'test' });
+      result.current.mutate({ email: 'test@example.com', password: 'test' });
 
-      // Assert
       await waitFor(() => {
         expect(result.current.isError).toBe(true);
       });
@@ -155,24 +106,16 @@ describe('Auth Queries', () => {
 
   describe('useSignUp', () => {
     it('should register successfully and navigate to login', async () => {
-      // Arrange
-      mockSignUp.mockResolvedValue({
-        data: {
-          success: true,
-        },
-      });
+      mockSignUpEmail.mockResolvedValue({ data: { user: {} }, error: null });
 
-      // Act
       const { result } = renderHook(() => useSignUp(), { wrapper });
       result.current.mutate({
-        userName: 'newuser',
         email: 'new@example.com',
         password: 'password123',
         firstName: 'New',
         lastName: 'User',
       });
 
-      // Assert
       await waitFor(() => {
         expect(result.current.isSuccess).toBe(true);
       });
@@ -181,100 +124,49 @@ describe('Auth Queries', () => {
     });
 
     it('should handle registration failure', async () => {
-      // Arrange
-      mockSignUp.mockResolvedValue({
-        data: {
-          success: false,
-          message: 'User already exists',
-        },
-      });
+      mockSignUpEmail.mockResolvedValue({ data: null, error: { message: 'Email already in use' } });
 
-      // Act
       const { result } = renderHook(() => useSignUp(), { wrapper });
       result.current.mutate({
-        userName: 'existing',
         email: 'existing@example.com',
         password: 'password123',
         firstName: 'Test',
         lastName: 'User',
       });
 
-      // Assert
       await waitFor(() => {
-        expect(result.current.isSuccess).toBe(true);
+        expect(result.current.isError).toBe(true);
       });
 
-      expect(mockNavigate).not.toHaveBeenCalledWith('/');
+      expect(mockNavigate).not.toHaveBeenCalledWith('/login');
     });
   });
 
   describe('useLogout', () => {
-    it('should logout and clear storage', async () => {
-      // Arrange
-      localStorage.setItem('token', 'test-token');
-      localStorage.setItem('user', JSON.stringify({ userName: 'test' }));
+    it('should logout and clear auth store', async () => {
+      mockSignOut.mockResolvedValue({});
       authStore.setState(() => ({
         isAuth: true,
-        user: { userName: 'test' },
-        token: 'test-token',
+        user: { email: 'test@example.com' },
         error: null,
       }));
 
-      // Act
       const { result } = renderHook(() => useLogout(), { wrapper });
       result.current.mutate();
 
-      // Assert
       await waitFor(() => {
         expect(result.current.isSuccess).toBe(true);
       });
 
-      expect(localStorage.getItem('token')).toBeNull();
-      expect(localStorage.getItem('user')).toBeNull();
       expect(authStore.state.isAuth).toBe(false);
       expect(mockNavigate).toHaveBeenCalledWith('/login');
     });
   });
 
   describe('initializeAuth', () => {
-    it('should restore auth from localStorage', () => {
-      // Arrange
-      const mockUser = { userName: 'test', email: 'test@example.com' };
-      localStorage.setItem('token', 'stored-token');
-      localStorage.setItem('user', JSON.stringify(mockUser));
-
-      // Act
+    it('should be a no-op that returns undefined', () => {
       const result = initializeAuth();
-
-      // Assert
-      expect(result).toBe(true);
-      expect(authStore.state.isAuth).toBe(true);
-      expect(authStore.state.token).toBe('stored-token');
-      expect(authStore.state.user).toEqual(mockUser);
-    });
-
-    it('should return false when no token in storage', () => {
-      // Act
-      const result = initializeAuth();
-
-      // Assert
-      expect(result).toBe(false);
-      expect(authStore.state.isAuth).toBe(false);
-    });
-
-    it('should clear invalid stored data', () => {
-      // Arrange
-      localStorage.setItem('token', 'test-token');
-      localStorage.setItem('user', 'invalid-json');
-
-      // Act
-      const result = initializeAuth();
-
-      // Assert
-      expect(result).toBe(false);
-      expect(localStorage.getItem('token')).toBeNull();
-      expect(localStorage.getItem('user')).toBeNull();
+      expect(result).toBeUndefined();
     });
   });
 });
-
