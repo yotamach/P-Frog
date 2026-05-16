@@ -1,0 +1,72 @@
+name: Security
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  secret-scan:
+    name: Secret Scanning (Gitleaks)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Run Gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE }}
+
+  dependency-audit:
+    name: Dependency Audit (yarn audit)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '22'
+          cache: 'yarn'
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile || yarn install
+
+      - name: Run audit
+        run: yarn audit --level moderate
+        continue-on-error: true
+
+      - name: Run audit (exit on high/critical)
+        run: yarn audit --level high
+
+  sast:
+    name: SAST (Semgrep)
+    runs-on: ubuntu-latest
+    container:
+      image: semgrep/semgrep
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Run Semgrep
+        run: |
+          semgrep \
+            --config "p/nodejs" \
+            --config "p/typescript" \
+            --config "p/jwt" \
+            --config "p/express" \
+            --config "p/owasp-top-ten" \
+            --config "p/secrets" \
+            --error \
+            --exclude "node_modules" \
+            --exclude "dist" \
+            --exclude "coverage" \
+            --exclude "*.spec.ts" \
+            --exclude "*.test.ts" \
+            .
