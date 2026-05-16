@@ -33,7 +33,7 @@ jobs:
           elif [ "${{ github.event_name }}" == "pull_request" ]; then
             git fetch origin ${{ github.base_ref }}
             CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD)
-            if echo "$CHANGED_FILES" | grep -qE '^apps/api/|^libs/data/'; then
+            if echo "$CHANGED_FILES" | grep -qE '^apps/api/|^libs/data/|^package\.json|^yarn\.lock'; then
               echo "changed=true" >> $GITHUB_OUTPUT
             else
               echo "changed=false" >> $GITHUB_OUTPUT
@@ -76,7 +76,7 @@ jobs:
           elif [ "${{ github.event_name }}" == "pull_request" ]; then
             git fetch origin ${{ github.base_ref }}
             CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD)
-            if echo "$CHANGED_FILES" | grep -qE '^apps/api/'; then
+            if echo "$CHANGED_FILES" | grep -qE '^apps/api/|^package\.json|^yarn\.lock'; then
               echo "changed=true" >> $GITHUB_OUTPUT
             else
               echo "changed=false" >> $GITHUB_OUTPUT
@@ -119,7 +119,7 @@ jobs:
           elif [ "${{ github.event_name }}" == "pull_request" ]; then
             git fetch origin ${{ github.base_ref }}
             CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD)
-            if echo "$CHANGED_FILES" | grep -qE '^apps/api/|^libs/'; then
+            if echo "$CHANGED_FILES" | grep -qE '^apps/api/|^libs/|^package\.json|^yarn\.lock'; then
               echo "changed=true" >> $GITHUB_OUTPUT
             else
               echo "changed=false" >> $GITHUB_OUTPUT

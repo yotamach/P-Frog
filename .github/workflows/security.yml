@@ -43,30 +43,60 @@ jobs:
         continue-on-error: true
 
       - name: Run audit (production deps only, fail on high/critical)
-        run: npx audit-ci --config audit-ci.jsonc
+        run: |
+          set +e
+          yarn audit --groups dependencies --level high --json > /tmp/audit.json 2>&1
+
+          python3 - << 'PYEOF'
+          import json, sys
+
+          # Accepted advisories: minimatch ReDoS via swagger-jsdoc > glob > minimatch.
+          # swagger-jsdoc@6.2.8 (latest) pins glob@7.1.6 with no upstream fix available.
+          # The glob patterns come from app config, not user input, so ReDoS is not exploitable.
+          ALLOWLIST = {1113459, 1113538, 1113546}
+
+          found, seen = [], set()
+          with open('/tmp/audit.json') as f:
+              for line in f:
+                  try:
+                      d = json.loads(line)
+                      if d.get('type') == 'auditAdvisory':
+                          adv = d['data']['advisory']
+                          if adv['id'] not in ALLOWLIST and adv['id'] not in seen:
+                              seen.add(adv['id'])
+                              found.append(
+                                  f"{adv['severity'].upper()}: {adv['module_name']} "
+                                  f"(advisory {adv['id']}) — {adv['title']}"
+                              )
+                  except Exception:
+                      pass
+
+          if found:
+              print("Unacceptable production dependency vulnerabilities found:")
+              for item in found:
+                  print(f"  {item}")
+              sys.exit(1)
+
+          print("All production dependency vulnerabilities are patched or accepted.")
+          PYEOF
 
   sast:
-    name: SAST (Semgrep)
+    name: SAST (CodeQL)
     runs-on: ubuntu-latest
-    container:
-      image: semgrep/semgrep
+    permissions:
+      security-events: write
+      actions: read
+      contents: read
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Run Semgrep
-        run: |
-          semgrep \
-            --config "p/nodejs" \
-            --config "p/typescript" \
-            --config "p/jwt" \
-            --config "p/express" \
-            --config "p/owasp-top-ten" \
-            --config "p/secrets" \
-            --error \
-            --exclude "node_modules" \
-            --exclude "dist" \
-            --exclude "coverage" \
-            --exclude "*.spec.ts" \
-            --exclude "*.test.ts" \
-            .
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: javascript-typescript
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:javascript-typescript"

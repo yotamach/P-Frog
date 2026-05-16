@@ -71,6 +71,14 @@ EOF
           VITE_SERVER_PORT=3333
           EOF
 
+      - name: Create docker-compose env file
+        if: steps.check.outputs.changed == 'true'
+        run: |
+          cat > docker-compose.env << 'EOF'
+          MONGO_INITDB_ROOT_USERNAME=admin
+          MONGO_INITDB_ROOT_PASSWORD=pfrogpswrd
+          EOF
+
       - name: Start MongoDB in Docker
         if: steps.check.outputs.changed == 'true'
         run: docker compose up -d
