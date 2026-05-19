@@ -5,8 +5,8 @@
 # Get the current branch name
 BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)
 
-# Skip validation for master branch
-if [ "$BRANCH_NAME" = "master" ]; then
+# Skip validation for master branch and automated claude/ branches
+if [ "$BRANCH_NAME" = "master" ] || [[ "$BRANCH_NAME" =~ ^claude/ ]]; then
     exit 0
 fi
 

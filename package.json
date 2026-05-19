@@ -71,6 +71,9 @@
     "winston": "^3.19.0",
     "winston-opensearch": "^0.3.0"
   },
+  "resolutions": {
+    "axios": "^1.16.1"
+  },
   "devDependencies": {
     "@nx/cypress": "22.6.4",
     "@nx/eslint": "22.6.4",
