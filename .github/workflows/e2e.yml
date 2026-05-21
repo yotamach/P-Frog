@@ -33,7 +33,7 @@ jobs:
           elif [ "${{ github.event_name }}" == "pull_request" ]; then
             git fetch origin ${{ github.base_ref }}
             CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD)
-            if echo "$CHANGED_FILES" | grep -qE '^apps/p-frog/|^apps/api/|^libs/data/'; then
+            if echo "$CHANGED_FILES" | grep -qE '^apps/p-frog/|^apps/p-frog-e2e/|^apps/api/|^libs/data/'; then
               echo "changed=true" >> $GITHUB_OUTPUT
             else
               echo "changed=false" >> $GITHUB_OUTPUT
@@ -99,18 +99,22 @@ EOF
 
       - name: Start client in background
         if: steps.check.outputs.changed == 'true'
-        run: yarn start &
+        run: yarn start > /tmp/frontend.log 2>&1 &
 
       - name: Wait for client to be ready
         if: steps.check.outputs.changed == 'true'
         run: |
           echo "Waiting for client to start on http://localhost:4200..."
-          timeout 120 bash -c 'until curl -s http://localhost:4200 > /dev/null; do sleep 2; done'
+          timeout 120 bash -c 'until curl -s http://localhost:4200 > /dev/null; do sleep 2; done' || {
+            echo "Frontend failed to start. Frontend logs:"
+            cat /tmp/frontend.log || echo "No frontend logs available"
+            exit 1
+          }
           echo "Client is ready!"
 
       - name: Run e2e tests
         if: steps.check.outputs.changed == 'true'
-        run: yarn nx run p-frog-e2e:e2e
+        run: yarn nx run p-frog-e2e:e2e --configuration=ci
 
       - name: Cleanup
         if: always() && steps.check.outputs.changed == 'true'

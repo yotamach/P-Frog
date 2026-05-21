@@ -11,9 +11,9 @@ const getEnvVar = (key: string, defaultValue: string) => {
   }
 };
 
-const baseURL = getEnvVar('VITE_API_URL', '')
-  ? getEnvVar('VITE_API_URL', '')
-  : `http://${getEnvVar('VITE_SERVER_HOST', 'localhost')}:${getEnvVar('VITE_SERVER_PORT', '3333')}/api`;
+// better-auth client requires the server base URL (without /api path).
+// Internally it appends /api/auth to form endpoint URLs like /api/auth/sign-in/email.
+const baseURL = `http://${getEnvVar('VITE_SERVER_HOST', 'localhost')}:${getEnvVar('VITE_SERVER_PORT', '3333')}`;
 
 export const authClient = createAuthClient({
   baseURL,
