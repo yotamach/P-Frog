@@ -68,7 +68,7 @@ describe('SettingsService', () => {
       const result = await settingsService.updateSettings(mockSettingsData, mockSettingsId);
 
       expect(Settings.findOneAndUpdate).toHaveBeenCalledWith(
-        { id: mockSettingsId },
+        { _id: mockSettingsId },
         { ...mockSettingsData },
         { new: true }
       );

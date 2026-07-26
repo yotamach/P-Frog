@@ -156,7 +156,7 @@ projectRouter.get('/:id', auth, requireProjectMember(), async (req: any, res: Re
     res.send({ success: true, project: projects[0] || null});
   } catch (err) {
     log.error(`GET /projects/${id} - Error: ${err}`);
-    res.send({ success: false, error: err});
+    res.status(500).send({ success: false, error: 'Internal server error' });
   }
 });
 
@@ -197,7 +197,7 @@ projectRouter.get('/', auth, async (req: any, res: Response) => {
     res.send({ success: true, projects});
   } catch (err) {
     log.error(`GET /projects - Error: ${err}`);
-    res.send({ success: false, error: err});
+    res.status(500).send({ success: false, error: 'Internal server error' });
   }
 });
 

@@ -1,10 +1,13 @@
 import {Logger} from "tslog";
+import bcrypt from 'bcrypt';
 import {UserModel} from "@models";
 import { IUser, User, SystemRole } from "@schemas";
 
 type UserQueryParams = Record<string, unknown>;
 
 const log = new Logger({});
+
+const escapeRegex = (value: string): string => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
 export class UserService {
 
@@ -34,14 +37,15 @@ export class UserService {
     return User.findById(id).exec();
   }
 
-  createUser(user: UserModel): Promise<IUser> {
+  async createUser(user: UserModel): Promise<IUser> {
     log.info(`UserService.createUser: user created! ${user}`);
-    return User.create(user);
+    const hashedPassword = await bcrypt.hash(user.password, 12);
+    return User.create({ ...user, password: hashedPassword });
   }
 
-  async updateUser(user: UserModel, id: string): Promise<IUser | null> {
+  async updateUser(user: Partial<UserModel>, id: string): Promise<IUser | null> {
     log.info(`UserService.updateUser: user updated! ${user}`);
-    return User.findOneAndUpdate({ id }, {...user}, {new: true}).exec();
+    return User.findOneAndUpdate({ _id: id }, {...user}, {new: true}).exec();
   }
 
   async deleteUser(id: string): Promise<IUser | null> {
@@ -59,7 +63,7 @@ export class UserService {
    */
   async searchUsers(query: string): Promise<IUser[]> {
     log.info(`UserService.searchUsers: searching for "${query}"`);
-    const regex = new RegExp(query, 'i');
+    const regex = new RegExp(escapeRegex(query), 'i');
     return User.find({
       $or: [
         { userName: regex },

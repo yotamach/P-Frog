@@ -36,7 +36,12 @@ export function useLogin() {
       const user = (data as any)?.user ?? null;
       setAuth(true, user);
       enqueueSnackbar('Login successful!', { variant: 'success' });
-      const from = (location.state as any)?.from?.pathname || '/home';
+      const requestedFrom = (location.state as any)?.from?.pathname;
+      // Only ever navigate to a relative, same-origin path — guards against this
+      // ever becoming an open redirect if `from` starts being sourced from a URL.
+      const from = typeof requestedFrom === 'string' && requestedFrom.startsWith('/') && !requestedFrom.startsWith('//')
+        ? requestedFrom
+        : '/home';
       navigate(from, { replace: true });
     },
     onError: (error: any) => {
