@@ -12,8 +12,12 @@ const getEnvVar = (key: string, defaultValue: string) => {
   }
 };
 
+// Match the page's own protocol so a production HTTPS deploy never silently
+// falls back to a plaintext-HTTP API origin (which would also leak the session cookie).
+const getDefaultProtocol = () => (typeof window !== 'undefined' && window.location?.protocol) || 'http:';
+
 const BASE_URL = getEnvVar('VITE_API_URL', '') ||
-  `http://${getEnvVar('VITE_SERVER_HOST', 'localhost')}:${getEnvVar('VITE_SERVER_PORT', '3333')}/api/`;
+  `${getDefaultProtocol()}//${getEnvVar('VITE_SERVER_HOST', 'localhost')}:${getEnvVar('VITE_SERVER_PORT', '3333')}/api/`;
 
 export type ApiResponse<T = any> = Promise<{ data: T }>;
 

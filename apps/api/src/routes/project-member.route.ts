@@ -51,7 +51,7 @@ projectMemberRouter.get('/', auth, requireProjectMember(), async (req: any, res:
     res.send({ success: true, members });
   } catch (e) {
     log.error(`GET /projects/${projectId}/members - Error: ${e}`);
-    res.status(500).send({ success: false, error: e.message });
+    res.status(500).send({ success: false, error: 'Internal server error' });
   }
 });
 
@@ -128,7 +128,7 @@ projectMemberRouter.post('/', auth, requireProjectAdmin(), async (req: any, res:
     if (e.code === 11000) { // MongoDB duplicate key error
       return res.status(409).send({ success: false, error: 'User is already a member of this project' });
     }
-    res.status(500).send({ success: false, error: e.message });
+    res.status(500).send({ success: false, error: 'Internal server error' });
   }
 });
 
@@ -209,7 +209,7 @@ projectMemberRouter.patch('/:userId', auth, requireProjectAdmin(), async (req: a
     res.send({ success: true, member: updatedMembership });
   } catch (e) {
     log.error(`PATCH /projects/${projectId}/members/${userId} - Error: ${e}`);
-    res.status(500).send({ success: false, error: e.message });
+    res.status(500).send({ success: false, error: 'Internal server error' });
   }
 });
 
@@ -291,7 +291,7 @@ projectMemberRouter.delete('/:userId', auth, async (req: any, res: Response) => 
     res.send({ success: true, message: 'Member removed from project' });
   } catch (e) {
     log.error(`DELETE /projects/${projectId}/members/${userId} - Error: ${e}`);
-    res.status(500).send({ success: false, error: e.message });
+    res.status(500).send({ success: false, error: 'Internal server error' });
   }
 });
 
@@ -325,7 +325,7 @@ projectMemberRouter.get('/me', auth, async (req: any, res: Response) => {
     res.send({ success: true, member: membership });
   } catch (e) {
     log.error(`GET /projects/${projectId}/members/me - Error: ${e}`);
-    res.status(500).send({ success: false, error: e.message });
+    res.status(500).send({ success: false, error: 'Internal server error' });
   }
 });
 

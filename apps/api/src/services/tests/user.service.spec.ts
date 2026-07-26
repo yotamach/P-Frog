@@ -56,7 +56,10 @@ describe('UserService', () => {
 
       const result = await userService.createUser(mockUserData);
 
-      expect(User.create).toHaveBeenCalledWith(mockUserData);
+      expect(User.create).toHaveBeenCalledTimes(1);
+      const createdArg = (User.create as jest.Mock).mock.calls[0][0];
+      expect(createdArg.password).not.toBe(mockUserData.password);
+      expect(createdArg).toMatchObject({ ...mockUserData, password: createdArg.password });
       expect(result).toEqual(mockCreatedUser);
     });
   });
@@ -77,7 +80,7 @@ describe('UserService', () => {
       const result = await userService.updateUser(mockUserData, mockUserId);
 
       expect(User.findOneAndUpdate).toHaveBeenCalledWith(
-        { id: mockUserId },
+        { _id: mockUserId },
         { ...mockUserData },
         { new: true }
       );

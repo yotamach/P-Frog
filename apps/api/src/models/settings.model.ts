@@ -5,4 +5,5 @@ export interface SettingsModel {
     city: string;
     country: string;
     sendTasksEmail: boolean;
+    user?: string;
 }

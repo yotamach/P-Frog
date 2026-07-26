@@ -21,11 +21,16 @@ const createTransport = () =>
   });
 
 export const createAuth = () => {
+  const secret = process.env.BETTER_AUTH_SECRET;
+  if (!secret || secret.length < 32) {
+    throw new Error('BETTER_AUTH_SECRET environment variable must be set to a random string of at least 32 characters');
+  }
+
   const db = mongoose.connection.getClient().db();
 
   return betterAuth({
     baseURL: process.env.BETTER_AUTH_URL || 'http://localhost:3333',
-    secret: process.env.BETTER_AUTH_SECRET,
+    secret,
     database: mongodbAdapter(db),
 
     emailAndPassword: {

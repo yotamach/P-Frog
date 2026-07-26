@@ -3,6 +3,8 @@ import { AppRouter } from "@models";
 import { connect, set } from "mongoose";
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
+import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
 import swaggerUi from 'swagger-ui-express';
 import { toNodeHandler } from 'better-auth/node';
 import { BASE_API } from "./config/config";
@@ -38,6 +40,9 @@ export class App {
   }
 
   configure(auth: Auth): void {
+    // CSP is disabled because this is a JSON API; the one HTML surface (swagger-ui, below)
+    // relies on inline scripts/styles that a default CSP would block.
+    this.app.use(helmet({ contentSecurityPolicy: false }));
     this.app.use(correlationIdMiddleware);
     this.app.use((req: Request, res: Response, next: NextFunction) => {
       const start = Date.now();
@@ -60,7 +65,13 @@ export class App {
     }));
 
     // better-auth handler must be mounted BEFORE express.json()
-    this.app.all('/api/auth/*', toNodeHandler(auth));
+    const authRateLimiter = rateLimit({
+      windowMs: 15 * 60 * 1000,
+      limit: 20,
+      standardHeaders: true,
+      legacyHeaders: false,
+    });
+    this.app.all('/api/auth/*', authRateLimiter, toNodeHandler(auth));
 
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: false }));
@@ -78,16 +89,20 @@ export class App {
   }
 
   addDefaultRoutes(): void {
-    this.app.use(function(req, res, next) {
-      const err = new Error('Not Found');
+    this.app.use((req: Request, res: Response, next: NextFunction) => {
+      const err: any = new Error('Not Found');
+      err.status = 404;
       next(err);
     });
 
-    this.app.use(function(req, res, next, err) {
-      res.locals.message = err.message;
-      res.locals.error = req.app.get('env') === 'development' ? err : {};
-      res.status(err.status || 500);
-      res.render('error');
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    this.app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+      const status = err.status || 500;
+      logger.error('Unhandled error', { error: err.message, status, url: req.originalUrl });
+      res.status(status).send({
+        success: false,
+        error: process.env.NODE_ENV === 'production' ? 'Internal Server Error' : err.message,
+      });
     });
   }
 
