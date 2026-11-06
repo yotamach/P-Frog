@@ -204,7 +204,7 @@ taskRouter.patch('/:id/assign', auth, async (req: any, res: Response) => {
     res.send({ success: true, task: updatedTask });
   } catch(e) {
     log.error(`PATCH /tasks/${id}/assign - Error: ${e}`);
-    res.status(500).send({ success: false, error: e.message });
+    res.status(500).send({ success: false, error: 'Internal server error' });
   }
 });
 
@@ -272,7 +272,7 @@ taskRouter.get('/:id', auth, async (req: any, res: Response) => {
     res.send({ success: true, task });
   } catch(e) {
     log.error(`GET /tasks/${id} - Error: ${e}`);
-    res.status(500).send({ success: false, error: e.message });
+    res.status(500).send({ success: false, error: 'Internal server error' });
   }
 });
 
@@ -313,7 +313,7 @@ taskRouter.get('/', auth, async (req: any, res: Response) => {
     res.send({ success: true, tasks });
   } catch(e) {
     log.error(`GET /tasks - Error: ${e}`);
-    res.send({ success: false, error: e.message });
+    res.status(500).send({ success: false, error: 'Internal server error' });
   }
 });
 
@@ -381,7 +381,7 @@ taskRouter.delete('/:id', auth, async (req: any, res: Response) => {
     res.send({ success: true, task });
   } catch(e) {
     log.error(`DELETE /tasks/${id} - Exception: ${e}`);
-    res.status(500).send({ success: false, error: e.message });
+    res.status(500).send({ success: false, error: 'Internal server error' });
   }
 });
 

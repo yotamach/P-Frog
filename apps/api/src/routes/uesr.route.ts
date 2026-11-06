@@ -37,7 +37,7 @@ const userService: UserService = new UserService();
  *       500:
  *         description: Internal server error
  */
-userRouter.post('/',async (req: Request, res: Response) => {
+userRouter.post('/', auth, requireAdmin(), async (req: Request, res: Response) => {
   log.info('POST /users - Creating user');
   try {
     const user: UserModel = req.body;
@@ -46,7 +46,7 @@ userRouter.post('/',async (req: Request, res: Response) => {
     res.send(userDetails);
   } catch(e) {
     log.error(`POST /users - Failed to create user - ${e}`);
-    res.status(500).send({ success: false, error: e });
+    res.status(500).send({ success: false, error: 'Failed to create user' });
   }
 });
 
@@ -72,17 +72,29 @@ userRouter.post('/',async (req: Request, res: Response) => {
  *       200:
  *         description: User updated
  */
-userRouter.patch('/:id', async (req: Request, res: Response) => {
+userRouter.patch('/:id', auth, async (req: any, res: Response) => {
   const {id} = req.params;
-  log.info(`PATCH /users/${id} - Updating user`);
+  const requesterId = getUserId(req);
+  log.info(`PATCH /users/${id} - Updating user (requester: ${requesterId})`);
   try {
-    const userData: UserModel = req.body;
+    if (id !== requesterId && !(await isAdmin(requesterId)) && !(await isSuperuser(requesterId))) {
+      return res.status(403).send({ success: false, error: 'Forbidden' });
+    }
+    // Role and password changes must go through their dedicated, permission-checked endpoints;
+    // token/id are server-managed and must never be settable from the request body.
+    const body = req.body as UserModel;
+    const userData: Partial<UserModel> = {
+      firstName: body.firstName,
+      lastName: body.lastName,
+      userName: body.userName,
+      email: body.email,
+    };
     const user = await userService.updateUser(userData, id);
     log.info(`PATCH /users/${id} - User updated successfully`);
     res.send({ success: true, user});
   } catch (err) {
     log.error(`PATCH /users/${id} - Error: ${err}`);
-    res.send({ success: false, error: err});
+    res.status(500).send({ success: false, error: 'Failed to update user' });
   }
 });
 
@@ -165,7 +177,7 @@ userRouter.patch('/:id/role', auth, requireAdmin(), async (req: any, res: Respon
     res.send({ success: true, user });
   } catch(e) {
     log.error(`PATCH /users/${id}/role - Error: ${e}`);
-    res.status(500).send({ success: false, error: e.message });
+    res.status(500).send({ success: false, error: 'Internal server error' });
   }
 });
 
@@ -192,7 +204,7 @@ userRouter.delete('/:id', auth, requireSuperuser(), async (req: any, res: Respon
     res.send({ success: true });
   } catch(e) {
     log.error(`DELETE /users/${id} - Error: ${e}`);
-    res.status(500).send({ success: false, error: e.message });
+    res.status(500).send({ success: false, error: 'Internal server error' });
   }
 });
 
@@ -221,16 +233,16 @@ userRouter.delete('/:id', auth, requireSuperuser(), async (req: any, res: Respon
  *                 user:
  *                   $ref: '#/components/schemas/User'
  */
-userRouter.get('/:id', async (req: Request, res: Response) => {
+userRouter.get('/:id', auth, async (req: Request, res: Response) => {
   const {id} = req.params;
   log.info(`GET /users/${id} - Fetching user by id`);
   try {
-    const user = await userService.getUserByParams({ id });
+    const user = await userService.getUserByParams({ _id: id });
     log.info(`GET /users/${id} - User retrieved successfully`);
     res.send({ success: true, user});
   } catch (err) {
     log.error(`GET /users/${id} - Error: ${err}`);
-    res.send({ success: false, error: err});
+    res.status(500).send({ success: false, error: 'Failed to fetch user' });
   }
 });
 
@@ -272,7 +284,7 @@ userRouter.get('/', auth, requireAdmin(), async (req: any, res: Response) => {
     res.send({ success: true, users });
   } catch(e) {
     log.error(`GET /users - Error: ${e}`);
-    res.send({ success: false, error: e.message });
+    res.status(500).send({ success: false, error: 'Internal server error' });
   }
 });
 
@@ -324,7 +336,7 @@ userRouter.get('/search', auth, async (req: any, res: Response) => {
     res.send({ success: true, users: results });
   } catch(e) {
     log.error(`GET /users/search - Error: ${e}`);
-    res.status(500).send({ success: false, error: e.message });
+    res.status(500).send({ success: false, error: 'Internal server error' });
   }
 });
 

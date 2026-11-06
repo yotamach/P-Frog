@@ -25,6 +25,7 @@ async function startApp() {
     app.addRouter(projectRoutes);
     app.addRouter(projectMemberRoutes);
     app.addRouter(healthRoutes);
+    app.addDefaultRoutes();
 
     await app.start();
   } catch (error) {

@@ -18,7 +18,7 @@ export class SettingsService {
 
   updateSettings(settings: SettingsModel, id: string): Promise<ISettings | null> {
     log.info(`SettingsService.updateSettings: findOneAndUpdate settings`);
-    return Settings.findOneAndUpdate({ id }, {...settings}, {new: true}).exec();
+    return Settings.findOneAndUpdate({ _id: id }, {...settings}, {new: true}).exec();
   }
 
   deleteSettings(id: string): Promise<ISettings | null> {
