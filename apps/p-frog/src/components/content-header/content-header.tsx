@@ -1,4 +1,5 @@
 import { useAuth } from '@hooks/use-auth/use-auth';
+import { useLogout } from '@data/queries/auth.queries';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass, faChevronRight } from '@fortawesome/free-solid-svg-icons';
@@ -13,7 +14,8 @@ const routeNames: Record<string, string> = {
 };
 
 export function ContentHeader() {
-  const { user, isAuth, logout } = useAuth();
+  const { user, isAuth } = useAuth();
+  const logoutMutation = useLogout();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -51,10 +53,7 @@ export function ContentHeader() {
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
         </svg>
       ),
-      onClick: () => {
-        logout();
-        navigate('/login');
-      }
+      onClick: () => logoutMutation.mutate()
     }
   ];
 

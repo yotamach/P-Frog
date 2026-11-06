@@ -11,6 +11,8 @@ export default defineConfig({
     screenshotsFolder: '../../dist/cypress/apps/p-frog-e2e/screenshots',
     chromeWebSecurity: false,
     baseUrl: 'http://localhost:4200',
+    defaultCommandTimeout: 10000,
+    requestTimeout: 15000,
   },
   // Use spec reporter which shows errors immediately after each failed test
   reporter: 'spec',

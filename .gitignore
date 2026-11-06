@@ -17,6 +17,7 @@
 .env.production
 .env.test
 !.env.example
+docker-compose.env
 
 # IDEs and editors
 /.idea

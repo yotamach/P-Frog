@@ -1,0 +1,9 @@
+title = "P-Frog Gitleaks Configuration"
+
+[[allowlists]]
+description = "CI test credentials in e2e workflow — local dev values only, not production secrets"
+paths = [".github/workflows/e2e.yml"]
+
+[[allowlists]]
+description = "Placeholder values in example files"
+paths = ["docker-compose.env.example"]

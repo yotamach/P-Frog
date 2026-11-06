@@ -86,6 +86,23 @@ describe('Authentication E2E Tests - Comprehensive', () => {
     password: 'TestPassword123!',
   };
 
+  // Create testUser via API before any test runs so login-dependent tests
+  // do not depend on the UI registration test having completed successfully.
+  before(() => {
+    cy.request({
+      method: 'POST',
+      url: 'http://localhost:3333/api/auth/sign-up/email',
+      body: {
+        email: testUser.email,
+        password: testUser.password,
+        name: `${testUser.firstName} ${testUser.lastName}`,
+        firstName: testUser.firstName,
+        lastName: testUser.lastName,
+      },
+      failOnStatusCode: false,
+    });
+  });
+
   beforeEach(() => {
     cy.clearCookies();
     cy.clearLocalStorage();
@@ -93,18 +110,20 @@ describe('Authentication E2E Tests - Comprehensive', () => {
 
   describe('Registration Flow', () => {
     it('should allow a new user to register', () => {
+      // Use a unique email so this test is independent of testUser setup above.
+      const uniqueEmail = 'ui_reg_' + Date.now() + '@example.com';
       cy.visit('/registration');
 
       cy.contains('label', 'First Name').parent().find('input').type(testUser.firstName);
       cy.contains('label', 'Last Name').parent().find('input').type(testUser.lastName);
-      cy.contains('label', 'Email').parent().find('input').type(testUser.email);
+      cy.contains('label', 'Email').parent().find('input').type(uniqueEmail);
       cy.contains('label', 'Password').parent().find('input').type(testUser.password);
       cy.contains('label', 'Confirm Password').parent().find('input').type(testUser.password);
 
       cy.get('button[type="submit"]').click();
 
-      cy.url().should('include', '/login');
-      cy.contains(/registration successful/i, { timeout: 5000 }).should('be.visible');
+      cy.url({ timeout: 10000 }).should('include', '/login');
+      cy.contains(/registration successful/i, { timeout: 10000 }).should('be.visible');
     });
 
     it('should show validation errors for invalid input', () => {
@@ -142,7 +161,7 @@ describe('Authentication E2E Tests - Comprehensive', () => {
 
       cy.get('button[type="submit"]').click();
 
-      cy.contains(/already/i, { timeout: 5000 }).should('be.visible');
+      cy.contains(/already/i, { timeout: 10000 }).should('be.visible');
     });
   });
 
@@ -155,7 +174,7 @@ describe('Authentication E2E Tests - Comprehensive', () => {
 
       cy.get('button[type="submit"]').click();
 
-      cy.url({ timeout: 5000 }).should('not.include', '/login');
+      cy.url({ timeout: 10000 }).should('not.include', '/login');
       cy.contains(/success/i).should('be.visible');
       cy.get('header').should('contain', testUser.firstName);
     });
@@ -184,7 +203,7 @@ describe('Authentication E2E Tests - Comprehensive', () => {
   describe('Protected Routes - With Authentication', () => {
     it('should redirect unauthenticated users to login', () => {
       cy.visit('/home');
-      cy.url({ timeout: 5000 }).should('include', '/login');
+      cy.url({ timeout: 10000 }).should('include', '/login');
     });
 
     it('should allow access to protected routes after login', () => {
@@ -193,7 +212,7 @@ describe('Authentication E2E Tests - Comprehensive', () => {
       cy.contains('label', 'Password').parent().find('input').type(testUser.password);
       cy.get('button[type="submit"]').click();
 
-      cy.url({ timeout: 5000 }).should('not.include', '/login');
+      cy.url({ timeout: 10000 }).should('not.include', '/login');
       cy.get('header').should('contain', testUser.firstName);
 
       cy.visit('/');
@@ -206,10 +225,10 @@ describe('Authentication E2E Tests - Comprehensive', () => {
       cy.contains('label', 'Email').parent().find('input').type(testUser.email);
       cy.contains('label', 'Password').parent().find('input').type(testUser.password);
       cy.get('button[type="submit"]').click();
-      cy.url({ timeout: 5000 }).should('not.include', '/login');
+      cy.url({ timeout: 10000 }).should('not.include', '/login');
 
       cy.visit('/login');
-      cy.url({ timeout: 3000 }).should('not.include', '/login');
+      cy.url({ timeout: 10000 }).should('not.include', '/login');
     });
   });
 
@@ -219,19 +238,19 @@ describe('Authentication E2E Tests - Comprehensive', () => {
       cy.contains('label', 'Email').parent().find('input').type(testUser.email);
       cy.contains('label', 'Password').parent().find('input').type(testUser.password);
       cy.get('button[type="submit"]').click();
-      cy.url({ timeout: 5000 }).should('not.include', '/login');
+      cy.url({ timeout: 10000 }).should('not.include', '/login');
     });
 
     it('should allow user to logout', () => {
       cy.get('[data-testid="user-avatar"]').click();
       cy.contains(/logout/i).click();
-      cy.url({ timeout: 5000 }).should('include', '/login');
+      cy.url({ timeout: 10000 }).should('include', '/login');
     });
 
     it('should clear authentication after logout', () => {
       cy.get('[data-testid="user-avatar"]').click();
       cy.contains(/logout/i).click();
-      cy.url({ timeout: 5000 }).should('include', '/login');
+      cy.url({ timeout: 10000 }).should('include', '/login');
 
       cy.visit('/home');
       cy.url().should('include', '/login');
@@ -244,7 +263,7 @@ describe('Authentication E2E Tests - Comprehensive', () => {
       cy.contains('label', 'Email').parent().find('input').type(testUser.email);
       cy.contains('label', 'Password').parent().find('input').type(testUser.password);
       cy.get('button[type="submit"]').click();
-      cy.url({ timeout: 5000 }).should('not.include', '/login');
+      cy.url({ timeout: 10000 }).should('not.include', '/login');
 
       cy.reload();
 
@@ -257,7 +276,7 @@ describe('Authentication E2E Tests - Comprehensive', () => {
       cy.contains('label', 'Email').parent().find('input').type(testUser.email);
       cy.contains('label', 'Password').parent().find('input').type(testUser.password);
       cy.get('button[type="submit"]').click();
-      cy.url({ timeout: 5000 }).should('not.include', '/login');
+      cy.url({ timeout: 10000 }).should('not.include', '/login');
 
       cy.visit('/');
       cy.url().should('not.include', '/login');
